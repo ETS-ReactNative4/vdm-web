@@ -1,0 +1,6 @@
+#canvas {
+    padding: 20px;
+    height: calc(100vh - 400px);
+    /* background: tomato; */
+    border: 1px solid silver;
+  }

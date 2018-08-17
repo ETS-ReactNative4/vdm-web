@@ -1,0 +1,36 @@
+git remote add origin git@github.com:nathannoble/vdm.git
+git push -u origin master
+
+Install NodeJS
+Install React etc.
+
+https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf
+https://www.sitepoint.com/react-router-v4-complete-guide/
+https://medium.freecodecamp.org/integrating-create-react-app-redux-react-router-redux-observable-bootstrap-altogether-216db97e89a3
+
+npm install -g create-react-app
+create-react-app vdm
+cd vdm
+npm start
+
+npm install --save react-router-dom
+npm install --save react-bootstrap
+npm install -save react-router-bootstrap
+npm i --save @fortawesome/fontawesome
+npm i --save @fortawesome/react-fontawesome
+npm i --save @fortawesome/fontawesome-free-solid
+npm i --save @fortawesome/fontawesome-free-regular
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+npm i --save jquery --save-dev
+npm i --save ztree --save-dev
+npm i --save jqueryui --save-dev
+npm i --save react-jsonschema-form --save-dev
+
+npm i react-redux --save-dev
+npm i redux --save-dev

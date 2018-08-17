@@ -1,0 +1,210 @@
+@font-face {
+  font-family: gothic;
+  src: url(./font/century-gothic/09f6b2ba02572f19a7d7dd2b5f6494ad.ttf);
+}
+
+.container{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: gothic;
+  background-color: #FFF;
+}
+
+.navbar{
+  border:none;
+  box-shadow: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.navbar-default{
+  background-image: none;
+  background-color: #2AAEE1;
+  border-color: none;
+}
+
+.navbar-default .navbar-brand {
+  color: #FFF;
+}
+
+.navbar-brand:hover{
+  color: #FFF;
+}
+
+.navbar-brand, .navbar-nav > li > a {
+  text-shadow: none;
+}
+
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+  color: #000;
+  background-color: #A8C7DC;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: #FFF;
+}
+
+.navbar-default .navbar-nav > li > a:active {
+  color: #FFF;
+}
+
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .active > a {
+  background-image: none;
+  box-shadow: none;
+}
+
+.content{
+  box-shadow: none;
+}
+
+.sub-menu{
+  background: #A8C7DC;
+}
+
+.tab-content{
+  background: #FFF;
+  padding-top: 5px;
+}
+
+.left-pane{
+  background-color: white;
+}
+
+.right-pane{
+  background-color: silver;
+}
+
+.footer{
+  background-color: #2AAEE1;
+  font-size: 14px;
+  padding-top: 18px;
+}
+
+.connections-panel{
+  background-color: azure;
+  height: calc(100vh - 160px);
+  overflow:auto;
+}
+
+
+
+.main {
+  display: flex;
+}
+.col-1{
+  width: 300px;
+}
+.col-2 {
+  flex-grow: 1;
+}
+.col-3 {
+  width: 300px;
+  padding: 5px;
+}
+
+
+/* Canvas Styles */
+.w {
+  padding: 16px;
+  position: absolute;
+  z-index: 4;
+  border: 1px solid #2e6f9a;
+  box-shadow: 2px 2px 19px #e0e0e0;
+  -o-box-shadow: 2px 2px 19px #e0e0e0;
+  -webkit-box-shadow: 2px 2px 19px #e0e0e0;
+  -moz-box-shadow: 2px 2px 19px #e0e0e0;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  opacity: 0.8;
+  cursor: move;
+  background-color: white;
+  font-size: 11px;
+  -webkit-transition: background-color 0.25s ease-in;
+  -moz-transition: background-color 0.25s ease-in;
+  transition: background-color 0.25s ease-in;
+}
+
+.w:hover {
+  background-color: #5c96bc;
+  color: white;
+
+}
+
+.aLabel {
+  -webkit-transition: background-color 0.25s ease-in;
+  -moz-transition: background-color 0.25s ease-in;
+  transition: background-color 0.25s ease-in;
+}
+
+.aLabel.jtk-hover, .jtk-source-hover, .jtk-target-hover {
+  background-color: #1e8151;
+  color: white;
+}
+
+.aLabel {
+  background-color: white;
+  opacity: 0.8;
+  padding: 0.3em;
+  border-radius: 0.5em;
+  border: 1px solid #346789;
+  cursor: pointer;
+}
+
+.ep {
+  position: absolute;
+  bottom: 37%;
+  right: 5px;
+  width: 1em;
+  height: 1em;
+  background-color: orange;
+  cursor: pointer;
+  box-shadow: 0 0 2px black;
+  -webkit-transition: -webkit-box-shadow 0.25s ease-in;
+  -moz-transition: -moz-box-shadow 0.25s ease-in;
+  transition: box-shadow 0.25s ease-in;
+}
+
+.ep:hover {
+  box-shadow: 0 0 6px black;
+}
+
+.statemachine-demo .jtk-endpoint {
+  z-index: 3;
+}
+
+#opened {
+  left: 10em;
+  top: 5em;
+}
+
+#phone1 {
+  left: 35em;
+  top: 12em;
+  width: 7em;
+}
+
+#inperson {
+  left: 12em;
+  top: 23em;
+}
+
+#phone2 {
+  left: 28em;
+  top: 24em;
+}
+
+#rejected {
+  left: 10em;
+  top: 35em;
+}
+
+.dragHover {
+  border: 2px solid orange;
+}
+
+path, .jtk-endpoint { cursor:pointer; }
