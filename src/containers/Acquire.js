@@ -7,6 +7,8 @@ import "./Acquire.css";
 import { Button, Tabs, Tab } from 'react-bootstrap';
 import $ from 'jquery';
 import { connect } from 'react-redux'
+import { Modal } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom'
 
 
 require('jqueryui');
@@ -30,6 +32,10 @@ class Acquire extends Component {
 
         this.addNode = this.addNode.bind(this);
         this.nodeClicked = this.nodeClicked.bind(this);
+        
+          this.handleShow = this.handleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
     }
 
@@ -39,6 +45,18 @@ class Acquire extends Component {
         this.setState({ currentNode: clickedNode });
         console.log(clickedNode);
     }
+    
+      handleClose() {
+      $('#modal1').hide();
+    this.setState({ show: false });
+  }
+
+  handleShow() {
+    console.log('redirect to explore');
+    this.setState({ show: true });
+ 	$('#modal1').hide();
+	document.getElementById('explorebtn').click()  
+  }
 
 
     // Add the node to the node list and to the canvas
@@ -225,6 +243,38 @@ class Acquire extends Component {
                                             nodeClicked={nodeClicked}
                                         />
                                     </div>
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+
+
+
+<div className="static-modal" id='modal1' style={{display: 'none'}}>
+  <Modal.Dialog>
+    <Modal.Header>
+      <Modal.Title>Modal title</Modal.Title>
+    </Modal.Header>
+
+    <Modal.Body>One fine body...</Modal.Body>
+
+    <Modal.Footer>
+      <Button onClick={this.handleClose}>Close</Button>
+      <Button bsStyle="primary" onClick={this.handleShow}>Save changes</Button>
+    </Modal.Footer>
+  </Modal.Dialog>
+</div>               
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
                                     <div className="col-2">
                                         <div className="actions-box">
                                             <Button>New</Button>

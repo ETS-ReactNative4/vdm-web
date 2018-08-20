@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import Form from "react-jsonschema-form";
 import './propertyPage.css'
 
+import jquery from 'jquery'
+
+window.jQuery = jquery
+
 const log = (type) => console.log.bind(console, type);
 
 const onSubmit = ({ formData }) => {
@@ -29,9 +33,30 @@ const onSubmit = ({ formData }) => {
         )**/
 
 
-var oReq = new XMLHttpRequest();
-oReq.open("POST", "http://localhost:9988/vdm/rawfile");
-oReq.send(JSON.stringify(rawFilePayload));
+var xmlhttp = new XMLHttpRequest();
+
+
+xmlhttp.onreadystatechange = function() {
+  if (xmlhttp.readyState === 4) {
+  
+  
+  console.log(xmlhttp.responseText);
+  
+    //var response = JSON.parse(xmlhttp.responseText);
+      if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+      
+         console.log('successful');
+         
+         jquery('#modal1').show()
+	
+      } else {
+         console.log('failed');
+      }
+  }
+}
+
+xmlhttp.open("POST", "http://localhost:9988/vdm/rawfile");
+xmlhttp.send(JSON.stringify(rawFilePayload));
 
 }
 

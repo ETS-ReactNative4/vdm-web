@@ -1,0 +1,45 @@
+
+group 'com.rcggs.vdm-service'
+version '1.0-SNAPSHOT'
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+
+
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext{
+
+}
+
+
+repositories {
+    mavenCentral()
+       maven {
+    name 'jboss'
+    url 'http://repository.jboss.org/nexus/content/groups/public-jboss'
+  }
+}
+
+configurations {
+    provided
+}
+
+
+test {
+    ignoreFailures = true
+}
+
+dependencies {
+
+
+ 
+    
+}
+
+

@@ -25,7 +25,7 @@ class App extends Component {
                 <NavItem><FontAwesomeIcon icon="upload" /> Acquire</NavItem>
               </LinkContainer>
               <LinkContainer to="/explore">
-                <NavItem><FontAwesomeIcon icon="search" /> Explore</NavItem>
+                <NavItem id="explorebtn"><FontAwesomeIcon icon="search" /> Explore</NavItem>
               </LinkContainer>
               <LinkContainer to="/govern">
                 <NavItem><FontAwesomeIcon icon="gavel" /> Govern</NavItem>
@@ -56,7 +56,8 @@ class App extends Component {
 
         <div className="content">
         </div>
-        
+     
+ 
         <i className="fa fa-camera-retro"></i>
         <div className="navbar navbar-fixed-bottom footer">
         Copyright &copy; 2018 RCG Global Services
