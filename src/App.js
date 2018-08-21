@@ -6,11 +6,15 @@ import { faHome, faUpload, faSearch, faGavel } from '@fortawesome/fontawesome-fr
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Jumbotron, Button, Panel, ListGroup, ListGroupItem, Grid, Row, Col, Clearfix } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap'
 import './App.css';
+import * as config from './config';
 
 
 class App extends Component {
 
 
+ componentDidMount() {
+
+  }
 
   render() {
     return (

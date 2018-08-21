@@ -4,6 +4,8 @@ import './propertyPage.css'
 
 import jquery from 'jquery'
 
+import * as config from '../config';
+
 window.jQuery = jquery
 
 const log = (type) => console.log.bind(console, type);
@@ -59,7 +61,7 @@ xmlhttp.onreadystatechange = function() {
   }
 }
 
-xmlhttp.open("POST", "http://localhost:9988/vdm/rawfile");
+xmlhttp.open("POST", config.VDM_SERVICE_HOST + '/vdm/rawfile');
 xmlhttp.send(JSON.stringify(rawFilePayload));
 
 }

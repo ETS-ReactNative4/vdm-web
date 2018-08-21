@@ -8,6 +8,8 @@
     "@fortawesome/fontawesome-free-solid": "^5.0.13",
     "@fortawesome/react-fontawesome": "0.0.20",
     "bootstrap": "^4.1.1",
+    "dotenv": "^6.0.0",
+    "json-loader": "^0.5.7",
     "jsplumb": "^2.6.12",
     "react": "^16.3.2",
     "react-bootstrap": "^0.32.1",

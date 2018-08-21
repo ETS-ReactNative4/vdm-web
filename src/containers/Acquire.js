@@ -8,9 +8,13 @@ import { Button, Tabs, Tab } from 'react-bootstrap';
 import $ from 'jquery';
 import { connect } from 'react-redux'
 import { Modal } from 'react-bootstrap';
+import * as config from '../config';
+
 
 require('jqueryui');
 require('jsplumb');
+
+
 
 const jsPlumb = window.jsPlumb;
 // const jsPlumbUtil = window.jsPlumbUtil;
@@ -197,7 +201,7 @@ class Acquire extends Component {
 
 
         //fetch('http://localhost:4000/api/getconnections')
-        fetch('http://localhost:9988/vdm/getConnections')
+        fetch(config.VDM_SERVICE_HOST + '/vdm/getConnections')
             .then(res => res.json())
             .then(
                 (result) => {
