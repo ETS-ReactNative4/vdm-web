@@ -58,7 +58,11 @@ class Acquire extends Component {
     this.setState({ show: true });
  	$('#modal1').hide();
  	
- 	document.getElementById('explorebtn').click()  ;
+ 	//document.getElementById('explorebtn').click();
+ 	
+ 	console.log(JSON.parse($('#triurl').val()));
+ 	
+ 	window.open('http://52.201.45.52:3005/','_blank');
  	
   }
 
@@ -259,14 +263,14 @@ class Acquire extends Component {
 <div className="static-modal" id='modal1' style={{display: 'none'}}>
   <Modal.Dialog>
     <Modal.Header>
-      <Modal.Title>Modal title</Modal.Title>
+      <Modal.Title>Acquire Successful</Modal.Title>
     </Modal.Header>
 
-    <Modal.Body>One fine body...<input id="triurl"/></Modal.Body>
+    <Modal.Body>Would you like to wrangle this file now ?<input type='hidden' id="triurl"/></Modal.Body>
 
     <Modal.Footer>
-      <Button onClick={this.handleClose}>Close</Button>
-      <Button bsStyle="primary" onClick={this.handleShow}>Save changes</Button>
+      <Button onClick={this.handleClose}>No</Button>
+      <Button bsStyle="primary" onClick={this.handleShow}>Yes</Button>
     </Modal.Footer>
   </Modal.Dialog>
 </div>               

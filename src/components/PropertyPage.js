@@ -41,17 +41,14 @@ var xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function() {
   if (xmlhttp.readyState === 4) {
   
-  
-  console.log(xmlhttp.responseText);
-  
-    //var response = JSON.parse(xmlhttp.responseText);
+     //var response = JSON.parse(xmlhttp.responseText);
       if (xmlhttp.status === 200 || xmlhttp.status === 201) {
       
-         console.log('successful');
+         console.log(xmlhttp.responseText);
          
-          jquery('#triurl').val(xmlhttp.responseText);
+         jquery('#triurl').val(xmlhttp.responseText);
  
- window.triurl='http://www.google.com';
+ 		 //window.triurl='http://www.google.com';
          
          jquery('#modal1').show()
 	
