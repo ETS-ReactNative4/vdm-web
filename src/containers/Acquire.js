@@ -60,9 +60,9 @@ class Acquire extends Component {
  	
  	//document.getElementById('explorebtn').click();
  	
- 	console.log(JSON.parse($('#triurl').val()));
- 	
- 	window.open('http://52.201.45.52:3005/','_blank');
+ 	var result = JSON.parse($('#triurl').val();
+ 	console.log(result)
+ 	window.open(result.url,'_blank');
  	
   }
 
