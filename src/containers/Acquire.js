@@ -8,8 +8,6 @@ import { Button, Tabs, Tab } from 'react-bootstrap';
 import $ from 'jquery';
 import { connect } from 'react-redux'
 import { Modal } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom'
-
 
 require('jqueryui');
 require('jsplumb');
@@ -55,7 +53,9 @@ class Acquire extends Component {
     console.log('redirect to explore');
     this.setState({ show: true });
  	$('#modal1').hide();
-	document.getElementById('explorebtn').click()  
+ 	
+ 	document.getElementById('explorebtn').click()  ;
+ 	
   }
 
 
@@ -258,7 +258,7 @@ class Acquire extends Component {
       <Modal.Title>Modal title</Modal.Title>
     </Modal.Header>
 
-    <Modal.Body>One fine body...</Modal.Body>
+    <Modal.Body>One fine body...<input id="triurl"/></Modal.Body>
 
     <Modal.Footer>
       <Button onClick={this.handleClose}>Close</Button>

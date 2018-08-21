@@ -2,13 +2,25 @@ import React, { Component } from 'react'
 import DatasetList from '../components/DatasetList'
 // eslint-disable-next-line
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Jumbotron, Button, Panel, ListGroup, ListGroupItem, Grid, Row, Col, Clearfix, Tabs, Tab } from 'react-bootstrap';
+import Acquire from './Acquire';
+import Iframe from 'react-iframe'
+
 
 
 class Explore extends Component {
 
+
+ componentDidMount() {
+  console.log( window.triurl);
+  document.getElementById('myId').src='http://52.201.45.52:3005/data/153/760';
+  }
+  
+  
+  
+
     render() {
         console.log(this.props.match)
-        return (
+       /** return (
             <div className='sub-menu'>
                 <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
                     <Tab className='tab-content' eventKey={1} title="Acquire Data">
@@ -29,7 +41,24 @@ class Explore extends Component {
                 </Tabs>
             </div>
 
+        );*/
+        
+        
+        
+         return (
+            <div>
+              <Iframe url="http://www.youtube.com/embed/xDMP3i36naA"
+		        width="450px"
+		        height="450px"
+		        id="myId"
+		        className="myClassname"
+		        display="initial"
+		        position="relative"
+		        allowFullScreen/>
+            </div>
+
         );
+        
     }
 }
 

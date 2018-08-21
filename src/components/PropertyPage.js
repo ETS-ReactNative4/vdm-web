@@ -47,6 +47,10 @@ xmlhttp.onreadystatechange = function() {
       
          console.log('successful');
          
+          jquery('#triurl').val(xmlhttp.responseText);
+ 
+ window.triurl='http://www.google.com';
+         
          jquery('#modal1').show()
 	
       } else {
