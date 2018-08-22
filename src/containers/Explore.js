@@ -4,15 +4,47 @@ import DatasetList from '../components/DatasetList'
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Jumbotron, Button, Panel, ListGroup, ListGroupItem, Grid, Row, Col, Clearfix, Tabs, Tab } from 'react-bootstrap';
 import Acquire from './Acquire';
 import Iframe from 'react-iframe'
+import * as config from '../config';
 
 
 
 class Explore extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            dataSources: []
+        };
+}
 
  componentDidMount() {
-  console.log( window.triurl);
-  document.getElementById('myId').src='http://52.201.45.52:3005/data/153/760';
+
+  fetch(config.VDM_SERVICE_HOST + '/vdm/getWrangledSets')
+            .then(res => res.json())
+            .then(
+                (result) => {
+                
+                console.log(result);
+                    this.setState({
+                        isLoaded: true,
+                        dataSources: JSON.parse(result)
+                    });
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            )
+
+
+
   }
   
   
@@ -46,15 +78,8 @@ class Explore extends Component {
         
         
          return (
-            <div>
-              <Iframe url="http://52.201.45.52:3005/sign-in"
-		        width="450px"
-		        height="450px"
-		        id="myId"
-		        className="myClassname"
-		        display="initial"
-		        position="relative"
-		        allowFullScreen/>
+            <div style={{padding:'20px'}}>Wrangled Datasets<hr/>
+           {this.state.datasources}
             </div>
 
         );
