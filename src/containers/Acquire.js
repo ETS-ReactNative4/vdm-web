@@ -47,6 +47,37 @@ class Acquire extends Component {
         this.setState({ currentNode: clickedNode });
         console.log(clickedNode);
     }
+    
+      handleClose() {
+      $('#modal1').hide();
+    this.setState({ show: false });
+  }
+
+  handleShow() {
+    console.log('redirect to explore');
+    $("#waitdiv").show();
+    this.setState({ show: true });
+ 	$('#modal1').hide();
+ 	
+ 	
+ 	var result = JSON.parse($('#triurl').val());
+ 	console.log(result)
+ 	
+ 	
+ 	
+ 	var win = window.open(result.url,'_blank');
+	var timer = setInterval(function() { 
+	    if(win.closed) {
+	        clearInterval(timer);
+	        document.getElementById('explorebtn').click();
+	        console.log('closed');
+	         $("#waitdiv").hide();
+	    }
+	}, 1000);
+
+ 	
+ 	
+  }
 
     handleClose() {
         $('#modal1').hide();
