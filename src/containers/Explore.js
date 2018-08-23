@@ -5,8 +5,8 @@ import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Jumbotron, Button, Panel, 
 import Acquire from './Acquire';
 import Iframe from 'react-iframe'
 import * as config from '../config';
-
-
+import ReactTable from "react-table";
+import 'react-table/react-table.css'
 
 class Explore extends Component {
 
@@ -14,34 +14,14 @@ class Explore extends Component {
         super(props);
         this.state = {
             error: null,
-            isLoaded: false,
-            dataSources: []
+            loading: true,
+            dataSources: "[]"
         };
 }
 
  componentDidMount() {
 
-  fetch(config.VDM_SERVICE_HOST + '/vdm/getWrangledSets')
-            .then(res => res.json())
-            .then(
-                (result) => {
-                
-                console.log(result);
-                    this.setState({
-                        isLoaded: true,
-                        dataSources: JSON.parse(result)
-                    });
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            )
+  
 
 
 
@@ -75,11 +55,79 @@ class Explore extends Component {
 
         );*/
         
-        
-        
+        			  const columns = [{
+      				    		Header: 'ID',
+      				    		accessor: 'id' 
+      				  	},{
+        				    Header: 'Name',
+        				    accessor: 'name' 
+        				  },{
+          				    Header: 'Recipe',
+          				    accessor: 'recipe' 
+          				  },{
+          				    Header: 'Flow',
+          				    accessor: 'flow' 
+          				  },{
+        				    Header: 'Created At',
+          				    accessor: 'createdAt' 
+          				  },{
+            				    Header: 'Updated At',
+              				    accessor: 'updatedAt' 
+              				  },
+          				  {
+        				    Header: 'Recipe',
+          				    accessor: 'url',
+          				    Cell: props => <a href={props.value} target='_blank'>{props.value}</a>
+          				  }
+        				   ]
+        						  
+        			  
          return (
             <div style={{padding:'20px'}}>Wrangled Datasets<hr/>
-           {this.state.datasources}
+         
+            <ReactTable
+           data={JSON.parse(this.state.dataSources)}
+           columns={columns}
+           manual
+           loading={this.state.loading}
+           onFetchData={(state, instance) => {
+        	    // show the loading overlay
+        	    this.setState({loading: true})
+        	    // fetch your data
+        	   fetch(config.VDM_SERVICE_HOST + '/vdm/getWrangledSets')
+            .then(res => res.json())
+            .then(
+                (result) => {
+                	
+                var	data = []	
+                    result.data.map((elem, i) => {
+                        var url = `http://52.201.45.52:3005/data/${elem.flow.id}/${elem.id}`;
+                        data.push({"name":elem.name,"id":elem.id,"recipe":elem.recipe.id,"flow":elem.flow.id, "createdAt": elem.createdAt, "updatedAt" : elem.updatedAt, "url": url })
+                       
+                        console.log(this.state.dataSources)
+                      });
+//
+//              
+//                
+//                	
+//                	
+//                	
+//                
+                    this.setState({
+                        loading:false,
+                        dataSources:JSON.stringify(data)
+                    });
+                    
+                    
+                },
+
+                (error) => {
+                  console.log(error)  
+                }
+            )
+        	  }}
+         />  
+           
             </div>
 
         );
