@@ -76,7 +76,7 @@ body {
 }
 
 .right-pane{
-  background-color: silver;
+  background-color: #F0FFFF;
 }
 
 .footer{
@@ -84,14 +84,6 @@ body {
   font-size: 14px;
   padding-top: 18px;
 }
-
-.connections-panel{
-  background-color: azure;
-  height: calc(100vh - 160px);
-  overflow:auto;
-}
-
-
 
 .main {
   display: flex;
@@ -208,3 +200,4 @@ body {
 }
 
 path, .jtk-endpoint { cursor:pointer; }
+

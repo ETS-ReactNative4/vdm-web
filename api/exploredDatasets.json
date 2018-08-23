@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Explored Data"
+    },
+    {
+        "id": 2,
+        "name": "Inventory"
+    },
+    {
+        "id": 3,
+        "name": "Receipts"
+    },
+    {
+        "id": 4,
+        "name": "Receipt Items"
+    },
+    {
+        "id": 5,
+        "name": "Products"
+    }
+]

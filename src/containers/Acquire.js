@@ -1,20 +1,19 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import ConnectionsList from '../components/ConnectionsList'
+import DatasetList from '../components/DatasetList'
 import Canvas from '../components/Canvas'
 import PropertyPage from '../components/PropertyPage'
 import "./Acquire.css";
 // eslint-disable-next-line
 import { Button, Tabs, Tab } from 'react-bootstrap';
 import $ from 'jquery';
-import { connect } from 'react-redux'
 import { Modal } from 'react-bootstrap';
 import * as config from '../config';
 
 
 require('jqueryui');
 require('jsplumb');
-
-
 
 const jsPlumb = window.jsPlumb;
 // const jsPlumbUtil = window.jsPlumbUtil;
@@ -27,6 +26,7 @@ class Acquire extends Component {
             error: null,
             isLoaded: false,
             dataSources: [],
+            acquiredDatasets: [],
             zTreeObj: null,
             currentNode: null,
             plumb: null
@@ -34,10 +34,10 @@ class Acquire extends Component {
 
         this.addNode = this.addNode.bind(this);
         this.nodeClicked = this.nodeClicked.bind(this);
-        
-          this.handleShow = this.handleShow.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    
+
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
     }
 
@@ -47,28 +47,29 @@ class Acquire extends Component {
         this.setState({ currentNode: clickedNode });
         console.log(clickedNode);
     }
-    
-      handleClose() {
-      $('#modal1').hide();
-    this.setState({ show: false });
-  }
 
-  handleShow() {
-    console.log('redirect to explore');
-    this.setState({ show: true });
- 	$('#modal1').hide();
- 	
- 	//document.getElementById('explorebtn').click();
- 	
- 	var result = JSON.parse($('#triurl').val());
- 	console.log(result)
- 	window.open(result.url,'_blank');
- 	
-  }
+    handleClose() {
+        $('#modal1').hide();
+        this.setState({ show: false });
+    }
 
+    handleShow() {
+        console.log('redirect to explore');
+        this.setState({ show: true });
+        $('#modal1').hide();
 
+        //document.getElementById('explorebtn').click();
+
+        var result = JSON.parse($('#triurl').val());
+        console.log(result)
+        window.open(result.url, '_blank');
+
+    }
     // Add the node to the node list and to the canvas
     addNode(node, nodeKey, relX, relY, plumb, nodeClicked, isNewNode) {
+
+        var vOffset = 0;
+        var hOffset = -300;
 
         var initNode = function (el) {
 
@@ -85,8 +86,8 @@ class Acquire extends Component {
                     console.log(ui.position)
                     // Update the node position
                     var node = window.acquireNodes.find(node => node.id === ui.helper[0].id)
-                    node.relX = ui.position.left - 300
-                    node.relY = ui.position.top - 100
+                    node.relX = ui.position.left + hOffset
+                    node.relY = ui.position.top + vOffset
                 }
             });
 
@@ -113,8 +114,6 @@ class Acquire extends Component {
         };
 
         var newNode = function (x, y) {
-            var vOffset = 100;
-            var hOffset = 300;
             var d = document.createElement("div");
             // var id = jsPlumbUtil.uuid();
             var nodeName = node.name;
@@ -199,10 +198,7 @@ class Acquire extends Component {
             window.onUpdateNodeClassName({ id: info.connection.targetId, className: "target-form" })
         });
 
-
-
         this.setState({ plumb: plumb });
-
 
         //fetch('http://localhost:4000/api/getconnections')
         fetch(config.VDM_SERVICE_HOST + '/vdm/getConnections')
@@ -224,13 +220,19 @@ class Acquire extends Component {
                     });
                 }
             )
+        getAllData()
+            .then(([dataSources, acquiredDatasets]) => {
+                this.setState({
+                    isLoaded: true,
+                    dataSources: dataSources,
+                    acquiredDatasets: acquiredDatasets
+                });
+            })
 
     }
 
-
-
     render() {
-        const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb } = this.state;
+        const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb, acquiredDatasets } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
         if (error) {
@@ -243,60 +245,41 @@ class Acquire extends Component {
                     <div className='sub-menu'>
                         <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
                             <Tab className='tab-content' eventKey={1} title="RCG Enable">
-
-                                <div className="main">
-                                    <div className="col-1">
-                                        <ConnectionsList dataSources={dataSources} zTreeObj={zTreeObj}
-                                            currentNode={currentNode} addNode={addNode} plumb={plumb}
-                                            nodeClicked={nodeClicked}
-                                        />
-                                    </div>
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-
-
-
-<div className="static-modal" id='modal1' style={{display: 'none'}}>
-  <Modal.Dialog>
-    <Modal.Header>
-      <Modal.Title>Acquire Successful</Modal.Title>
-    </Modal.Header>
-
-    <Modal.Body>Would you like to wrangle this file now ?<input type='hidden' id="triurl"/></Modal.Body>
-
-    <Modal.Footer>
-      <Button onClick={this.handleClose}>No</Button>
-      <Button bsStyle="primary" onClick={this.handleShow}>Yes</Button>
-    </Modal.Footer>
-  </Modal.Dialog>
-</div>               
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    <div className="col-2">
-                                        <div className="actions-box">
-                                            <Button>New</Button>
-                                            <Button>Open</Button>
-                                            <Button>Close</Button>
-                                            <Button>Save</Button>
-                                        </div>
-                                        <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} />
-                                    </div>
-                                    <div className="col-3">
-                                        <PropertyPage node={currentNode} />
-                                    </div>
+                                <div className='col-lg-2  col-md-3 left-pane'>
+                                    <ConnectionsList dataSources={dataSources} zTreeObj={zTreeObj}
+                                        currentNode={currentNode} addNode={addNode} plumb={plumb}
+                                        nodeClicked={nodeClicked}
+                                    />
                                 </div>
+                                <div className="static-modal" id='modal1' style={{ display: 'none' }}>
+                                    <Modal.Dialog>
+                                        <Modal.Header>
+                                            <Modal.Title>Acquire Successful</Modal.Title>
+                                        </Modal.Header>
 
+                                        <Modal.Body>Would you like to wrangle this file now ?<input type='hidden' id="triurl" /></Modal.Body>
+
+                                        <Modal.Footer>
+                                            <Button onClick={this.handleClose}>No</Button>
+                                            <Button bsStyle="primary" onClick={this.handleShow}>Yes</Button>
+                                        </Modal.Footer>
+                                    </Modal.Dialog>
+                                </div>
+                                <div className="col-2">
+                                    <div className="actions-box">
+                                        <Button>New</Button>
+                                        <Button>Open</Button>
+                                        <Button>Close</Button>
+                                        <Button>Save</Button>
+                                    </div>
+                                    <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
+                                </div>
+                                <div className='col-lg-2  col-md-3'>
+                                    <PropertyPage node={currentNode} />
+                                </div>
+                                <div className='col-lg-2  col-md-3 right-pane'>
+                                    <DatasetList datasets={acquiredDatasets} title='Acquired Datasets' />
+                                </div>
                             </Tab>
                             <Tab eventKey={2} title="Confluent" disabled>
                                 Rules Parser content
@@ -323,6 +306,25 @@ const mapDispatchToProps = dispatch => {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
+};
+
+const getDatasources = () => {
+    return fetch('http://localhost:4000/api/datasources')
+        .then(res => res.json())
+        .then((result) => JSON.parse(result))
+};
+
+const getAcquiredDatasets = () => {
+    return fetch('http://localhost:4000/api/acquiredDatasets', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    }).then(res => res.json())
+};
+
+const getAllData = () => {
+    return Promise.all([getDatasources(), getAcquiredDatasets()])
 };
 
 export default connect(

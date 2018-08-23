@@ -1,0 +1,6 @@
+.connections-panel{
+    background-color: azure;
+    height: calc(100vh - 160px);
+    overflow:auto;
+    padding: 3px;
+  }

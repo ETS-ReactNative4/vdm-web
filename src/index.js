@@ -9,7 +9,8 @@ import Govern from './containers/Govern'
 import Operationalize from './containers/Operationalize'
 import Monitor from './containers/Monitor'
 import About from './containers/About'
-import './index.css';
+import './index.css'
+import './component.css'
 
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
@@ -18,6 +19,29 @@ import rootReducer from './reducers'
 const store = createStore(rootReducer)
 
 window.nodes = [];
+
+window.DATASETS = [
+    {
+        id: 1,
+        name: 'Product'
+    },
+    {
+        id: 2,
+        name: 'Inventory'
+    },
+    {
+        id: 3,
+        name: 'Receipts'
+    },
+    {
+        id: 4,
+        name: 'Receipt Items'
+    },
+    {
+        id: 5,
+        name: 'Invoices'
+    }
+]
 
 ReactDOM.render(
     <Provider  store={store}>

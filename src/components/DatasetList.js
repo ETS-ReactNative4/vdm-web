@@ -7,13 +7,14 @@ class DatasetList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            datasets: DATASETS
+            datasets: props.datasets,
+            title: props.title
         };
     }
 
 
     filterChanged = (e) => {
-        var updatedList = DATASETS;
+        var updatedList = this.state.datasets;
         updatedList = updatedList.filter(function (item) {
             return item.name.toLowerCase().search(
                 e.target.value.toLowerCase()) !== -1;
@@ -24,22 +25,20 @@ class DatasetList extends Component {
     }
 
     render() {
-        let contacts = this.state.datasets;
+        let {datasets, title} = this.state;
         return (
-
-
             <div>
-                <div>Acquired Datasets</div>
-                    <input type="text" className="search" onChange={this.filterChanged} />
-                    <ul>
-                        {
-                            contacts.map((el) => {
-                                return <Dataset key={el.id}
-                                    name={el.name}
-                                />
-                            })
-                        }
-                    </ul>
+                <div className='component-title'>{title}</div>
+                <input type="text" className="search" onChange={this.filterChanged} />
+                <ul>
+                    {
+                        datasets.map((el) => {
+                            return <Dataset key={el.id}
+                                name={el.name}
+                            />
+                        })
+                    }
+                </ul>
             </div>
 
         )
@@ -49,25 +48,3 @@ class DatasetList extends Component {
 export default DatasetList
 
 
-let DATASETS = [
-    {
-        id: 1,
-        name: 'Product'
-    },
-    {
-        id: 2,
-        name: 'Inventory'
-    },
-    {
-        id: 3,
-        name: 'Receipts'
-    },
-    {
-        id: 4,
-        name: 'Receipt Items'
-    },
-    {
-        id: 5,
-        name: 'Invoices'
-    }
-]

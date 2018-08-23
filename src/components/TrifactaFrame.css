@@ -1,0 +1,6 @@
+.trifacta-frame {
+    padding: 20px;
+    height: calc(100vh - 400px);
+    background: #eee;
+    border: 1px solid silver;
+  }

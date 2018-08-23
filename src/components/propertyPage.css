@@ -5,3 +5,22 @@
 .target-form{
     display: inline-block;
 }
+
+.form-group {
+    margin-bottom: 3px;
+}
+
+.form-control{
+    padding: 3px;
+    height: 24px;
+    font-weight: 600;
+    border: 1px solid #e8e8e8;
+    /* border-radius: 0; */
+}
+
+label{
+    font-weight: normal;
+    font-size: smaller;
+    color: #2A6497;
+    margin-bottom: 0;
+}

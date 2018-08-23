@@ -3,6 +3,7 @@ import $ from 'jquery';
 // import 'ztree/css/zTreeStyle/zTreeStyle.css'
 import 'ztree/css/metroStyle/metroStyle.css'
 import 'jqueryui/jquery-ui.css'
+import './ConnectionsList.css'
 
 window.jQuery = $;
 
@@ -66,6 +67,7 @@ class ConnectionsList extends Component {
 	render() {
 		return (
 			<div className='connections-panel'>
+			<div className='component-title'>Data Sources</div>
 				<ul id="treeDemo" className="ztree"></ul>
 			</div>
 		);

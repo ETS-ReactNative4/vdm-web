@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Form from "react-jsonschema-form";
+import { Button} from 'react-bootstrap';
 import './propertyPage.css'
 
 import jquery from 'jquery'
@@ -109,7 +110,7 @@ class PropertyPage extends Component {
                     onChange={log("changed")}
                     onSubmit={onSubmit}
                     onError={log("errors")} >
-                    <button className={node.className} type="submit">Submit</button>
+                    <Button bsStyle="primary" className={node.className} type="submit">Submit</Button>
                 </Form>
             </div>
         )
