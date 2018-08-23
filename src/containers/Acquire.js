@@ -55,14 +55,27 @@ class Acquire extends Component {
 
   handleShow() {
     console.log('redirect to explore');
+    $("#waitdiv").show();
     this.setState({ show: true });
  	$('#modal1').hide();
  	
- 	//document.getElementById('explorebtn').click();
  	
  	var result = JSON.parse($('#triurl').val());
  	console.log(result)
- 	window.open(result.url,'_blank');
+ 	
+ 	
+ 	
+ 	var win = window.open(result.url,'_blank');
+	var timer = setInterval(function() { 
+	    if(win.closed) {
+	        clearInterval(timer);
+	        document.getElementById('explorebtn').click();
+	        console.log('closed');
+	         $("#waitdiv").hide();
+	    }
+	}, 1000);
+
+ 	
  	
   }
 
@@ -257,16 +270,17 @@ class Acquire extends Component {
                                     
                                     
                                     
-
+<div id='waitdiv'><br/><br/>Please wait...</div>
 
 
 <div className="static-modal" id='modal1' style={{display: 'none'}}>
+
   <Modal.Dialog>
     <Modal.Header>
       <Modal.Title>Acquire Successful</Modal.Title>
     </Modal.Header>
 
-    <Modal.Body>Would you like to wrangle this file now ?<input type='hidden' id="triurl"/></Modal.Body>
+    <Modal.Body><b>Would you like to wrangle this file now ?</b><input type='hidden' id="triurl"/><p/><span class="note">If you choose yes, your changes will be saved automatically when you close the wrangler window.</span></Modal.Body>
 
     <Modal.Footer>
       <Button onClick={this.handleClose}>No</Button>
