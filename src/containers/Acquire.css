@@ -20,3 +20,17 @@
   text-align: center;
   display:none;
 }
+
+.connections-panel {
+  height:400px;
+}
+
+#canvas {
+  height:700px;
+}
+
+.conformedPanel {
+  background-color : #eee;
+  height:400px;
+  padding : 10px;
+}
