@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import ConnectionsList from '../components/ConnectionsList'
 import ConformedList from '../components/ConformedList'
 import DatasetList from '../components/DatasetList'
 import Canvas from '../components/Canvas'
@@ -27,8 +26,11 @@ class Govern extends Component {
             error: null,
             isLoaded: false,
             dataSources: [],
+            conformedDataSources: [],
+            conformedDataObjects: [],
             acquiredDatasets: [],
             zTreeObj: null,
+            zTreeObj1: null,
             currentNode: null,
             plumb: null
         };
@@ -99,6 +101,12 @@ class Govern extends Component {
     }
     // Add the node to the node list and to the canvas
     addNode(node, nodeKey, relX, relY, plumb, nodeClicked, isNewNode) {
+    	
+    	if(node.type != "data"){
+    		return false;
+    	}
+    	
+    	let self = this;
 
         var vOffset = 0;
         var hOffset = -300;
@@ -116,17 +124,21 @@ class Govern extends Component {
                 stop: function (event, ui) {
                     console.log(ui.helper[0].id)
                     console.log(ui.position)
+                    
+                   console.log(self.props.acquireNodes)
                     // Update the node position
                     var node = window.acquireNodes.find(node => node.id === ui.helper[0].id)
-                    node.relX = ui.position.left + hOffset
-                    node.relY = ui.position.top + vOffset
+                    if(node){
+	                    node.relX = ui.position.left + hOffset
+	                    node.relY = ui.position.top + vOffset
+                    }
                 }
             });
 
             plumb.makeSource(el, {
                 filter: ".ep",
                 anchor: "Continuous",
-                connectorStyle: { stroke: "#5c96bc", strokeWidth: 2, outlineStroke: "transparent", outlineWidth: 4 },
+              //  connectorStyle: { stroke: "#5c96bc", strokeWidth: 2, outlineStroke: "transparent", outlineWidth: 4 },
                 connectionType: "basic",
                 extract: {
                     "action": "the-action"
@@ -149,10 +161,14 @@ class Govern extends Component {
             var d = document.createElement("div");
             // var id = jsPlumbUtil.uuid();
             var nodeName = node.name;
-            if (nodeName.length > 7) { nodeName = nodeName.substring(0, 7) + '...'; }
+            if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
             d.className = "w";
             d.id = node.id;
-            d.innerHTML = nodeName + "<div class=\"ep\"></div>";
+            d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
+            		`<tr><td>Element Name:</td><td><input value='${nodeName}'/></td></tr>` + 
+            		`<tr><td>Element Description:</td><td><input value='${node.description}'/></td></tr>` + 
+            		`<tr><td>Element ID:</td><td><input value='${node.id}'/></td></tr>` + 
+            		`</table></div><div class=\"ep\"></div>`;
             d.style.left = (x + hOffset) + "px";
             d.style.top = (y + vOffset) + "px";
             plumb.getContainer().appendChild(d);
@@ -188,25 +204,29 @@ class Govern extends Component {
     }
 
     componentDidMount() {
+    	
+    	
 
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
             Endpoint: ["Dot", { radius: 2 }],
-            Connector: "StateMachine",
             HoverPaintStyle: { stroke: "#1e8151", strokeWidth: 2 },
             ConnectionOverlays: [
                 ["Arrow", {
-                    location: 1,
-                    id: "arrow",
-                    length: 14,
-                    foldback: 0.8
+                	location : 1,
+        			id : "arrow",
+        			width : 12,
+        			length : 8,
+        			foldback : 0.8
                 }],
-                ["Label", { label: "FOO", id: "label", cssClass: "aLabel" }]
+               // ["Label", { label: "", id: "label", cssClass: "aLabel" }]
             ],
-            Container: "canvas"
+            Container: "canvas",
+        	Connector : [ "Bezier" ]
         });
-
-        plumb.registerConnectionType("basic", { anchor: "Continuous", connector: "StateMachine" });
+        
+        
+        plumb.registerConnectionType("basic", { anchor: "Continuous" });
 
         // bind a click listener to each connection; the connection is deleted. you could of course
         // just do this: instance.bind("click", instance.deleteConnection), but I wanted to make it clear what was
@@ -232,35 +252,9 @@ class Govern extends Component {
 
         this.setState({ plumb: plumb });
 
-        //fetch('http://localhost:4000/api/getconnections')
-//        fetch(config.VDM_SERVICE_HOST + '/vdm/getDataElements')
-////            .then(res => res.json())
-//            .then(
-//                (result) => {
-//                	
-//                	
-//                	
-//                	console.log(result)	
-//                    this.setState({
-//                        isLoaded: true,
-//                        //dataSources: JSON.parse(result)
-//                    });
-//                },
-//                // Note: it's important to handle errors here
-//                // instead of a catch() block so that we don't swallow
-//                // exceptions from actual bugs in components.
-//                (error) => {
-//                	console.log(error)
-//                    this.setState({
-//                        isLoaded: true,
-//                        error
-//                    });
-//                }
-//            )
-        
         
         var xmlhttp = new XMLHttpRequest();
-let self = this;
+        let self = this;
 
         xmlhttp.onreadystatechange = function() {
           if (xmlhttp.readyState === 4) {
@@ -285,9 +279,10 @@ let self = this;
 
         xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/vdm/getDataElements');
         xmlhttp.send();
-
-            
-            
+        
+        
+    
+        
         getAllData()
             .then(([dataSources, acquiredDatasets]) => {
                 this.setState({
@@ -296,11 +291,22 @@ let self = this;
                     acquiredDatasets: acquiredDatasets
                 });
             })
+            
+            
+            
+            console.log(this.state)
+            
+            var connections = plumb.getConnections();
+        $.each(connections, function(index, value) {
+        	console.log("XXXXXXXXXXXXXXXXXx> " +value)
+        
+        	//plumb.deleteConnection(value)
+        });
 
     }
 
     render() {
-        const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb, acquiredDatasets } = this.state;
+        const { error, isLoaded, dataSources, conformedDataSources, conformedDataObjects, zTreeObj, zTreeObj1, currentNode, plumb, acquiredDatasets } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
         if (error) {
@@ -312,24 +318,15 @@ let self = this;
                 <div>
                     <div className='sub-menu'>
                         <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
-                            <Tab className='tab-content' eventKey={1} title="Available Data Elements">
+                            <Tab className='tab-content' eventKey={1} title="Conformed Data">
                                 <div className='col-lg-2  col-md-3 left-pane'>
-                                    <ConnectionsList dataSources={dataSources} zTreeObj={zTreeObj} height="400px"
+                                    <ConformedList dataSources={dataSources} zTreeObj={zTreeObj}
                                         currentNode={currentNode} addNode={addNode} plumb={plumb}
                                         nodeClicked={nodeClicked}
                                     />
                                     
                                     
-                                    <div className="conformedPanel">   
-                                    <ConformedList dataSources={dataSources} zTreeObj={zTreeObj} height="400px"
-                                            currentNode={currentNode} addNode={addNode} plumb={plumb}
-                                            nodeClicked={nodeClicked}
-                                        /></div>
-                                    
                                 </div>
-                                
-                                
-                                
                                 <div className="static-modal" id='modal1' style={{ display: 'none' }}>
                                     <Modal.Dialog>
                                         <Modal.Header>
@@ -344,22 +341,34 @@ let self = this;
                                         </Modal.Footer>
                                     </Modal.Dialog>
                                 </div>
-                                <div className="col-2">                            
+                                <div className="col-2">
+                                   
                                     <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
                                 </div>
                                 <div className='col-lg-2  col-md-3'>
                                     <PropertyPage node={currentNode} />
                                 </div>
-                                <div className='col-lg-2  col-md-3 right-pane'>
-                                    <DatasetList datasets={acquiredDatasets} title='Acquired Datasets' />
-                                </div>
-                                
-                                
-                                
-                                
                             </Tab>
-                            <Tab eventKey={2} title="Conformed Data Elements" disabled>
-                                Rules Parser content
+                            <Tab eventKey={2} title="Conformed Object">
+                                
+
+
+
+
+                         
+                       
+                        <div className="col-2">
+                           
+                          
+                        </div>
+                        <div className='col-lg-2  col-md-3'>
+                            <PropertyPage node={currentNode} />
+                        </div>
+                        <div className='col-lg-2  col-md-3 right-pane'>
+                            <DatasetList datasets={acquiredDatasets} title='Acquired Datasets' />
+                        </div> 
+                                                        
+                            
                                 </Tab>
                         </Tabs>
                     </div>

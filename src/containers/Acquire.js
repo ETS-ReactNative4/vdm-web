@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ConnectionsList from '../components/ConnectionsList'
 import DatasetList from '../components/DatasetList'
-import Canvas from '../components/Canvas'
+import Canvas1 from '../components/Canvas1'
 import PropertyPage from '../components/PropertyPage'
 import "./Acquire.css";
 // eslint-disable-next-line
@@ -99,6 +99,10 @@ class Acquire extends Component {
     // Add the node to the node list and to the canvas
     addNode(node, nodeKey, relX, relY, plumb, nodeClicked, isNewNode) {
 
+       	if(node.type == "data"){
+    		return false;
+    	}
+    	
         var vOffset = 0;
         var hOffset = -300;
 
@@ -125,7 +129,7 @@ class Acquire extends Component {
             plumb.makeSource(el, {
                 filter: ".ep",
                 anchor: "Continuous",
-                connectorStyle: { stroke: "#5c96bc", strokeWidth: 2, outlineStroke: "transparent", outlineWidth: 4 },
+                //connectorStyle: { stroke: "#5c96bc", strokeWidth: 2, outlineStroke: "transparent", outlineWidth: 4 },
                 connectionType: "basic",
                 extract: {
                     "action": "the-action"
@@ -151,7 +155,11 @@ class Acquire extends Component {
             if (nodeName.length > 7) { nodeName = nodeName.substring(0, 7) + '...'; }
             d.className = "w";
             d.id = node.id;
-            d.innerHTML = nodeName + "<div class=\"ep\"></div>";
+            d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
+            		`<tr><td>Element Name:</td><td><input value='${nodeName}'/></td></tr>` + 
+            		`<tr><td>Element Description:</td><td><input value='${node.description}'/></td></tr>` + 
+            		`<tr><td>Element ID:</td><td><input value='${node.id}'/></td></tr>` + 
+            		`</table></div><div class=\"ep\"></div>`;
             d.style.left = (x + hOffset) + "px";
             d.style.top = (y + vOffset) + "px";
             plumb.getContainer().appendChild(d);
@@ -191,20 +199,21 @@ class Acquire extends Component {
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
             Endpoint: ["Dot", { radius: 2 }],
-            Connector: "StateMachine",
             HoverPaintStyle: { stroke: "#1e8151", strokeWidth: 2 },
             ConnectionOverlays: [
                 ["Arrow", {
-                    location: 1,
-                    id: "arrow",
-                    length: 14,
-                    foldback: 0.8
+                	location : 1,
+        			id : "arrow",
+        			width : 12,
+        			length : 8,
+        			foldback : 0.8
                 }],
-                ["Label", { label: "FOO", id: "label", cssClass: "aLabel" }]
+               // ["Label", { label: "", id: "label", cssClass: "aLabel" }]
             ],
-            Container: "canvas"
+            Container: "canvas1",
+        	Connector : [ "Bezier" ]
         });
-
+        
         plumb.registerConnectionType("basic", { anchor: "Continuous", connector: "StateMachine" });
 
         // bind a click listener to each connection; the connection is deleted. you could of course
@@ -297,20 +306,13 @@ class Acquire extends Component {
                                     </Modal.Dialog>
                                 </div>
                                 <div className="col-2">
-                                    <div className="actions-box">
-                                        <Button>New</Button>
-                                        <Button>Open</Button>
-                                        <Button>Close</Button>
-                                        <Button>Save</Button>
-                                    </div>
-                                    <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
+                                    
+                                    <Canvas1 addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
                                 </div>
                                 <div className='col-lg-2  col-md-3'>
                                     <PropertyPage node={currentNode} />
                                 </div>
-                                <div className='col-lg-2  col-md-3 right-pane'>
-                                    <DatasetList datasets={acquiredDatasets} title='Acquired Datasets' />
-                                </div>
+                              
                             </Tab>
                             <Tab eventKey={2} title="Confluent" disabled>
                                 Rules Parser content

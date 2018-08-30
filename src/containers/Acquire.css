@@ -25,8 +25,9 @@
   height:400px;
 }
 
-#canvas {
-  height:700px;
+#canvas, #canvas1 {
+  height:645px;
+  width:1195px;
 }
 
 .conformedPanel {
@@ -34,3 +35,50 @@
   height:400px;
   padding : 10px;
 }
+
+#accordion .ui-accordion-content { 
+  padding: 0; 
+  min-height:500px;
+}
+
+#accordion1 .ui-accordion-content { 
+  padding: 0; 
+  min-height:600px;
+}
+
+.ui-accordion-header, .ui-accordion-content   { 
+	border-radius: 0px; 
+	-moz-border-radius-bottomright: 0px !important; 
+	-moz-border-radius-bottomleft: 0px !important; 
+	-moz-border-radius-topright: 0px  !important;
+	-moz-border-radius-topleft: 0px !important;
+}
+
+.w {
+	width : 250px;
+	border-radius : 0px !important;
+	background-color : #98CDFF !important;
+	color : #385C81 !important;
+	padding : 0px  !important;
+    -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75) !important;
+    -moz-box-shadow: 5px 5px 3px 0px rgba(0,0,0,0.75) !important;
+    box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75) !important;
+}
+
+.detaildiv {
+  background-color : #D6EBFF !important;
+  padding : 3px  !important;
+  height: 100px;
+}
+
+.headerdiv {
+  padding : 3px  !important;
+}
+
+.detailtable {
+    border-spacing: 2px;
+    border-collapse: separate;
+}
+
+
+

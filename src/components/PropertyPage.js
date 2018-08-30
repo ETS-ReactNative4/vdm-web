@@ -70,8 +70,33 @@ class PropertyPage extends Component {
         const node = this.props.node;
 
         if (node == null) {
+        	
+        	  const schema = {
+        	            title: "no selected node",
+        	            type: "object",
+        	            required: ["Id", "Name", "Location", "FileFormat", "Delimiter", "Status", "SourceID"],
+        	            properties: {
+        	                Id: { type: "string" },
+        	                Name: { type: "string" },
+        	                Description: { type: "string" },
+        	                Location: { type: "string" },
+        	                FileFormat: { type: "string" },
+        	                Delimiter: { type: "string" },
+        	                Status: { type: "string" },
+        	                SourceID: { type: "string" },
+        	            }
+        	        };
+        	  
             return (
-                <div></div>
+            		 <div>
+                     <Form schema={schema}
+                         formData={[]}
+                         onChange={log("changed")}
+                         onSubmit={onSubmit}
+                         onError={log("errors")} >
+                        
+                     </Form>
+                 </div>
             )
         }
 

@@ -39,7 +39,7 @@ class ConnectionsList extends Component {
 				}
 			});
 
-			$('#canvas').droppable({
+			$('#canvas1').droppable({
 				drop: function (event, ui) {
 
 					if (ui.draggable[0].className.indexOf('node_name') === -1)
@@ -62,14 +62,27 @@ class ConnectionsList extends Component {
 				}
 			});
 		});
+		
+		  $("#accordion1").accordion({
+		         collapsible: true,
+		         animate: false
+		     });
 	}
 
 	render() {
 		return (
-			<div className='connections-panel'>
-			<div className='component-title'>Data Sources</div>
-				<ul id="treeDemo" className="ztree"></ul>
-			</div>
+				
+				
+				
+				<div id="accordion1">
+				  <h3>Avaiable Data Elements</h3>
+				  <div>
+				  <ul id="treeDemo" className="ztree"></ul>	
+				  </div>
+
+				</div>
+			
+		
 		);
 	}
 }
