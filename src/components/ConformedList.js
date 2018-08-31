@@ -71,20 +71,14 @@ class ConnectionsList extends Component {
 			$('#canvas').droppable({
 				drop: function (event, ui) {
 
-				
-				
-		
-				
 					if (ui.draggable[0].className.indexOf('node_name') === -1)
 						return false;
 					
-				
 
 					var node = $.extend(true, {}, currentNode);
 					
-			
 					console.log(node.itemType)
-
+										
 					var wrapper = $(this).parent();
 					var parentOffset = wrapper.offset();
 					var relX = event.pageX - parentOffset.left + wrapper.scrollLeft();
@@ -93,6 +87,12 @@ class ConnectionsList extends Component {
 					
 					
 					console.log(node);
+					if(!node){
+						console.log(currentNode)
+						alert("No node found")
+						return false;
+					}
+					
 					var nodeKey = ((node.parent) ? node.parent.replace(/\\/g, "/") : "") + node.name + "|" + node.data.config.host + "|" + node.data.config.type;
 
 					console.log(node);
@@ -126,11 +126,6 @@ class ConnectionsList extends Component {
 					 
 					treeObj.editName(newNode[0]);
 					
-					
-					$(".node_name").each(function(){
-				            $(this).addClass("ui-draggable").addClass("ui-draggable-handle");
-				        });
-				  
 			  
 				$(".node_name").draggable({
 					helper: 'clone',
@@ -160,21 +155,17 @@ class ConnectionsList extends Component {
 		
 		$( "#addconformed1" ).click(function() {
 			  var treeObj = $.fn.zTree.getZTreeObj("treeDemo2");
-			  var newNode = { id:222, pId:222, pId:222, itemType: "Conformed Data Object", "type" : "data", name:"object name", "data" : {"config" : {"host" : "host"}}};
-			  
+			  var id = uuid()
+
+		    var newNode = { id:id, pId:id, pId:id, itemType: "Conformed Data Object", "type" : "data", name:"object name", "data" : {"config" : {"host" : "host"}}};
+					  
 			 var nodes = treeObj.getSelectedNodes();
 					var	treeNode = nodes[0];
 					
 					 newNode = treeObj.addNodes(treeNode, newNode);
 					 
 					treeObj.editName(newNode[0]);
-					
-					
-					$(".node_name").each(function(){
-				            $(this).addClass("ui-draggable").addClass("ui-draggable-handle");
-				        });
-				  
-			  
+			
 				$(".node_name").draggable({
 					helper: 'clone',
 					drag: function (event, ui) {
@@ -194,7 +185,7 @@ class ConnectionsList extends Component {
 							zTreeObj.selectNode(currentNode);
 						}else{
 							console.log("found node in ztree")
-							zTreeObj1.selectNode(currentNode);
+							zTreeObj2.selectNode(currentNode);
 						}
 					}
 				});

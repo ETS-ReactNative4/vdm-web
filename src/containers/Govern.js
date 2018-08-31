@@ -160,14 +160,27 @@ class Govern extends Component {
         var newNode = function (x, y) {
             var d = document.createElement("div");
             // var id = jsPlumbUtil.uuid();
+            var className, headerClassName = ""
+            if(node.itemType == "Conformed Data Element"){
+            	className = "detaildiv1"
+            	headerClassName = "headerdiv1"
+            }else if(node.itemType == "Conformed Data Object"){            	
+            	className = "detaildiv2"
+            	headerClassName = "headerdiv2"
+            			
+            }else if(node.itemType == "Data Element"){            	
+            	className = "detaildiv"
+            	headerClassName = "headerdiv"            			            
+            }
+            
             var nodeName = node.name;
             if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
             d.className = "w";
             d.id = node.id;
-            d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
-            		`<tr><td>Element Name:</td><td><input value='${nodeName}'/></td></tr>` + 
-            		`<tr><td>Element Description:</td><td><input value='${node.description}'/></td></tr>` + 
-            		`<tr><td>Element ID:</td><td><input value='${node.id}'/></td></tr>` + 
+            d.innerHTML = `<div class='${headerClassName}'><b>` + node.itemType + `</b></div><div class='${className}'><table class="detailtable">` +
+            		`<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` + 
+            		`<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` + 
+            		`<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` + 
             		`</table></div><div class=\"ep\"></div>`;
             d.style.left = (x + hOffset) + "px";
             d.style.top = (y + vOffset) + "px";
@@ -210,7 +223,6 @@ class Govern extends Component {
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
             Endpoint: ["Dot", { radius: 2 }],
-            HoverPaintStyle: { stroke: "#1e8151", strokeWidth: 2 },
             ConnectionOverlays: [
                 ["Arrow", {
                 	location : 1,

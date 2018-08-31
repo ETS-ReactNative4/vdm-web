@@ -72,7 +72,7 @@ class PropertyPage extends Component {
         if (node == null) {
         	
         	  const schema = {
-        	            title: "no selected node",
+        	           /* title: "no selected node",*/
         	            type: "object",
         	            required: ["Id", "Name", "Location", "FileFormat", "Delimiter", "Status", "SourceID"],
         	            properties: {
