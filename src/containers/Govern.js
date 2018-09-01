@@ -295,7 +295,7 @@ class Govern extends Component {
         
     
         
-        getAllData()
+/*        getAllData()
             .then(([dataSources, acquiredDatasets]) => {
                 this.setState({
                     isLoaded: true,
@@ -303,7 +303,7 @@ class Govern extends Component {
                     acquiredDatasets: acquiredDatasets
                 });
             })
-            
+            */
             
             
             console.log(this.state)
@@ -406,7 +406,7 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-const getDatasources = () => {
+/*const getDatasources = () => {
     return fetch('http://localhost:4000/api/datasources')
         .then(res => res.json())
         .then((result) => JSON.parse(result))
@@ -424,7 +424,7 @@ const getAcquiredDatasets = () => {
 const getAllData = () => {
     return Promise.all([getDatasources(), getAcquiredDatasets()])
 };
-
+*/
 export default connect(
     mapStateToProps,
     mapDispatchToProps
