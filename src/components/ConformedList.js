@@ -60,11 +60,12 @@ class ConnectionsList extends Component {
 						zTreeObj2.selectNode(currentNode);
 					}
 					
-					
-//					}else{
-//						console.log("found node in ztree")
-//						zTreeObj.selectNode(currentNode);
-//					}
+					if(currentNode == null){
+						console.log("no curent node in ztree")
+						currentNode = zTreeObj.getNodeByParam('tId', nodeId);						
+						zTreeObj.selectNode(currentNode);
+					}
+
 				}
 			});
 
@@ -87,7 +88,7 @@ class ConnectionsList extends Component {
 					
 					
 					console.log(node);
-					if(!node){
+					if(!node.data){
 						console.log(currentNode)
 						alert("No node found")
 						return false;

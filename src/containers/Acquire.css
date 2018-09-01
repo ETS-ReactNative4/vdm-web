@@ -26,8 +26,8 @@
 }
 
 #canvas, #canvas1 {
-  height:645px;
-  width:1195px;
+  height:655px;
+  width:1200px;
 }
 
 .conformedPanel {
@@ -38,12 +38,12 @@
 
 #accordion .ui-accordion-content { 
   padding: 0; 
-  min-height:500px;
+  min-height:545px;
 }
 
 #accordion1 .ui-accordion-content { 
   padding: 0; 
-  min-height:600px;
+  min-height:620px;
 }
 
 .ui-accordion-header, .ui-accordion-content   { 

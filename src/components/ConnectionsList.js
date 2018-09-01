@@ -75,7 +75,7 @@ class ConnectionsList extends Component {
 				
 				
 				<div id="accordion1">
-				  <h3>Avaiable Data Elements</h3>
+				  <h3>Available Data Sources</h3>
 				  <div>
 				  <ul id="treeDemo" className="ztree"></ul>	
 				  </div>

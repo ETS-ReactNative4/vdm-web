@@ -156,9 +156,9 @@ class Acquire extends Component {
             d.className = "w";
             d.id = node.id;
             d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
-            		`<tr><td>Element Name:</td><td><input value='${nodeName}'/></td></tr>` + 
-            		`<tr><td>Element Description:</td><td><input value='${node.description}'/></td></tr>` + 
-            		`<tr><td>Element ID:</td><td><input value='${node.id}'/></td></tr>` + 
+            		`<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` + 
+            		`<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` + 
+            		`<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` + 
             		`</table></div><div class=\"ep\"></div>`;
             d.style.left = (x + hOffset) + "px";
             d.style.top = (y + vOffset) + "px";
@@ -195,6 +195,8 @@ class Acquire extends Component {
     }
 
     componentDidMount() {
+    	
+    	let self = this
 
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
@@ -214,6 +216,7 @@ class Acquire extends Component {
         	Connector : [ "Bezier" ]
         });
         
+        
         plumb.registerConnectionType("basic", { anchor: "Continuous", connector: "StateMachine" });
 
         // bind a click listener to each connection; the connection is deleted. you could of course
@@ -228,6 +231,16 @@ class Acquire extends Component {
         // this listener sets the connection's internal
         // id as the label overlay's text.
         plumb.bind("connection", function (info, e) {
+        	
+        	
+        	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        	console.log(info)
+        	var obj = treeObj.getNodeByParam('id', info.source.id)
+        	
+        	$("#root_Name").val(obj.text)
+        	$("#root_Location").val(obj.data.config.path + "/")
+        	$("#root_SourceID").val(info.source.id)
+    
             e.preventDefault();
             info.connection.getOverlay("label").setLabel(info.connection.id);
             console.log("Source:" + info.connection.sourceId)
@@ -241,25 +254,53 @@ class Acquire extends Component {
         this.setState({ plumb: plumb });
 
         //fetch('http://localhost:4000/api/getconnections')
-        fetch(config.VDM_SERVICE_HOST + '/vdm/getConnections')
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        isLoaded: true,
-                        dataSources: JSON.parse(result)
-                    });
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            )
+//        fetch(config.VDM_SERVICE_HOST + '/vdm/getConnections')
+//            .then(res => res.json())
+//            .then(
+//                (result) => {
+//                    this.setState({
+//                        isLoaded: true,
+//                        dataSources: JSON.parse(result)
+//                    });
+//                },
+//                // Note: it's important to handle errors here
+//                // instead of a catch() block so that we don't swallow
+//                // exceptions from actual bugs in components.
+//                (error) => {
+//                    this.setState({
+//                        isLoaded: true,
+//                        error
+//                    });
+//                }
+//            )
+        
+        
+        var xmlhttp = new XMLHttpRequest();
+      
+        xmlhttp.onreadystatechange = function() {
+          if (xmlhttp.readyState === 4) {
+          
+             //var response = JSON.parse(xmlhttp.responseText);
+              if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+              
+            	  var json = JSON.parse(xmlhttp.responseText)
+                 console.log(json);
+                 
+                 self.setState({
+                     isLoaded: true,
+                     dataSources: json
+                 });
+                
+        	
+              } else {
+                 console.log('failed');
+              }
+          }
+        }
+
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/vdm/getConnections');
+        xmlhttp.send();
+                
         getAllData()
             .then(([dataSources, acquiredDatasets]) => {
                 this.setState({
@@ -268,6 +309,7 @@ class Acquire extends Component {
                     acquiredDatasets: acquiredDatasets
                 });
             })
+            
 
     }
 
