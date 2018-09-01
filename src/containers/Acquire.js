@@ -121,8 +121,8 @@ class Acquire extends Component {
                     console.log(ui.position)
                     // Update the node position
                     var node = window.acquireNodes.find(node => node.id === ui.helper[0].id)
-                    node.relX = ui.position.left + hOffset
-                    node.relY = ui.position.top + vOffset
+//                    node.relX = ui.position.left + hOffset
+//                    node.relY = ui.position.top + vOffset
                 }
             });
 
