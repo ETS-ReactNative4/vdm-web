@@ -235,9 +235,11 @@ class Acquire extends Component {
         	
         	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
         	console.log(info)
-        	var obj = treeObj.getNodeByParam('id', info.source.id)
+        	console.log(info.source.idloadin)
         	
-        	obj.Source_ID="xxxxxxxxxxxxxxxxxx"
+        	var obj = treeObj.getNodeByParam('id', info.source.idloadin)
+        	
+        	//obj.Source_ID="xxxxxxxxxxxxxxxxxx"
         	
         	self.setState({ currentNode: obj });
         	
