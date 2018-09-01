@@ -300,7 +300,7 @@ class Acquire extends Component {
 
         xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/vdm/getConnections');
         xmlhttp.send();
-                
+     /*           
         getAllData()
             .then(([dataSources, acquiredDatasets]) => {
                 this.setState({
@@ -308,7 +308,7 @@ class Acquire extends Component {
                     dataSources: dataSources,
                     acquiredDatasets: acquiredDatasets
                 });
-            })
+            })*/
             
 
     }
@@ -383,7 +383,7 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-const getDatasources = () => {
+/*const getDatasources = () => {
     return fetch('http://localhost:4000/api/datasources')
         .then(res => res.json())
         .then((result) => JSON.parse(result))
@@ -396,11 +396,11 @@ const getAcquiredDatasets = () => {
             'Accept': 'application/json'
         }
     }).then(res => res.json())
-};
+};*/
 
-const getAllData = () => {
+/*const getAllData = () => {
     return Promise.all([getDatasources(), getAcquiredDatasets()])
-};
+};*/
 
 export default connect(
     mapStateToProps,
