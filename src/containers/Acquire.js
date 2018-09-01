@@ -237,9 +237,13 @@ class Acquire extends Component {
         	console.log(info)
         	var obj = treeObj.getNodeByParam('id', info.source.id)
         	
-        	$("#root_Name").val(obj.text)
-        	$("#root_Location").val(obj.data.config.path + "/")
-        	$("#root_SourceID").val(info.source.id)
+        	obj.Source_ID="xxxxxxxxxxxxxxxxxx"
+        	
+        	self.setState({ currentNode: obj });
+        	
+//        	$("#root_Name").val(obj.text)
+//        	$("#root_Location").val(obj.data.config.path + "/")
+//        	$("#root_SourceID").val(info.source.id)
     
             e.preventDefault();
             info.connection.getOverlay("label").setLabel(info.connection.id);

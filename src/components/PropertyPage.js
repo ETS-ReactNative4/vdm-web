@@ -74,7 +74,7 @@ class PropertyPage extends Component {
         	  const schema = {
         	           /* title: "no selected node",*/
         	            type: "object",
-        	            required: ["Id", "Name", "Location", "FileFormat", "Delimiter", "Status", "SourceID"],
+        	          //  required: ["Id", "Name", "Location", "FileFormat", "Delimiter", "Status", "SourceID"],
         	            properties: {
         	                Id: { type: "string" },
         	                Name: { type: "string" },
@@ -104,7 +104,7 @@ class PropertyPage extends Component {
         const schema = {
             title: node.text,
             type: "object",
-            required: ["Id", "Name", "Location", "FileFormat", "Delimiter", "Status", "SourceID"],
+           // required: ["Id", "Name", "Location", "FileFormat", "Delimiter", "Status", "SourceID"],
             properties: {
                 Id: { type: "string" },
                 Name: { type: "string" },
