@@ -324,7 +324,7 @@ class Govern extends Component {
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div>Loading...</div>;
+        	 return <div className="loader"><br/><img src='images/wait.gif'/><br/>Loading...</div>;
         } else {
             return (
                 <div>

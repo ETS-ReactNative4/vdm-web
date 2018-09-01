@@ -152,9 +152,9 @@ class Acquire extends Component {
             var d = document.createElement("div");
             // var id = jsPlumbUtil.uuid();
             var nodeName = node.name;
-            if (nodeName.length > 7) { nodeName = nodeName.substring(0, 7) + '...'; }
+            if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
             d.className = "w";
-            d.id = node.id;
+            d.idloadin = node.id;
             d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
             		`<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` + 
             		`<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` + 
@@ -324,7 +324,7 @@ class Acquire extends Component {
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div>Loading...</div>;
+            return <div className="loader"><br/><img src='images/wait.gif'/><br/>Loading...</div>;
         } else {
             return (
                 <div>
