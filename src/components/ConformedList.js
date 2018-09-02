@@ -19,7 +19,7 @@ class ConnectionsList extends Component {
 	componentDidMount() {
 		let dataSources = this.props.dataSources.datasources;
 		let conformeddataSources = this.props.dataSources.conformed;
-		let conformeddataObjects = this.props.dataSources.conformed;
+		let conformeddataObjects = this.props.dataSources.object;
 		let zTreeObj = this.props.zTreeObj;
 		let zTreeObj1 = this.props.zTreeObj1;
 		let zTreeObj2 = this.props.zTreeObj2;
@@ -34,7 +34,7 @@ class ConnectionsList extends Component {
 			zTreeObj1 = $.fn.zTree.init($("#treeDemo1"), setting, conformeddataSources);
 			zTreeObj1.expandAll(false);
 
-			zTreeObj2 = $.fn.zTree.init($("#treeDemo2"), setting, conformeddataSources);
+			zTreeObj2 = $.fn.zTree.init($("#treeDemo2"), setting, conformeddataObjects);
 			zTreeObj2.expandAll(false);
 			
 			$(".node_name").draggable({
