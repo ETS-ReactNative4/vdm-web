@@ -4,6 +4,7 @@ import ConnectionsList from '../components/ConnectionsList'
 import DatasetList from '../components/DatasetList'
 import Canvas1 from '../components/Canvas1'
 import PropertyPage from '../components/PropertyPage'
+import AcquireActions from '../components/AcquireActions'
 import "./Acquire.css";
 // eslint-disable-next-line
 import { Button, Tabs, Tab } from 'react-bootstrap';
@@ -354,7 +355,7 @@ class Acquire extends Component {
                                     </Modal.Dialog>
                                 </div>
                                 <div className="col-2">
-                                    
+                                    <AcquireActions></AcquireActions>
                                     <Canvas1 addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
                                 </div>
                                 <div className='col-lg-2  col-md-3'>
@@ -362,9 +363,7 @@ class Acquire extends Component {
                                 </div>
                               
                             </Tab>
-                            <Tab eventKey={2} title="Confluent" disabled>
-                                Rules Parser content
-                                </Tab>
+                            
                         </Tabs>
                     </div>
                 </div>

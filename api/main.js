@@ -13,7 +13,7 @@ app.use(function (req, res, next) {
 app.get('/', (request, response) => response.send('Hello World'));
 
 // all routes prefixed with /api
-app.use('/api', router);
+app.use('/api/vdm', router);
 
 // using router.get() to prefix our path
 // url: http://localhost:4000/api/
@@ -59,11 +59,19 @@ const nodes = [{
 }
 ];
 
+router.get('/getConnections', (request, response) => {
+    var fs = require('fs');
+    var filex = fs.readFileSync('sources.txt', "utf8");
+    const jsonDatax = JSON.parse(filex);
+
+    response.json(jsonDatax);
+});
+
 router.get('/datasources', (request, response) => {
     response.json(jsonData);
 });
 
-router.get('/getConnections', (request, response) => {
+router.get('/getConnections2', (request, response) => {
     var fs = require('fs');
     var filex = fs.readFileSync('Connection2.txt', "utf8");
     const jsonDatax = JSON.parse(filex);
