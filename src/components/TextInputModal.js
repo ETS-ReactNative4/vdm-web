@@ -34,8 +34,6 @@ class TextInputModal extends Component {
   
       return (
         <div>
-          <p>Click to get the full Modal experience!</p>
-  
           <Button bsStyle="primary" bsSize="large" onClick={this.handleShow}>
             Launch demo modal
           </Button>
