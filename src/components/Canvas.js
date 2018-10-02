@@ -20,7 +20,8 @@ class Canvas extends Component {
   }
 
   componentDidMount() {
-    let nodes = this.props.nodes;
+    let nodes = this.props.acquireCanvas.nodes;
+    let connections = this.props.acquireCanvas.connections;
     let plumb = this.props.plumb;
     let addNode = this.props.addNode;
     let nodeClicked = this.props.nodeClicked;
@@ -33,11 +34,12 @@ class Canvas extends Component {
       plumb.batch(function () {
         // Restore nodes
         nodes.forEach(node => {
-          addNode(node, node.nodeKey, node.relX, node.relY, plumb, nodeClicked, false)
+          addNode(node, plumb, nodeClicked, false)
         });
 
-        if (nodes.length > 1) {
-          plumb.connect({ source: nodes[0].id, target:  nodes[1].id, type: "basic" });
+        if (connections.length > 0) {
+          var c = connections[0];
+          plumb.connect(c);
         }
 
       });
@@ -52,9 +54,12 @@ class Canvas extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-
-})
+const mapStateToProps = state => {
+  console.log(state);
+  return {
+    acquireCanvas: state.acquireCanvas
+  }
+}
 
 const mapDispatchToProps = dispatch => {
   return {

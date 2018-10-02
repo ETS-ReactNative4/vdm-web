@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Button, Popover, Tooltip, OverlayTrigger, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import $ from 'jquery';
@@ -12,23 +13,21 @@ class AcquireActions extends Component {
 
         this.handleNewButtonClicked = this.handleNewButtonClicked.bind(this);
         this.handleClose = this.handleClose.bind(this);
-
         this.handleAcceptNewFlowName = this.handleAcceptNewFlowName.bind(this);
-
         this.handleNewFlowNameChanged = this.handleNewFlowNameChanged.bind(this);
-
+        this.handleDescriptionChanged = this.handleDescriptionChanged.bind(this);
         this.handleCloseActiveFlow = this.handleCloseActiveFlow.bind(this);
-
         this.state = {
             showNewTextInput: false,
             flowNameAccepted: false,
             newFlowName: '',
+            description:'',
             activeFlow: {}
         };
     }
 
     handleNewButtonClicked() {
-        this.setState({ showNewTextInput: true });
+        this.setState({ showNewTextInput: true, description:'' });
     }
 
     handleClose() {
@@ -43,7 +42,10 @@ class AcquireActions extends Component {
                 activeFlow: { name: flowName },
                 showNewTextInput: false
             }
-        );
+        )
+
+        var nextJobId = this.props.jobs.currentJob.jobId + 1;
+        this.props.newJobCreated({jobId:nextJobId, name:flowName, description: this.state.description})
     }
 
     getValidationState() {
@@ -58,13 +60,22 @@ class AcquireActions extends Component {
         this.setState({ newFlowName: e.target.value });
     }
 
+    handleDescriptionChanged(e){
+        this.setState({ description: e.target.value });
+    }
+
     handleCloseActiveFlow(e) {
         this.setState(
             { 
                 newFlowName: '',
+                description: '',
                 activeFlow:{}, 
             }
         );
+    }
+
+    componentDidMount(){
+        let newJobCreated = this.props.newJobCreated;
     }
 
     render() {
@@ -76,7 +87,6 @@ class AcquireActions extends Component {
         const tooltip = <Tooltip id="modal-tooltip">The flow name must not contain special characters</Tooltip>;
         return (
             <div className="acquire-actions">
-                <h4>{this.state.activeFlow.name}</h4>
                 <Button onClick={this.handleNewButtonClicked}>New</Button>
                 <Button>Open</Button>
                 <Button onClick={this.handleCloseActiveFlow}>Close</Button>
@@ -94,14 +104,22 @@ class AcquireActions extends Component {
                             >
                                 <ControlLabel>
                                     <OverlayTrigger overlay={tooltip}>
-                                        <a href="#tooltip">Enter a name for the new flow</a>
+                                        <a href="#tooltip">Job Name</a>
                                     </OverlayTrigger>
                                 </ControlLabel>
                                 <FormControl
                                     type="text"
                                     value={this.state.value}
-                                    placeholder="Enter text"
+                                    placeholder="Enter job name"
                                     onChange={this.handleNewFlowNameChanged}
+                                />
+                                <ControlLabel>Description
+                                </ControlLabel>
+                                <FormControl
+                                    type="text"
+                                    value={this.state.description}
+                                    placeholder="Enter Description for this job" 
+                                    onChange={this.handleDescriptionChanged}
                                 />
                                 <FormControl.Feedback />
 
@@ -119,4 +137,18 @@ class AcquireActions extends Component {
     }
 }
 
-export default AcquireActions;
+const mapStateToProps = state => {
+    return {
+        jobs: state.jobs
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AcquireActions)

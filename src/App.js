@@ -32,6 +32,9 @@ class App extends Component {
               <LinkContainer to="/acquire">
                 <NavItem><FontAwesomeIcon icon="upload" /> Acquire</NavItem>
               </LinkContainer>
+              <LinkContainer to="/newacquire">
+                <NavItem><FontAwesomeIcon icon="upload" /> New Acquire</NavItem>
+              </LinkContainer>
               <LinkContainer to="/explore">
                 <NavItem id="explorebtn"><FontAwesomeIcon icon="search" /> Explore</NavItem>
               </LinkContainer>

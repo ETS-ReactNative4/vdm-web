@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ConnectionsList from '../components/ConnectionsList'
 import DatasetList from '../components/DatasetList'
-import Canvas1 from '../components/Canvas1'
+import Canvas from '../components/Canvas'
 import PropertyPage from '../components/PropertyPage'
 import AcquireActions from '../components/AcquireActions'
 import "./Acquire.css";
@@ -44,41 +44,41 @@ class Acquire extends Component {
 
     // Update the current selected node
     nodeClicked = nodeId => {
-        var clickedNode = this.props.acquireNodes.find(n => n.id === nodeId);
+        var clickedNode = this.props.acquireCanvas.nodes.find(n => n.id === nodeId);
         this.setState({ currentNode: clickedNode });
         console.log(clickedNode);
     }
-    
-      handleClose() {
-      $('#modal1').hide();
-    this.setState({ show: false });
-  }
 
-  handleShow() {
-    console.log('redirect to explore');
-    $("#waitdiv").show();
-    this.setState({ show: true });
- 	$('#modal1').hide();
- 	
- 	
- 	var result = JSON.parse($('#triurl').val());
- 	console.log(result)
- 	
- 	
- 	
- 	var win = window.open(result.url,'_blank');
-	var timer = setInterval(function() { 
-	    if(win.closed) {
-	        clearInterval(timer);
-	        document.getElementById('explorebtn').click();
-	        console.log('closed');
-	         $("#waitdiv").hide();
-	    }
-	}, 1000);
+    handleClose() {
+        $('#modal1').hide();
+        this.setState({ show: false });
+    }
 
- 	
- 	
-  }
+    handleShow() {
+        console.log('redirect to explore');
+        $("#waitdiv").show();
+        this.setState({ show: true });
+        $('#modal1').hide();
+
+
+        var result = JSON.parse($('#triurl').val());
+        console.log(result)
+
+
+
+        var win = window.open(result.url, '_blank');
+        var timer = setInterval(function () {
+            if (win.closed) {
+                clearInterval(timer);
+                document.getElementById('explorebtn').click();
+                console.log('closed');
+                $("#waitdiv").hide();
+            }
+        }, 1000);
+
+
+
+    }
 
     handleClose() {
         $('#modal1').hide();
@@ -98,14 +98,11 @@ class Acquire extends Component {
 
     }
     // Add the node to the node list and to the canvas
-    addNode(node, nodeKey, relX, relY, plumb, nodeClicked, isNewNode) {
+    addNode(node, plumb, nodeClicked, isNewNode) {
 
-       	if(node.type == "data"){
-    		return false;
-    	}
-    	
-        var vOffset = 0;
-        var hOffset = -300;
+        if (node.type == "data") {
+            return false;
+        }
 
         var initNode = function (el) {
 
@@ -118,12 +115,13 @@ class Acquire extends Component {
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
-                    console.log(ui.helper[0].id)
+                    var nodeId = ui.helper[0].nodeId
+                    console.log(nodeId)
                     console.log(ui.position)
                     // Update the node position
-                    var node = window.acquireNodes.find(node => node.id === ui.helper[0].id)
-//                    node.relX = ui.position.left + hOffset
-//                    node.relY = ui.position.top + vOffset
+                    var node = window.acquireCanvas.nodes.find(node => node.id === nodeId)
+                    node.left = ui.position.left
+                    node.top = ui.position.top
                 }
             });
 
@@ -149,43 +147,36 @@ class Acquire extends Component {
 
         };
 
-        var newNode = function (x, y) {
+        var newNode = function () {
             var d = document.createElement("div");
             // var id = jsPlumbUtil.uuid();
             var nodeName = node.name;
             if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
             d.className = "w";
-            d.idloadin = node.id;
+            d.id = node.id;
+            d.nodeId = node.id;
             d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
-            		`<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` + 
-            		`<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` + 
-            		`<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` + 
-            		`</table></div><div class=\"ep\"></div>`;
-            d.style.left = (x + hOffset) + "px";
-            d.style.top = (y + vOffset) + "px";
+                `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
+                `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
+                `<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` +
+                `</table></div><div class=\"ep\"></div>`;
+            d.style.left = node.left + "px";
+            d.style.top = node.top + "px";
             plumb.getContainer().appendChild(d);
             initNode(d);
-            return d;
         };
 
-        console.log('Nodekey: ' + nodeKey);
+        newNode();
 
-        var d = newNode(relX, relY);
+        // if (this.props.acquireCanvas.nodes.find(x => x.id === node.id) == null) {
+        //     this.props.onAddNode(node)
+        // } else {
+        //     if (isNewNode === true) {
+        //         plumb.getContainer().removeChild(d);
+        //     }
+        // }
 
-        // Fluffup this node with metadata
-        node.nodeKey = nodeKey;
-        node.relX = relX;
-        node.relY = relY;
-
-        if (this.props.acquireNodes.find(x => x.id === node.id) == null) {
-            this.props.onAddNode(node)
-        } else {
-            if (isNewNode === true) {
-                plumb.getContainer().removeChild(d);
-            }
-        }
-
-        window.acquireNodes = this.props.acquireNodes
+        window.acquireCanvas = this.props.acquireCanvas
 
         $(".w").on('click', function (e) {
             console.log('clicked ' + e.currentTarget.id)
@@ -196,8 +187,8 @@ class Acquire extends Component {
     }
 
     componentDidMount() {
-    	
-    	let self = this
+
+        let self = this
 
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
@@ -205,19 +196,19 @@ class Acquire extends Component {
             HoverPaintStyle: { stroke: "#1e8151", strokeWidth: 2 },
             ConnectionOverlays: [
                 ["Arrow", {
-                	location : 1,
-        			id : "arrow",
-        			width : 12,
-        			length : 8,
-        			foldback : 0.8
+                    location: 1,
+                    id: "arrow",
+                    width: 12,
+                    length: 8,
+                    foldback: 0.8
                 }],
-               // ["Label", { label: "", id: "label", cssClass: "aLabel" }]
+                // ["Label", { label: "", id: "label", cssClass: "aLabel" }]
             ],
-            Container: "canvas1",
-        	Connector : [ "Bezier" ]
+            Container: "canvas",
+            Connector: ["Bezier"]
         });
-        
-        
+
+
         plumb.registerConnectionType("basic", { anchor: "Continuous", connector: "StateMachine" });
 
         // bind a click listener to each connection; the connection is deleted. you could of course
@@ -232,22 +223,22 @@ class Acquire extends Component {
         // this listener sets the connection's internal
         // id as the label overlay's text.
         plumb.bind("connection", function (info, e) {
-        	
-        	
-        	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-        	console.log(info)
-        	console.log(info.source.idloadin)
-        	
-        	var obj = treeObj.getNodeByParam('id', info.source.idloadin)
-        	
-        	//obj.Source_ID="xxxxxxxxxxxxxxxxxx"
-        	
-        	self.setState({ currentNode: obj });
-        	
-//        	$("#root_Name").val(obj.text)
-//        	$("#root_Location").val(obj.data.config.path + "/")
-//        	$("#root_SourceID").val(info.source.id)
-    
+
+
+            var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+            console.log(info)
+            console.log(info.source.nodeId)
+
+            var obj = treeObj.getNodeByParam('id', info.source.nodeId)
+
+            //obj.Source_ID="xxxxxxxxxxxxxxxxxx"
+
+            self.setState({ currentNode: obj });
+
+            //        	$("#root_Name").val(obj.text)
+            //        	$("#root_Location").val(obj.data.config.path + "/")
+            //        	$("#root_SourceID").val(info.source.id)
+
             e.preventDefault();
             info.connection.getOverlay("label").setLabel(info.connection.id);
             console.log("Source:" + info.connection.sourceId)
@@ -261,62 +252,62 @@ class Acquire extends Component {
         this.setState({ plumb: plumb });
 
         //fetch('http://localhost:4000/api/getconnections')
-//        fetch(config.VDM_SERVICE_HOST + '/vdm/getConnections')
-//            .then(res => res.json())
-//            .then(
-//                (result) => {
-//                    this.setState({
-//                        isLoaded: true,
-//                        dataSources: JSON.parse(result)
-//                    });
-//                },
-//                // Note: it's important to handle errors here
-//                // instead of a catch() block so that we don't swallow
-//                // exceptions from actual bugs in components.
-//                (error) => {
-//                    this.setState({
-//                        isLoaded: true,
-//                        error
-//                    });
-//                }
-//            )
-        
-        
+        //        fetch(config.VDM_SERVICE_HOST + '/vdm/getConnections')
+        //            .then(res => res.json())
+        //            .then(
+        //                (result) => {
+        //                    this.setState({
+        //                        isLoaded: true,
+        //                        dataSources: JSON.parse(result)
+        //                    });
+        //                },
+        //                // Note: it's important to handle errors here
+        //                // instead of a catch() block so that we don't swallow
+        //                // exceptions from actual bugs in components.
+        //                (error) => {
+        //                    this.setState({
+        //                        isLoaded: true,
+        //                        error
+        //                    });
+        //                }
+        //            )
+
+
         var xmlhttp = new XMLHttpRequest();
-      
-        xmlhttp.onreadystatechange = function() {
-          if (xmlhttp.readyState === 4) {
-          
-             //var response = JSON.parse(xmlhttp.responseText);
-              if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-              
-            	  var json = JSON.parse(xmlhttp.responseText)
-                 console.log(json);
-                 
-                 self.setState({
-                     isLoaded: true,
-                     dataSources: json
-                 });
-                
-        	
-              } else {
-                 console.log('failed');
-              }
-          }
+
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+
+                //var response = JSON.parse(xmlhttp.responseText);
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+                    var json = JSON.parse(xmlhttp.responseText)
+                    console.log(json);
+
+                    self.setState({
+                        isLoaded: true,
+                        dataSources: json
+                    });
+
+
+                } else {
+                    console.log('failed');
+                }
+            }
         }
 
         xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/vdm/getConnections');
         xmlhttp.send();
-     /*           
-        getAllData()
-            .then(([dataSources, acquiredDatasets]) => {
-                this.setState({
-                    isLoaded: true,
-                    dataSources: dataSources,
-                    acquiredDatasets: acquiredDatasets
-                });
-            })*/
-            
+        /*           
+           getAllData()
+               .then(([dataSources, acquiredDatasets]) => {
+                   this.setState({
+                       isLoaded: true,
+                       dataSources: dataSources,
+                       acquiredDatasets: acquiredDatasets
+                   });
+               })*/
+
 
     }
 
@@ -327,7 +318,7 @@ class Acquire extends Component {
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div className="loader"><br/><img src='images/wait.gif'/><br/>Loading...</div>;
+            return <div className="loader"><br /><img src='images/wait.gif' /><br />Loading...</div>;
         } else {
             return (
                 <div>
@@ -356,14 +347,14 @@ class Acquire extends Component {
                                 </div>
                                 <div className="col-2">
                                     <AcquireActions></AcquireActions>
-                                    <Canvas1 addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
+                                    <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireCanvas.nodes} currentNode={currentNode} />
                                 </div>
                                 <div className='col-lg-2  col-md-3'>
                                     <PropertyPage node={currentNode} />
                                 </div>
-                              
+
                             </Tab>
-                            
+
                         </Tabs>
                     </div>
                 </div>
@@ -377,7 +368,7 @@ class Acquire extends Component {
 const mapStateToProps = state => {
     console.log(state);
     return {
-        acquireNodes: state.acquireNodes
+        acquireCanvas: state.acquireCanvas
     }
 }
 

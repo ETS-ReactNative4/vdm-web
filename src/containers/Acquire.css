@@ -25,9 +25,9 @@
   height:400px;
 }
 
-#canvas, #canvas1 {
+#canvas {
   height:655px;
-  width:1200px;
+  width:800px;
 }
 
 .conformedPanel {

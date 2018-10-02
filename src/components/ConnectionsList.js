@@ -39,7 +39,7 @@ class ConnectionsList extends Component {
 				}
 			});
 
-			$('#canvas1').droppable({
+			$('#canvas').droppable({
 				drop: function (event, ui) {
 
 					if (ui.draggable[0].className.indexOf('node_name') === -1)
