@@ -4,7 +4,6 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter, Route } from 'react-router-dom'
 import Acquire from './containers/Acquire'
-import NewAcquire from './containers/NewAcquire'
 import Explore from './containers/Explore'
 import Govern from './containers/Govern'
 import Operationalize from './containers/Operationalize'
@@ -19,31 +18,6 @@ import rootReducer from './reducers'
 
 const store = createStore(rootReducer)
 
-window.nodes = [];
-
-window.DATASETS = [
-    {
-        id: 1,
-        name: 'Product'
-    },
-    {
-        id: 2,
-        name: 'Inventory'
-    },
-    {
-        id: 3,
-        name: 'Receipts'
-    },
-    {
-        id: 4,
-        name: 'Receipt Items'
-    },
-    {
-        id: 5,
-        name: 'Invoices'
-    }
-]
-
 ReactDOM.render(
     <Provider  store={store}>
         <BrowserRouter>
@@ -51,7 +25,6 @@ ReactDOM.render(
                 <App />
                 <Route exact path="/" component={Acquire} />
                 <Route path="/acquire" render={(props) => (<Acquire {...props} state={window.nodes} />)} />
-                <Route path="/newacquire" component={NewAcquire} />
                 <Route path="/explore" component={Explore} />
                 <Route path="/govern" component={Govern} />
                 <Route path="/operationalize" component={Operationalize} />

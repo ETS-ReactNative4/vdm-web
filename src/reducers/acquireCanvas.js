@@ -21,6 +21,9 @@ const acquireCanvas = (state = canvasInitialState, action) => {
             state.connections = [...state.connections, action.connection]
             return state
 
+        case 'CLEAR_CANVAS':
+            return {nodes:[], connections:[]};
+
         default:
             return state
     }

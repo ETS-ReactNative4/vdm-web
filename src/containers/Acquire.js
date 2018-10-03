@@ -35,12 +35,18 @@ class Acquire extends Component {
 
         this.addNode = this.addNode.bind(this);
         this.nodeClicked = this.nodeClicked.bind(this);
+        this.onClearCanvas = this.onClearCanvas.bind(this);
 
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.props.onAddConnection;
+    }
+
+    onClearCanvas(){
+        this.props.onClearCanvas();
+        this.state.plumb.empty('canvas')
     }
 
     // Update the current selected node
@@ -328,6 +334,8 @@ class Acquire extends Component {
         const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb, acquiredDatasets } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
+        const onClearCanvas = this.onClearCanvas;
+
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
@@ -359,7 +367,10 @@ class Acquire extends Component {
                                     </Modal.Dialog>
                                 </div>
                                 <div className="col-2">
-                                    <AcquireActions></AcquireActions>
+                                    <h4>{this.props.jobs.currentJob.name}</h4>
+                                    <AcquireActions onNewJobCreated={this.props.onNewJobCreated}
+                                    onClearCanvas={onClearCanvas}
+                                    ></AcquireActions>
                                     <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireCanvas.nodes} currentNode={currentNode} />
                                 </div>
                                 <div className='col-lg-2  col-md-3'>
@@ -381,7 +392,8 @@ class Acquire extends Component {
 const mapStateToProps = state => {
     console.log(state);
     return {
-        acquireCanvas: state.acquireCanvas
+        acquireCanvas: state.acquireCanvas,
+        jobs: state.jobs
     }
 }
 
@@ -389,6 +401,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
         onAddConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
+        onNewJobCreated: job => dispatch({ type: 'ADD_JOB', job: job }),
+        onClearCanvas: () => dispatch({type:'CLEAR_CANVAS'}),
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
 };

@@ -45,7 +45,8 @@ class AcquireActions extends Component {
         )
 
         var nextJobId = this.props.jobs.currentJob.jobId + 1;
-        this.props.newJobCreated({jobId:nextJobId, name:flowName, description: this.state.description})
+        this.props.onNewJobCreated({jobId:nextJobId, name:flowName, description: this.state.description})
+        this.props.onClearCanvas();
     }
 
     getValidationState() {
@@ -145,6 +146,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        
     };
 };
 
