@@ -36,6 +36,7 @@ class Acquire extends Component {
         this.addNode = this.addNode.bind(this);
         this.nodeClicked = this.nodeClicked.bind(this);
         this.onClearCanvas = this.onClearCanvas.bind(this);
+        this.onClearCurrentJob = this.onClearCurrentJob.bind(this)
 
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -44,7 +45,12 @@ class Acquire extends Component {
         window.onAddConnection = this.props.onAddConnection;
     }
 
-    onClearCanvas(){
+    onClearCurrentJob() {
+        this.props.onClearCurrentJob();
+        this.onClearCanvas();
+    }
+
+    onClearCanvas() {
         this.props.onClearCanvas();
         this.state.plumb.empty('canvas')
     }
@@ -368,8 +374,10 @@ class Acquire extends Component {
                                 </div>
                                 <div className="col-2">
                                     <h4>{this.props.jobs.currentJob.name}</h4>
-                                    <AcquireActions onNewJobCreated={this.props.onNewJobCreated}
-                                    onClearCanvas={onClearCanvas}
+                                    <AcquireActions
+                                        onNewJobCreated={this.props.onNewJobCreated}
+                                        onClearCanvas={onClearCanvas}
+                                        onClearCurrentJob={this.onClearCurrentJob}
                                     ></AcquireActions>
                                     <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireCanvas.nodes} currentNode={currentNode} />
                                 </div>
@@ -402,7 +410,8 @@ const mapDispatchToProps = dispatch => {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
         onAddConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
         onNewJobCreated: job => dispatch({ type: 'ADD_JOB', job: job }),
-        onClearCanvas: () => dispatch({type:'CLEAR_CANVAS'}),
+        onClearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
+        onClearCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
 };

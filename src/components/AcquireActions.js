@@ -73,6 +73,7 @@ class AcquireActions extends Component {
                 activeFlow:{}, 
             }
         );
+        this.props.onClearCurrentJob()
     }
 
     componentDidMount(){
