@@ -245,7 +245,7 @@ class Acquire extends Component {
             //        	$("#root_Location").val(obj.data.config.path + "/")
             //        	$("#root_SourceID").val(info.source.id)
 
-            // e.preventDefault();
+            e.preventDefault();
             // info.connection.getOverlay("label").setLabel(info.connection.id);
             console.log("Source:" + info.connection.sourceId)
             console.log("Target:" + info.connection.targetId)
