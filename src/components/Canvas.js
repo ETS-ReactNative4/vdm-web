@@ -37,8 +37,7 @@ class Canvas extends Component {
           addNode(node, plumb, nodeClicked, false)
         });
 
-        if (connections.length > 0) {
-          var c = connections[0];
+        for (const c of connections) {
           plumb.connect(c);
         }
 
@@ -49,7 +48,7 @@ class Canvas extends Component {
 
   render() {
     return (
-      <div id='canvas' className='col-lg-6 col-md-3'/>    
+      <div id='canvas' className='col-lg-6 col-md-3' />
     )
   }
 }

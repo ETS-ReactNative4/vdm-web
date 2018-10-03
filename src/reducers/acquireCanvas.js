@@ -1,25 +1,25 @@
 const canvasInitialState = {
     nodes: [
         { id: 's1', name: 'source1', left: 100, top: 100 },
-        { id: 's2', name: 'target1', left: 100, top: 300 }
+        { id: 's2', name: 'target1', left: 100, top: 300 },
+        { id: 'hello', name: 'hello', left: 50, top: 500 }
     ],
     connections: [
-        { source: 's1', target: 's2', type: 'basic' }
+        { source: 's1', target: 's2', type: 'basic' },
+        { source: 's2', target: 'hello', type: 'basic' }
     ]
 
 }
 const acquireCanvas = (state = canvasInitialState, action) => {
     switch (action.type) {
         case 'ADD_NODE':
-            return {
-                nodes: [...state.nodes, action.node],
-            }
-
+            state.nodes = [...state.nodes, action.node]
+            return state
+            
 
         case 'ADD_CONNECTION':
-            return {
-                connections: [...state.connections, action.connection],
-            }
+            state.connections = [...state.connections, action.connection]
+            return state
 
         default:
             return state

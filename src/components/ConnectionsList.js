@@ -49,8 +49,8 @@ class ConnectionsList extends Component {
 
 					var wrapper = $(this).parent();
 					var parentOffset = wrapper.offset();
-					var relX = event.pageX - parentOffset.left + wrapper.scrollLeft();
-					var relY = event.pageY - parentOffset.top + wrapper.scrollTop();
+					node.left = event.pageX - parentOffset.left + wrapper.scrollLeft() - 210;
+					node.top = event.pageY - parentOffset.top + wrapper.scrollTop() - 50;
 
 					var nodeKey = ((node.parent) ? node.parent.replace(/\\/g, "/") : "") + node.name + "|" + node.data.config.host + "|" + node.data.config.type;
 
@@ -58,7 +58,7 @@ class ConnectionsList extends Component {
 					console.log(nodeKey);
 					
 					var isNewNode = true;
-					addNode(node, nodeKey, relX, relY, plumb, nodeClicked, isNewNode);
+					addNode(node, plumb, nodeClicked, isNewNode);
 				}
 			});
 		});

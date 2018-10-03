@@ -40,6 +40,7 @@ class Acquire extends Component {
         this.handleClose = this.handleClose.bind(this);
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
+        window.onAddConnection = this.props.onAddConnection;
     }
 
     // Update the current selected node
@@ -112,13 +113,14 @@ class Acquire extends Component {
                 grid: [50, 50]
             });
 
+
+            // Update the node position
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
                     var nodeId = ui.helper[0].nodeId
                     console.log(nodeId)
                     console.log(ui.position)
-                    // Update the node position
                     var node = window.acquireCanvas.nodes.find(node => node.id === nodeId)
                     node.left = ui.position.left
                     node.top = ui.position.top
@@ -176,11 +178,15 @@ class Acquire extends Component {
         //     }
         // }
 
+        if (isNewNode === true) {
+            this.props.onAddNode(node)
+        }
+
         window.acquireCanvas = this.props.acquireCanvas
 
         $(".w").on('click', function (e) {
             console.log('clicked ' + e.currentTarget.id)
-            nodeClicked(e.currentTarget.id);
+            // nodeClicked(e.currentTarget.id);
             e.preventDefault();
         });
 
@@ -233,20 +239,27 @@ class Acquire extends Component {
 
             //obj.Source_ID="xxxxxxxxxxxxxxxxxx"
 
-            self.setState({ currentNode: obj });
+            // self.setState({ currentNode: obj });
 
             //        	$("#root_Name").val(obj.text)
             //        	$("#root_Location").val(obj.data.config.path + "/")
             //        	$("#root_SourceID").val(info.source.id)
 
-            e.preventDefault();
-            info.connection.getOverlay("label").setLabel(info.connection.id);
+            // e.preventDefault();
+            // info.connection.getOverlay("label").setLabel(info.connection.id);
             console.log("Source:" + info.connection.sourceId)
             console.log("Target:" + info.connection.targetId)
 
+            var connection = {
+                source: info.connection.sourceId,
+                target: info.connection.targetId,
+                type: 'basic'
+            }
+            window.onAddConnection(connection)
+
             // Prepare form for submission
-            window.onUpdateNodeClassName({ id: info.connection.sourceId, className: "source-form" })
-            window.onUpdateNodeClassName({ id: info.connection.targetId, className: "target-form" })
+            // window.onUpdateNodeClassName({ id: info.connection.sourceId, className: "source-form" })
+            // window.onUpdateNodeClassName({ id: info.connection.targetId, className: "target-form" })
         });
 
         this.setState({ plumb: plumb });
@@ -375,6 +388,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
+        onAddConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
 };
