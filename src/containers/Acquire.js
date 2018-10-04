@@ -42,7 +42,41 @@ class Acquire extends Component {
         this.handleClose = this.handleClose.bind(this);
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
-        window.onAddConnection = this.props.onAddConnection;
+        window.onAddConnection = this.onAddConnection.bind(this);
+    }
+
+    onAddConnection(connection) {
+        // At this point we already have a defined connection
+        console.log(this.props.acquireCanvas)
+        this.props.onAddConnection(connection)
+
+        // fluff up the job with the connection info
+        var job = Object.assign({}, this.props.jobs.currentJob)
+
+        var source = this.props.acquireCanvas.nodes.find(node => node.id === connection.source)
+        job.source = {
+            id: source.id,
+            location: source.data.config.path,
+            name: source.name
+        }
+
+        // Hardcoding some of the parameters for now
+        var target = this.props.acquireCanvas.nodes.find(node => node.id === connection.target)
+        job.target = {
+            id: target.id,
+            description: target.description,
+            location: source.data.config.path,
+            name: source.name,
+            delimiter:':',
+            fileFormat:'Data Source',
+            sourceId: source.id,
+            status:'Active'
+        }
+
+        this.props.onUpdateCurrentJob(job)
+
+        console.log(this.props.jobs)
+
     }
 
     onClearCurrentJob() {
@@ -410,8 +444,10 @@ const mapDispatchToProps = dispatch => {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
         onAddConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
         onNewJobCreated: job => dispatch({ type: 'ADD_JOB', job: job }),
-        onClearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
+        onUpdateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
         onClearCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
+        onClearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
+        
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
 };

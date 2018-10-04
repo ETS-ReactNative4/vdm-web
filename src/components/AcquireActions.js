@@ -44,7 +44,7 @@ class AcquireActions extends Component {
             }
         )
 
-        var nextJobId = this.props.jobs.currentJob.jobId + 1;
+        var nextJobId = window.uuid();
         this.props.onNewJobCreated({jobId:nextJobId, name:flowName, description: this.state.description})
         this.props.onClearCanvas();
     }

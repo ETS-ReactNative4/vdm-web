@@ -10,7 +10,7 @@ const canvasInitialState = {
     ]
 
 }
-const acquireCanvas = (state = canvasInitialState, action) => {
+const acquireCanvas = (state = {}, action) => {
     switch (action.type) {
         case 'ADD_NODE':
             state.nodes = [...state.nodes, action.node]
