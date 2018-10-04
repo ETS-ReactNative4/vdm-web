@@ -16,8 +16,9 @@ import * as config from '../config';
 require('jqueryui');
 require('jsplumb');
 
+const log = (type) => console.log.bind(console, type);
+
 const jsPlumb = window.jsPlumb;
-// const jsPlumbUtil = window.jsPlumbUtil;
 
 class Acquire extends Component {
 
@@ -37,12 +38,41 @@ class Acquire extends Component {
         this.nodeClicked = this.nodeClicked.bind(this);
         this.onClearCanvas = this.onClearCanvas.bind(this);
         this.onClearCurrentJob = this.onClearCurrentJob.bind(this)
+        this.onRunJob = this.onRunJob.bind(this)
 
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
+    }
+
+    onRunJob() {
+        // Call the rawfile api method
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+                    console.log(xmlhttp.responseText);
+
+                    $('#triurl').val(xmlhttp.responseText);
+                    $('#modal1').show()
+
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        var rawFilePayload = JSON.stringify({rawFile:this.props.jobs.currentJob.target})
+        console.log(rawFilePayload)
+        
+        // xmlhttp.open("POST", config.VDM_SERVICE_HOST + '/vdm/rawfile');
+        xmlhttp.open("POST", 'http://52.201.45.52:9988/vdm/rawfile');
+        xmlhttp.send(rawFilePayload);
     }
 
     onAddConnection(connection) {
@@ -67,10 +97,10 @@ class Acquire extends Component {
             description: target.description,
             location: source.data.config.path,
             name: source.name,
-            delimiter:':',
-            fileFormat:'Data Source',
+            delimiter: ':',
+            fileFormat: 'Data Source',
             sourceId: source.id,
-            status:'Active'
+            status: 'Active'
         }
 
         this.props.onUpdateCurrentJob(job)
@@ -412,6 +442,7 @@ class Acquire extends Component {
                                         onNewJobCreated={this.props.onNewJobCreated}
                                         onClearCanvas={onClearCanvas}
                                         onClearCurrentJob={this.onClearCurrentJob}
+                                        onRunJob={this.onRunJob}
                                     ></AcquireActions>
                                     <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireCanvas.nodes} currentNode={currentNode} />
                                 </div>
@@ -447,7 +478,7 @@ const mapDispatchToProps = dispatch => {
         onUpdateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
         onClearCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
         onClearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
-        
+
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
 };

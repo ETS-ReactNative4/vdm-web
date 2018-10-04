@@ -17,17 +17,25 @@ class AcquireActions extends Component {
         this.handleNewFlowNameChanged = this.handleNewFlowNameChanged.bind(this);
         this.handleDescriptionChanged = this.handleDescriptionChanged.bind(this);
         this.handleCloseActiveFlow = this.handleCloseActiveFlow.bind(this);
+        this.handleSave = this.handleSave.bind(this)
+
         this.state = {
             showNewTextInput: false,
             flowNameAccepted: false,
             newFlowName: '',
-            description:'',
-            activeFlow: {}
+            description: '',
+            activeFlow: {},
+            isSaving: false
         };
     }
 
+    handleSave() {
+        this.setState({ isSaving: true });
+        this.props.onRunJob()
+    }
+
     handleNewButtonClicked() {
-        this.setState({ showNewTextInput: true, description:'' });
+        this.setState({ showNewTextInput: true, description: '' });
     }
 
     handleClose() {
@@ -45,7 +53,7 @@ class AcquireActions extends Component {
         )
 
         var nextJobId = window.uuid();
-        this.props.onNewJobCreated({jobId:nextJobId, name:flowName, description: this.state.description})
+        this.props.onNewJobCreated({ jobId: nextJobId, name: flowName, description: this.state.description })
         this.props.onClearCanvas();
     }
 
@@ -61,22 +69,22 @@ class AcquireActions extends Component {
         this.setState({ newFlowName: e.target.value });
     }
 
-    handleDescriptionChanged(e){
+    handleDescriptionChanged(e) {
         this.setState({ description: e.target.value });
     }
 
     handleCloseActiveFlow(e) {
         this.setState(
-            { 
+            {
                 newFlowName: '',
                 description: '',
-                activeFlow:{}, 
+                activeFlow: {},
             }
         );
         this.props.onClearCurrentJob()
     }
 
-    componentDidMount(){
+    componentDidMount() {
         let newJobCreated = this.props.newJobCreated;
     }
 
@@ -92,6 +100,7 @@ class AcquireActions extends Component {
                 <Button onClick={this.handleNewButtonClicked}>New</Button>
                 <Button>Open</Button>
                 <Button onClick={this.handleCloseActiveFlow}>Close</Button>
+                <Button onClick={this.handleSave}>Save</Button>
                 <Button>Properties</Button>
                 <Modal show={this.state.showNewTextInput} onHide={this.handleClose}>
                     <Modal.Header closeButton>
@@ -120,7 +129,7 @@ class AcquireActions extends Component {
                                 <FormControl
                                     type="text"
                                     value={this.state.description}
-                                    placeholder="Enter Description for this job" 
+                                    placeholder="Enter Description for this job"
                                     onChange={this.handleDescriptionChanged}
                                 />
                                 <FormControl.Feedback />
@@ -147,7 +156,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        
+
     };
 };
 

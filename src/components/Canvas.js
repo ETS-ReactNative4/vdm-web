@@ -33,14 +33,15 @@ class Canvas extends Component {
 
       plumb.batch(function () {
         // Restore nodes
-        nodes.forEach(node => {
-          addNode(node, plumb, nodeClicked, false)
-        });
-
-        for (const c of connections) {
-          plumb.connect(c);
+        if(nodes){
+          nodes.forEach(node => {
+            addNode(node, plumb, nodeClicked, false)
+          });
+  
+          for (const c of connections) {
+            plumb.connect(c);
+          }
         }
-
       });
     });
 
