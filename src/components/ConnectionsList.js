@@ -56,33 +56,28 @@ class ConnectionsList extends Component {
 
 					console.log(node);
 					console.log(nodeKey);
-					
+
 					var isNewNode = true;
 					addNode(node, plumb, nodeClicked, isNewNode);
 				}
 			});
 		});
-		
-		  $("#accordion1").accordion({
-		         collapsible: true,
-		         animate: false
-		     });
+
+		$("#accordion1").accordion({
+			collapsible: true,
+			animate: false
+		});
 	}
 
 	render() {
 		return (
-				
-				
-				
-				<div id="accordion1">
-				  <h3>Available Data Sources</h3>
-				  <div>
-				  <ul id="treeDemo" className="ztree"></ul>	
-				  </div>
-
+			<div id="accordion1">
+				<h3>Available Data Sources</h3>
+				<div>
+					<ul id="treeDemo" className="ztree"></ul>
 				</div>
-			
-		
+
+			</div>
 		);
 	}
 }

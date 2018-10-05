@@ -90,7 +90,7 @@ class Acquire extends Component {
             }
         }
 
-        var rawFilePayload = JSON.stringify({ rawFile: this.props.jobs.currentJob.target })
+        var rawFilePayload = JSON.stringify({ rawFile: this.props.jobs.currentJob.Target })
         console.log(rawFilePayload)
 
         xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/vdm/rawfile');
@@ -106,22 +106,22 @@ class Acquire extends Component {
         var job = Object.assign({}, this.props.jobs.currentJob)
 
         var source = this.props.acquireCanvas.nodes.find(node => node.id === connection.source)
-        job.source = {
-            id: source.id,
-            location: source.data.config.path,
-            name: source.name
+        job.Source = {
+            ID: source.id,
+            Location: source.data.config.path,
+            Name: source.name
         }
 
         // Hardcoding some of the parameters for now
         var target = this.props.acquireCanvas.nodes.find(node => node.id === connection.target)
-        job.target = {
-            id: target.id,
+        job.Target = {
+            ID: target.id,
             description: target.description,
-            location: source.data.config.path,
-            name: source.name,
+            Location: source.data.config.path,
+            Name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
-            sourceId: source.id,
+            sourceID: source.id,
             status: 'Active'
         }
 
@@ -228,6 +228,11 @@ class Acquire extends Component {
     // Add the node to the node list and to the canvas
     addNode(node, plumb, nodeClicked, isNewNode) {
 
+        if(this.props.jobs.currentJob==undefined || this.props.jobs.currentJob.Name === ''){
+            window.acquireActions.handleNewButtonClicked()
+            return
+        }
+
         if (node.type == "data") {
             return false;
         }
@@ -294,14 +299,6 @@ class Acquire extends Component {
         };
 
         newNode();
-
-        // if (this.props.acquireCanvas.nodes.find(x => x.id === node.id) == null) {
-        //     this.props.onAddNode(node)
-        // } else {
-        //     if (isNewNode === true) {
-        //         plumb.getContainer().removeChild(d);
-        //     }
-        // }
 
         if (isNewNode === true) {
             this.props.onAddNode(node)
@@ -377,28 +374,6 @@ class Acquire extends Component {
 
         this.setState({ plumb: plumb });
 
-        //fetch('http://localhost:4000/api/getconnections')
-        //        fetch(config.VDM_SERVICE_HOST + '/vdm/getConnections')
-        //            .then(res => res.json())
-        //            .then(
-        //                (result) => {
-        //                    this.setState({
-        //                        isLoaded: true,
-        //                        dataSources: JSON.parse(result)
-        //                    });
-        //                },
-        //                // Note: it's important to handle errors here
-        //                // instead of a catch() block so that we don't swallow
-        //                // exceptions from actual bugs in components.
-        //                (error) => {
-        //                    this.setState({
-        //                        isLoaded: true,
-        //                        error
-        //                    });
-        //                }
-        //            )
-
-
         var xmlhttp = new XMLHttpRequest();
 
         xmlhttp.onreadystatechange = function () {
@@ -422,17 +397,7 @@ class Acquire extends Component {
 
         xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/vdm/getConnections');
         xmlhttp.send();
-        /*           
-           getAllData()
-               .then(([dataSources, acquiredDatasets]) => {
-                   this.setState({
-                       isLoaded: true,
-                       dataSources: dataSources,
-                       acquiredDatasets: acquiredDatasets
-                   });
-               })*/
-
-
+        
     }
 
     render() {
@@ -471,7 +436,7 @@ class Acquire extends Component {
                                     </Modal.Dialog>
                                 </div>
                                 <div className="col-2">
-                                    <h4>{this.props.jobs.currentJob.name}</h4>
+                                    <h4>{this.props.jobs.currentJob.Name}</h4>
                                     <AcquireActions
                                         actionStates={actionStates}
                                         onCreateNewJob={this.createNewJob}
@@ -483,7 +448,7 @@ class Acquire extends Component {
                                 </div>
                                 <div className='col-lg-2  col-md-3'>
                                     <PropertyPage node={currentNode} />
-                                </div>
+                                </div>  
 
                             </Tab>
 

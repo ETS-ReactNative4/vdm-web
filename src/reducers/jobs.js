@@ -1,14 +1,15 @@
 // Reducer to keep track of jobs within the UI
 const jobsInitialState = {
     currentJob: {
-        jobId: 0, 
-        name: '', 
-        description: 'default description',
-        layer:'source-to-raw',
-        sources:[],
-        targets:[]
+        JobID: 0,
+        Name: '',
+        Description: 'default description',
+        Type: 'Batch',
+        Layer: 'source-to-raw',
+        Sources: [],
+        Targets: []
     },
-    jobs: []
+    JobList: []
 }
 
 const jobs = (state = jobsInitialState, action) => {
@@ -16,16 +17,16 @@ const jobs = (state = jobsInitialState, action) => {
         case 'ADD_JOB':
             return {
                 currentJob: action.job,
-                jobs: [...state.jobs, action.job],
+                JobList: [...state.JobList, action.job],
             }
 
         case 'UPDATE_CURRENT_JOB': {
-            var cleaned = state.jobs.filter(j => j.jobId != action.job.jobId)
-            return { ...state, currentJob:action.job, jobs:cleaned.concat(action.job)}
+            var cleaned = state.JobList.filter(j => j.JobID != action.job.JobID)
+            return { ...state, currentJob: action.job, JobList: cleaned.concat(action.job) }
         }
 
         case 'CLEAR_CURRENT_JOB':
-            return { ...state, currentJob:{} }
+            return { ...state, currentJob: { Name: '' } }
 
         default:
             return state

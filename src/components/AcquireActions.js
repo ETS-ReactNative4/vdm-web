@@ -27,6 +27,8 @@ class AcquireActions extends Component {
             activeFlow: {},
             isSaving: false
         };
+
+        window.acquireActions = this
     }
 
     handleSave() {
@@ -52,8 +54,9 @@ class AcquireActions extends Component {
             }
         )
 
+        // TODO: The job id should be coming from the service
         var nextJobId = window.uuid();
-        this.props.onCreateNewJob({ jobId: nextJobId, name: flowName, description: this.state.description })
+        this.props.onCreateNewJob({ JobID: nextJobId, Name: flowName, Description: this.state.description })
         this.props.onClearCanvas();
     }
 
