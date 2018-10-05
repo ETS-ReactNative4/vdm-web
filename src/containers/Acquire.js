@@ -141,7 +141,7 @@ class Acquire extends Component {
         console.log(this.props.jobs)
     }
 
-    onDeleteConnection(){
+    onDeleteConnection() {
         this.setState({
             actionStates: {
                 ...this.state.actionStates,
@@ -228,7 +228,7 @@ class Acquire extends Component {
     // Add the node to the node list and to the canvas
     addNode(node, plumb, nodeClicked, isNewNode) {
 
-        if(this.props.jobs.currentJob==undefined || this.props.jobs.currentJob.Name === ''){
+        if (this.props.jobs.currentJob == undefined || this.props.jobs.currentJob.Name === '') {
             window.acquireActions.handleNewButtonClicked()
             return
         }
@@ -397,7 +397,7 @@ class Acquire extends Component {
 
         xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/vdm/getConnections');
         xmlhttp.send();
-        
+
     }
 
     render() {
@@ -415,28 +415,15 @@ class Acquire extends Component {
                     <div className='sub-menu'>
                         <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
                             <Tab className='tab-content' eventKey={1} title="RCG Enable">
-                                <div className='col-lg-2  col-md-3 left-pane'>
-                                    <ConnectionsList dataSources={dataSources} zTreeObj={zTreeObj}
+                                <div className='col-lg-3  col-md-3 left-pane'>
+                                    <ConnectionsList
+                                        dataSources={dataSources} zTreeObj={zTreeObj}
                                         currentNode={currentNode} addNode={addNode} plumb={plumb}
                                         nodeClicked={nodeClicked}
                                     />
                                 </div>
-                                <div className="static-modal" id='modal1' style={{ display: 'none' }}>
-                                    <Modal.Dialog>
-                                        <Modal.Header>
-                                            <Modal.Title>Acquire Successful</Modal.Title>
-                                        </Modal.Header>
 
-                                        <Modal.Body>Would you like to wrangle this file now ?<input type='hidden' id="triurl" /></Modal.Body>
-
-                                        <Modal.Footer>
-                                            <Button onClick={this.handleClose}>No</Button>
-                                            <Button bsStyle="primary" onClick={this.handleShow}>Yes</Button>
-                                        </Modal.Footer>
-                                    </Modal.Dialog>
-                                </div>
-                                <div className="col-2">
-                                    <h4>{this.props.jobs.currentJob.Name}</h4>
+                                <div className="col-8">
                                     <AcquireActions
                                         actionStates={actionStates}
                                         onCreateNewJob={this.createNewJob}
@@ -444,16 +431,32 @@ class Acquire extends Component {
                                         onCloseJob={this.closeJob}
                                         onRunJob={this.onRunJob}
                                     ></AcquireActions>
-                                    <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireCanvas.nodes} currentNode={currentNode} />
+                                    <Canvas
+                                        addNode={addNode}
+                                        plumb={plumb}
+                                        nodeClicked={nodeClicked}
+                                        nodes={this.props.acquireCanvas.nodes}
+                                        currentNode={currentNode} />
                                 </div>
-                                <div className='col-lg-2  col-md-3'>
-                                    <PropertyPage node={currentNode} />
-                                </div>  
-
                             </Tab>
 
                         </Tabs>
                     </div>
+                    <div className="static-modal" id='modal1' style={{ display: 'none' }}>
+                        <Modal.Dialog>
+                            <Modal.Header>
+                                <Modal.Title>Acquire Successful</Modal.Title>
+                            </Modal.Header>
+
+                            <Modal.Body>Would you like to wrangle this file now ?<input type='hidden' id="triurl" /></Modal.Body>
+
+                            <Modal.Footer>
+                                <Button onClick={this.handleClose}>No</Button>
+                                <Button bsStyle="primary" onClick={this.handleShow}>Yes</Button>
+                            </Modal.Footer>
+                        </Modal.Dialog>
+                    </div>
+
                 </div>
             );
         }

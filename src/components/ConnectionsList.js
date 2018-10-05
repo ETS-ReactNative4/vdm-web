@@ -23,7 +23,7 @@ class ConnectionsList extends Component {
 		let plumb = this.props.plumb;
 		$(document).ready(function () {
 			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, dataSources);
-			zTreeObj.expandAll(false);
+			zTreeObj.expandAll(true);
 
 			$(".node_name").draggable({
 				helper: 'clone',
@@ -47,10 +47,8 @@ class ConnectionsList extends Component {
 
 					var node = $.extend(true, {}, currentNode);
 
-					var wrapper = $(this).parent();
-					var parentOffset = wrapper.offset();
-					node.left = event.pageX - parentOffset.left + wrapper.scrollLeft() - 210;
-					node.top = event.pageY - parentOffset.top + wrapper.scrollTop() - 50;
+					node.left = event.pageX - this.offsetLeft
+					node.top = event.pageY - this.offsetTop
 
 					var nodeKey = ((node.parent) ? node.parent.replace(/\\/g, "/") : "") + node.name + "|" + node.data.config.host + "|" + node.data.config.type;
 
@@ -63,7 +61,7 @@ class ConnectionsList extends Component {
 			});
 		});
 
-		$("#accordion1").accordion({
+		$("#connectionsAccordion").accordion({
 			collapsible: true,
 			animate: false
 		});
@@ -71,9 +69,9 @@ class ConnectionsList extends Component {
 
 	render() {
 		return (
-			<div id="accordion1">
+			<div id="connectionsAccordion">
 				<h3>Available Data Sources</h3>
-				<div>
+				<div id='connectionList'>
 					<ul id="treeDemo" className="ztree"></ul>
 				</div>
 

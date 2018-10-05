@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { Button, Popover, Tooltip, OverlayTrigger, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { ButtonGroup, Button, Popover, Tooltip, OverlayTrigger, FormGroup, FormControl, ControlLabel, Label } from 'react-bootstrap';
 import $ from 'jquery';
 import { Modal } from 'react-bootstrap';
 
@@ -92,25 +92,30 @@ class AcquireActions extends Component {
     }
 
     render() {
+        const jobName = this.props.jobs.currentJob.Name
         const actionStates = this.props.actionStates
         const tooltip = <Tooltip id="modal-tooltip">The flow name must not contain special characters</Tooltip>;
         return (
             <div className="acquire-actions">
-                <Button onClick={this.handleNewButtonClicked}
-                    disabled={!actionStates.canNew}
-                >New</Button>
-                <Button
-                    disabled={!actionStates.canOpen}
-                >Open</Button>
-                <Button onClick={this.handleCloseActiveFlow}
-                    disabled={!actionStates.canClose}
-                >Close</Button>
-                <Button onClick={this.handleSave}
-                    disabled={!actionStates.canSave}
-                >Save</Button>
-                <Button
-                    disabled={!actionStates.canShowProps}
-                >Properties</Button>
+                <ButtonGroup>
+                    <Button onClick={this.handleNewButtonClicked}
+                        disabled={!actionStates.canNew}
+                    >New</Button>
+                    <Button
+                        disabled={!actionStates.canOpen}
+                    >Open</Button>
+                    <Button onClick={this.handleCloseActiveFlow}
+                        disabled={!actionStates.canClose}
+                    >Close</Button>
+                    <Button onClick={this.handleSave}
+                        disabled={!actionStates.canSave}
+                    >Save</Button>
+                    <Button
+                        disabled={!actionStates.canShowProps}
+                    >Properties</Button>
+                </ButtonGroup>
+
+                <Label className='job-name-label' bsStyle="primary">{jobName}</Label>
                 <Modal show={this.state.showNewTextInput} onHide={this.handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Create a New Flow</Modal.Title>
