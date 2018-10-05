@@ -2,7 +2,7 @@
 const jobsInitialState = {
     currentJob: {
         jobId: 0, 
-        name: 'Please create or open a job', 
+        name: '', 
         description: 'default description',
         layer:'source-to-raw',
         sources:[],

@@ -31,20 +31,42 @@ class Acquire extends Component {
             acquiredDatasets: [],
             zTreeObj: null,
             currentNode: null,
-            plumb: null
+            plumb: null,
+            actionStates: {
+                canNew: true,
+                canSave: false,
+                canOpen: false,
+                canShowProps: false,
+                canClose: false
+            }
         };
 
         this.addNode = this.addNode.bind(this);
         this.nodeClicked = this.nodeClicked.bind(this);
-        this.onClearCanvas = this.onClearCanvas.bind(this);
-        this.onClearCurrentJob = this.onClearCurrentJob.bind(this)
+        this.clearCanvas = this.clearCanvas.bind(this);
+        this.closeJob = this.closeJob.bind(this)
         this.onRunJob = this.onRunJob.bind(this)
+        this.createNewJob = this.createNewJob.bind(this)
 
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
+    }
+
+    createNewJob(job) {
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: false
+            }
+        })
+
+        this.props.addJob(job)
     }
 
     onRunJob() {
@@ -67,18 +89,17 @@ class Acquire extends Component {
             }
         }
 
-        var rawFilePayload = JSON.stringify({rawFile:this.props.jobs.currentJob.target})
+        var rawFilePayload = JSON.stringify({ rawFile: this.props.jobs.currentJob.target })
         console.log(rawFilePayload)
-        
-        // xmlhttp.open("POST", config.VDM_SERVICE_HOST + '/vdm/rawfile');
-        xmlhttp.open("POST", 'http://52.201.45.52:9988/vdm/rawfile');
+
+        xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/vdm/rawfile');
         xmlhttp.send(rawFilePayload);
     }
 
     onAddConnection(connection) {
         // At this point we already have a defined connection
         console.log(this.props.acquireCanvas)
-        this.props.onAddConnection(connection)
+        this.props.addConnection(connection)
 
         // fluff up the job with the connection info
         var job = Object.assign({}, this.props.jobs.currentJob)
@@ -103,19 +124,39 @@ class Acquire extends Component {
             status: 'Active'
         }
 
+        // Time to enable the save button
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
+                canNew: false
+            }
+        })
+
         this.props.onUpdateCurrentJob(job)
 
         console.log(this.props.jobs)
-
     }
 
-    onClearCurrentJob() {
-        this.props.onClearCurrentJob();
-        this.onClearCanvas();
+    closeJob() {
+        this.props.closeCurrentJob();
+        this.clearCanvas();
+
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: false,
+                canShowProps: false,
+                canSave: false,
+                canNew: true
+            }
+        })
     }
 
-    onClearCanvas() {
-        this.props.onClearCanvas();
+    clearCanvas() {
+        this.props.clearCanvas();
         this.state.plumb.empty('canvas')
     }
 
@@ -152,9 +193,6 @@ class Acquire extends Component {
                 $("#waitdiv").hide();
             }
         }, 1000);
-
-
-
     }
 
     handleClose() {
@@ -206,7 +244,6 @@ class Acquire extends Component {
             plumb.makeSource(el, {
                 filter: ".ep",
                 anchor: "Continuous",
-                //connectorStyle: { stroke: "#5c96bc", strokeWidth: 2, outlineStroke: "transparent", outlineWidth: 4 },
                 connectionType: "basic",
                 extract: {
                     "action": "the-action"
@@ -227,7 +264,6 @@ class Acquire extends Component {
 
         var newNode = function () {
             var d = document.createElement("div");
-            // var id = jsPlumbUtil.uuid();
             var nodeName = node.name;
             if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
             d.className = "w";
@@ -305,24 +341,11 @@ class Acquire extends Component {
         // this listener sets the connection's internal
         // id as the label overlay's text.
         plumb.bind("connection", function (info, e) {
-
-
             var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
             console.log(info)
             console.log(info.source.nodeId)
-
-            var obj = treeObj.getNodeByParam('id', info.source.nodeId)
-
-            //obj.Source_ID="xxxxxxxxxxxxxxxxxx"
-
-            // self.setState({ currentNode: obj });
-
-            //        	$("#root_Name").val(obj.text)
-            //        	$("#root_Location").val(obj.data.config.path + "/")
-            //        	$("#root_SourceID").val(info.source.id)
-
             e.preventDefault();
-            // info.connection.getOverlay("label").setLabel(info.connection.id);
+
             console.log("Source:" + info.connection.sourceId)
             console.log("Target:" + info.connection.targetId)
 
@@ -366,8 +389,6 @@ class Acquire extends Component {
 
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
-
-                //var response = JSON.parse(xmlhttp.responseText);
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
 
                     var json = JSON.parse(xmlhttp.responseText)
@@ -385,7 +406,7 @@ class Acquire extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/vdm/getConnections');
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/vdm/getConnections');
         xmlhttp.send();
         /*           
            getAllData()
@@ -401,10 +422,9 @@ class Acquire extends Component {
     }
 
     render() {
-        const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb, acquiredDatasets } = this.state;
+        const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb, actionStates } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
-        const onClearCanvas = this.onClearCanvas;
 
         if (error) {
             return <div>Error: {error.message}</div>;
@@ -439,9 +459,10 @@ class Acquire extends Component {
                                 <div className="col-2">
                                     <h4>{this.props.jobs.currentJob.name}</h4>
                                     <AcquireActions
-                                        onNewJobCreated={this.props.onNewJobCreated}
-                                        onClearCanvas={onClearCanvas}
-                                        onClearCurrentJob={this.onClearCurrentJob}
+                                        actionStates={actionStates}
+                                        onCreateNewJob={this.createNewJob}
+                                        onClearCanvas={this.clearCanvas}
+                                        onCloseJob={this.closeJob}
                                         onRunJob={this.onRunJob}
                                     ></AcquireActions>
                                     <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireCanvas.nodes} currentNode={currentNode} />
@@ -473,11 +494,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
-        onAddConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
-        onNewJobCreated: job => dispatch({ type: 'ADD_JOB', job: job }),
+        addConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
+        addJob: job => dispatch({ type: 'ADD_JOB', job: job }),
         onUpdateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
-        onClearCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
-        onClearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
+        closeCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
+        clearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
 
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };

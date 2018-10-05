@@ -53,7 +53,7 @@ class AcquireActions extends Component {
         )
 
         var nextJobId = window.uuid();
-        this.props.onNewJobCreated({ jobId: nextJobId, name: flowName, description: this.state.description })
+        this.props.onCreateNewJob({ jobId: nextJobId, name: flowName, description: this.state.description })
         this.props.onClearCanvas();
     }
 
@@ -81,7 +81,7 @@ class AcquireActions extends Component {
                 activeFlow: {},
             }
         );
-        this.props.onClearCurrentJob()
+        this.props.onCloseJob()
     }
 
     componentDidMount() {
@@ -89,19 +89,25 @@ class AcquireActions extends Component {
     }
 
     render() {
-        const popover = (
-            <Popover id="modal-popover" title="popover">
-                very popover. such engagement
-            </Popover>
-        );
+        const actionStates = this.props.actionStates
         const tooltip = <Tooltip id="modal-tooltip">The flow name must not contain special characters</Tooltip>;
         return (
             <div className="acquire-actions">
-                <Button onClick={this.handleNewButtonClicked}>New</Button>
-                <Button>Open</Button>
-                <Button onClick={this.handleCloseActiveFlow}>Close</Button>
-                <Button onClick={this.handleSave}>Save</Button>
-                <Button>Properties</Button>
+                <Button onClick={this.handleNewButtonClicked}
+                    disabled={!actionStates.canNew}
+                >New</Button>
+                <Button
+                    disabled={!actionStates.canOpen}
+                >Open</Button>
+                <Button onClick={this.handleCloseActiveFlow}
+                    disabled={!actionStates.canClose}
+                >Close</Button>
+                <Button onClick={this.handleSave}
+                    disabled={!actionStates.canSave}
+                >Save</Button>
+                <Button
+                    disabled={!actionStates.canShowProps}
+                >Properties</Button>
                 <Modal show={this.state.showNewTextInput} onHide={this.handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Create a New Flow</Modal.Title>

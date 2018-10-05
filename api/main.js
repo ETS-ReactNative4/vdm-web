@@ -67,6 +67,12 @@ router.get('/getConnections', (request, response) => {
     response.json(jsonDatax);
 });
 
+
+router.post('/rawfile', (request, response) => {
+    var jsonData = {dataSetId:447,wrangledId:1190,name:"/data/Ins_Demo_Parameters.csv",flowId:310,url:"http://52.201.45.52:3005/data/304/1177"}
+    response.json(jsonData);
+});
+
 router.get('/datasources', (request, response) => {
     response.json(jsonData);
 });
