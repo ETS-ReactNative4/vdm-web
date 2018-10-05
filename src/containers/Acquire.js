@@ -53,6 +53,7 @@ class Acquire extends Component {
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
+        window.onDeleteConnection = this.onDeleteConnection.bind(this);
     }
 
     createNewJob(job) {
@@ -138,6 +139,18 @@ class Acquire extends Component {
         this.props.onUpdateCurrentJob(job)
 
         console.log(this.props.jobs)
+    }
+
+    onDeleteConnection(){
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: false
+            }
+        })
     }
 
     closeJob() {
@@ -334,6 +347,7 @@ class Acquire extends Component {
         // happening.
         plumb.bind("click", function (connection) {
             plumb.deleteConnection(connection);
+            window.onDeleteConnection()
         });
 
         // bind a connection listener. note that the parameter passed to this function contains more than
