@@ -50,11 +50,6 @@ class ConnectionsList extends Component {
 					node.left = event.pageX - this.offsetLeft
 					node.top = event.pageY - this.offsetTop
 
-					var nodeKey = ((node.parent) ? node.parent.replace(/\\/g, "/") : "") + node.name + "|" + node.data.config.host + "|" + node.data.config.type;
-
-					console.log(node);
-					console.log(nodeKey);
-
 					var isNewNode = true;
 					addNode(node, plumb, nodeClicked, isNewNode);
 				}

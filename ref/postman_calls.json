@@ -1,0 +1,761 @@
+{
+	"id": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+	"name": "VDMRestJobServices",
+	"description": "",
+	"order": [
+		"3a37349c-9d6a-1ee8-a753-7f779ce40402",
+		"253611b7-e357-8853-5ad7-f18f7fabba05",
+		"5f735910-c822-0a7c-6f0b-1697ee6c8420",
+		"f21e5b0b-df0b-bbeb-63e5-29da2672f940",
+		"9dd1ced4-ce6d-3343-42ae-a0ff4618a69f",
+		"b3b1da0f-749c-a914-34ea-9df60266571c",
+		"44f99294-9f80-6360-3b42-e54d2714d35e",
+		"b9161c5f-feb5-15b7-87e1-f9537a80e7f4",
+		"13cff442-c782-6086-ec03-9490aac2f50d",
+		"654a3291-47f7-adc5-e2cd-1c222c65894a",
+		"af65a15e-3e6b-194b-1f8c-b9f023451695",
+		"a5398d45-d92c-9bfd-e79e-7f6c4a323980",
+		"17164194-53b0-50ee-e78d-9e7c62d8ce7f",
+		"5f2d3a61-a772-bc59-8b00-ebddac3592cb",
+		"64705c43-12d5-40fe-05f2-ee9989418a86",
+		"a59e3f6b-3e47-62ca-e948-4d40fef8f124",
+		"87be6ac9-4f57-273f-215e-0cf4fb74a333",
+		"ba9aad1a-9678-0232-d854-115f5434749b",
+		"53bdddc6-d133-3959-aa2e-7a1626ef02a8",
+		"018152f9-8794-a542-4e42-e402107935b2",
+		"7b68c15a-a968-d1cf-edad-b15e58203365",
+		"687123c1-e467-4138-b095-e5d86355807f",
+		"1f0b05c3-c463-1cbb-f343-f219829e5758",
+		"17ab5dc0-ff79-b643-64cd-33da16ba5ec4"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1536285596007,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "018152f9-8794-a542-4e42-e402107935b2",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/conformedDataElements/3",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537457912045,
+			"name": "ConformedDataElement",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"ConformedDataElement\":{\n\t\t\"name\" : \"CustomerFirstName3\",\n\t\t\"description\" : \"Customer ...\",\n\t\t\"definition\" : \"Customer ...\",\n\t\t\"sources\":\n\t\t[\n\t\t\t{\n\t\t\t\t\"id\":1,\n\t\t\t\t\"name\": \"cust_nm\",\n\t\t\t\t\"rules\" :[\n\t\t\t\t\t{\n\t\t\t\t\t\t\"ruleID\" : 1,\n\t\t\t\t\t\t\"transformType\" : \"Split\"\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 9,\n\t\t\t\t\"name\": \"first_name\",\n\t\t\t\t\"rules\" : []\n\t\t\t}\n\t\t],\n\t\t\"preferredSource\" : {\n\t\t\t\"id\" : 9,\n\t\t\t\"name\" : \"first_name\"\n\t\t},\n\t\t\"status\" : \"Approved\"\n\t}\n}"
+		},
+		{
+			"id": "13cff442-c782-6086-ec03-9490aac2f50d",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/rawFiles",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537220443566,
+			"name": "rawFiles",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"RawFile\": {\n\t\t\"name\": \"Customers.csv\",\n\t\t\"description\": \"Customer file from acme Company …\",\n\t\t\"location\": \"/home/user/data\",\n\t\t\"fileFormat\": \"Delimited\",\n\t\t\"delimiter\":\",\",\n\t\t\"active\":\"Active\",\n\t\t\"sourceId\":1\n\t}\n}"
+		},
+		{
+			"id": "17164194-53b0-50ee-e78d-9e7c62d8ce7f",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/dataElements",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537281466769,
+			"name": "DataElement",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\r\n\"DataElement\":{\r\n   \"name\":\"cust_nm\",\r\n   \"description\":\"Customer Name\",\r\n   \"type\":\"String\",\r\n   \"length\":25,  \r\n   \"constraints\":[\r\n\t \"No Spaces Allowed\", \"again no spaces\"\r\n\t],\r\n   \"knownAs\":\"CustomerName\",\r\n   \"rawSourceID\":12\r\n}\r\n}"
+		},
+		{
+			"id": "17ab5dc0-ff79-b643-64cd-33da16ba5ec4",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/conformedDataObjects/3",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537458052815,
+			"name": "ConformedDataObject",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"ConformedDataObject\" : {\n\t\t\"name\" : \"Customer3\",\n\t\t\"description\" : \"Conformed Customer object\",\n\t\t\"sources\":[\n\t\t{\n\t\t\t\"id\":8,\n\t\t\t\"name\":\"CustomerFirstName\"\n\t\t},\n\t\t{\n\t\t\t\"id\":45,\n\t\t\t\"name\":\"CustomerLastName\"\n\t\t}\n\t\t],\n\t\t\n\t\t\"status\":\"Draft\"\n\t}\n}"
+		},
+		{
+			"id": "1f0b05c3-c463-1cbb-f343-f219829e5758",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/conformedDataObjects",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537457963325,
+			"name": "ConformedDataObject by id",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"ConformedDataObject\" : {\n\t\t\"name\" : \"Customer\",\n\t\t\"description\" : \"Conformed Customer object\",\n\t\t\"sources\":[\n\t\t{\n\t\t\t\"id\":8,\n\t\t\t\"name\":\"CustomerFirstName\"\n\t\t},\n\t\t{\n\t\t\t\"id\":45,\n\t\t\t\"name\":\"CustomerLastName\"\n\t\t}\n\t\t],\n\t\t\n\t\t\"status\":\"Draft\"\n\t}\n}"
+		},
+		{
+			"id": "253611b7-e357-8853-5ad7-f18f7fabba05",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/jobs",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537195249716,
+			"name": "get job list",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		},
+		{
+			"id": "3a37349c-9d6a-1ee8-a753-7f779ce40402",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/jobs",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537195266652,
+			"name": "post job",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"Job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		},
+		{
+			"id": "44f99294-9f80-6360-3b42-e54d2714d35e",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/sources",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"data": [],
+			"dataMode": "raw",
+			"name": "get sources by id",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1537218245145,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n\t\"job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		},
+		{
+			"id": "53bdddc6-d133-3959-aa2e-7a1626ef02a8",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/conformedDataElements",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537382632456,
+			"name": "ConformedDataElement by id",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"ConformedDataElement\":{\n\t\t\"name\" : \"CustomerFirstName\",\n\t\t\"description\" : \"Customer ...\",\n\t\t\"definition\" : \"Customer ...\",\n\t\t\"sources\":\n\t\t[\n\t\t\t{\n\t\t\t\t\"id\":1,\n\t\t\t\t\"name\": \"cust_nm\",\n\t\t\t\t\"rules\" :[\n\t\t\t\t\t{\n\t\t\t\t\t\t\"ruleID\" : 1,\n\t\t\t\t\t\t\"transformType\" : \"Split\"\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 9,\n\t\t\t\t\"name\": \"first_name\",\n\t\t\t\t\"rules\" : []\n\t\t\t}\n\t\t],\n\t\t\"preferredSource\" : {\n\t\t\t\"id\" : 9,\n\t\t\t\"name\" : \"first_name\"\n\t\t},\n\t\t\"status\" : \"Approved\"\n\t}\n}"
+		},
+		{
+			"id": "5f2d3a61-a772-bc59-8b00-ebddac3592cb",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:58081/vdm/parser/dataelement/55fa0898",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"data": [],
+			"dataMode": "raw",
+			"name": "DataElement list",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1537281274120,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": ""
+		},
+		{
+			"id": "5f735910-c822-0a7c-6f0b-1697ee6c8420",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/jobs/1",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537195296516,
+			"name": "get job by id",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		},
+		{
+			"id": "64705c43-12d5-40fe-05f2-ee9989418a86",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/dataElements/2",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537457721253,
+			"name": "DataElement by id",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "654a3291-47f7-adc5-e2cd-1c222c65894a",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/rawFiles",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537220422413,
+			"name": "rawfile list",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		},
+		{
+			"id": "687123c1-e467-4138-b095-e5d86355807f",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/conformedDataObjects",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537457963325,
+			"name": "ConformedDataObject list",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"ConformedDataObject\" : {\n\t\t\"name\" : \"Customer\",\n\t\t\"description\" : \"Conformed Customer object\",\n\t\t\"sources\":[\n\t\t{\n\t\t\t\"id\":8,\n\t\t\t\"name\":\"CustomerFirstName\"\n\t\t},\n\t\t{\n\t\t\t\"id\":45,\n\t\t\t\"name\":\"CustomerLastName\"\n\t\t}\n\t\t],\n\t\t\n\t\t\"status\":\"Draft\"\n\t}\n}"
+		},
+		{
+			"id": "7b68c15a-a968-d1cf-edad-b15e58203365",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:58081/vdm/parser/conformeddataobject",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"data": [],
+			"dataMode": "raw",
+			"name": "ConformedDataObject",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1537295614602,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n\t\"ConformedDataObject\" : {\n\t\t\"name\" : \"Customer\",\n\t\t\"description\" : \"Conformed Customer object\",\n\t\t\"sources\":[\n\t\t{\n\t\t\t\"id\":8,\n\t\t\t\"name\":\"CustomerFirstName\"\n\t\t},\n\t\t{\n\t\t\t\"id\":45,\n\t\t\t\"name\":\"CustomerLastName\"\n\t\t}\n\t\t],\n\t\t\n\t\t\"status\":\"Draft\"\n\t}\n}"
+		},
+		{
+			"id": "87be6ac9-4f57-273f-215e-0cf4fb74a333",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:58081/vdm/parser/conformeddataelement",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"data": [],
+			"dataMode": "raw",
+			"name": "ConformedDataElement",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1537289701378,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n\t\"ConformedDataElement\":{\n\t\t\"name\" : \"CustomerFirstName\",\n\t\t\"description\" : \"Customer ...\",\n\t\t\"definition\" : \"Customer ...\",\n\t\t\"sources\":\n\t\t[\n\t\t\t{\n\t\t\t\t\"id\":1,\n\t\t\t\t\"name\": \"cust_nm\",\n\t\t\t\t\"rules\" :[\n\t\t\t\t\t{\n\t\t\t\t\t\t\"ruleID\" : 1,\n\t\t\t\t\t\t\"transformType\" : \"Split\"\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 9,\n\t\t\t\t\"name\": \"first_name\",\n\t\t\t\t\"rules\" : []\n\t\t\t}\n\t\t],\n\t\t\"preferredSource\" : {\n\t\t\t\"id\" : 9,\n\t\t\t\"name\" : \"first_name\"\n\t\t},\n\t\t\"status\" : \"Approved\"\n\t}\n}"
+		},
+		{
+			"id": "9dd1ced4-ce6d-3343-42ae-a0ff4618a69f",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/sources",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537218145953,
+			"name": "post sources",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"SourceDesc\": {\n\t\t\"name\": \"Customers.csv\",\n\t\t\"description\": \"Customer file from acme Company …\",\n\t\t\"type\": \"File\",\n\t\t\"file\": {\n\t\t\t\"hostName\": \"xyz\",\n\t\t\t\"sourcePath\": \"/home/user/data\",\n\t\t\t\"fileFormat\": \"Delimited\",\n\t\t\t\"delimiter\":\",\"\n\t\t}\n\t}\n}"
+		},
+		{
+			"id": "a5398d45-d92c-9bfd-e79e-7f6c4a323980",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/rawFiles",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537220443566,
+			"name": "rawFiles",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"isFromCollection": true,
+			"collectionRequestId": "13cff442-c782-6086-ec03-9490aac2f50d",
+			"rawModeData": "{\n\t\"RawFile\": {\n\t\t\"name\": \"Customers.csv\",\n\t\t\"description\": \"Customer file from acme Company …\",\n\t\t\"location\": \"/home/user/data\",\n\t\t\"fileFormat\": \"Delimited\",\n\t\t\"delimiter\":\",\",\n\t\t\"active\":\"Active\",\n\t\t\"sourceId\":1\n\t}\n}"
+		},
+		{
+			"id": "a59e3f6b-3e47-62ca-e948-4d40fef8f124",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/dataElements",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537457751805,
+			"name": "DataElement",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\r\n\"DataElement\":{\r\n   \"name\":\"cust_nm\",\r\n   \"description\":\"Customer Name\",\r\n   \"type\":\"String\",\r\n   \"length\":25,  \r\n   \"constraints\":[\r\n\t \"No Spaces Allowed\", \"again no spaces\"\r\n\t],\r\n   \"knownAs\":\"CustomerName\",\r\n   \"rawSourceID\":12\r\n}\r\n}"
+		},
+		{
+			"id": "af65a15e-3e6b-194b-1f8c-b9f023451695",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/rawFiles/2",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537456243251,
+			"name": "rawfile",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		},
+		{
+			"id": "b3b1da0f-749c-a914-34ea-9df60266571c",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/sources",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537213216481,
+			"name": "get sources list",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		},
+		{
+			"id": "b9161c5f-feb5-15b7-87e1-f9537a80e7f4",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/sources",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537456087708,
+			"name": "sources",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"SourceDesc\": {\n\t\t\"name\": \"Customers.csv\",\n\t\t\"description\": \"Customer file from acme Company …\",\n\t\t\"type\": \"File\",\n\t\t\"file\": {\n\t\t\t\"hostName\": \"xyz\",\n\t\t\t\"sourcePath\": \"/home/user/data\",\n\t\t\t\"fileFormat\": \"Delimited\",\n\t\t\t\"delimiter\":\",\"\n\t\t}\n\t}\n}"
+		},
+		{
+			"id": "ba9aad1a-9678-0232-d854-115f5434749b",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/conformedDataElements",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1537382632456,
+			"name": "ConformedDataElement list",
+			"description": "",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"responses": [],
+			"rawModeData": "{\n\t\"ConformedDataElement\":{\n\t\t\"name\" : \"CustomerFirstName\",\n\t\t\"description\" : \"Customer ...\",\n\t\t\"definition\" : \"Customer ...\",\n\t\t\"sources\":\n\t\t[\n\t\t\t{\n\t\t\t\t\"id\":1,\n\t\t\t\t\"name\": \"cust_nm\",\n\t\t\t\t\"rules\" :[\n\t\t\t\t\t{\n\t\t\t\t\t\t\"ruleID\" : 1,\n\t\t\t\t\t\t\"transformType\" : \"Split\"\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 9,\n\t\t\t\t\"name\": \"first_name\",\n\t\t\t\t\"rules\" : []\n\t\t\t}\n\t\t],\n\t\t\"preferredSource\" : {\n\t\t\t\"id\" : 9,\n\t\t\t\"name\" : \"first_name\"\n\t\t},\n\t\t\"status\" : \"Approved\"\n\t}\n}"
+		},
+		{
+			"id": "f21e5b0b-df0b-bbeb-63e5-29da2672f940",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:9090/v1/jobs",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "PUT",
+			"collectionId": "bc28c9a2-b102-8010-aea6-644e49ebb424",
+			"data": [],
+			"dataMode": "raw",
+			"name": "job",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1537195121821,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n\t\"Job\": {\n\t\t\"name\": \"Ingest Cubstomer\",\n\t\t\"description\": \"Ingest Customer data from …\",\n\t\t\"type\": \"Batch\",\n\t\t\"layer\": \"Source-To-Raw\",\n\t\t\"sources\": [{\n\t\t\t\"id\": 1,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"targets\": [{\n\t\t\t\"id\": 2,\n\t\t\t\"name\": \"Customers.csv\"\n\t\t}],\n\t\t\"schedule\": {\n\t\t\t\"frequency\": \"Weekly\",\n\t\t\t\"dayOfWeek\": \"Fri\",\n\t\t\t\"time\": \"23:00\"\n\t\t},\n\t\t\"activeIndicator\": \"Y\"\n\t}\n}"
+		}
+	]
+}

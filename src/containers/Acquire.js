@@ -56,6 +56,27 @@ class Acquire extends Component {
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
     }
 
+    ///////////////////////////
+    // API calls
+    ///////////////////////////
+    svcCreateJob = (job) => {
+        fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            method: 'post',
+            body: JSON.stringify(job)
+        }).then(function (response) {
+            var result = response.json()
+            job.ID = result.ID
+            this.props.addJob(job)
+            
+        }).then(function (data) {
+            console.log('Create job failed: ${job.name} ${data}');
+        });
+    }
+
     createNewJob(job) {
         this.setState({
             actionStates: {
@@ -68,6 +89,7 @@ class Acquire extends Component {
         })
 
         this.props.addJob(job)
+        // this.svcCreateJob(job)
     }
 
     onRunJob() {
@@ -107,9 +129,9 @@ class Acquire extends Component {
 
         var source = this.props.acquireCanvas.nodes.find(node => node.id === connection.source)
         job.Source = {
-            ID: source.id,
-            Location: source.data.config.path,
-            Name: source.name
+            id: source.id,
+            location: source.data.config.path,
+            name: source.name
         }
 
         // Hardcoding some of the parameters for now
@@ -117,8 +139,8 @@ class Acquire extends Component {
         job.Target = {
             ID: target.id,
             description: target.description,
-            Location: source.data.config.path,
-            Name: source.name,
+            location: source.data.config.path,
+            name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
             sourceID: source.id,
@@ -228,7 +250,7 @@ class Acquire extends Component {
     // Add the node to the node list and to the canvas
     addNode(node, plumb, nodeClicked, isNewNode) {
 
-        if (this.props.jobs.currentJob == undefined || this.props.jobs.currentJob.Name === '') {
+        if (this.props.jobs.currentJob == undefined || this.props.jobs.currentJob.name === '') {
             window.acquireActions.handleNewButtonClicked()
             return
         }
@@ -485,6 +507,8 @@ const mapDispatchToProps = dispatch => {
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
 };
+
+
 
 /*const getDatasources = () => {
     return fetch('http://localhost:4000/api/datasources')
