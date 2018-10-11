@@ -26,7 +26,7 @@ const jobs = (state = jobsInitialState, action) => {
         }
 
         case 'CLEAR_CURRENT_JOB':
-            return { ...state, currentJob: { Name: '' } }
+            return { ...state, currentJob: { name: '' } }
 
         default:
             return state

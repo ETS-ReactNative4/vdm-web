@@ -55,12 +55,14 @@
 }
 
 .w {
-	width : 250px;
-	border-radius : 0px !important;
+  width : 250px;
+  opacity: 1 !important;
+  border:0 !important;
+	/* border-radius : 0px !important; */
 	padding : 0px  !important;
-    -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75) !important;
-    -moz-box-shadow: 5px 5px 3px 0px rgba(0,0,0,0.75) !important;
-    box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75) !important;
+    /* -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.2) !important; */
+    /* -moz-box-shadow: 5px 5px 3px 0px rgba(0,0,0,0.2) !important; */
+    /* box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.2) !important; */
 }
 
 .detaildiv {
