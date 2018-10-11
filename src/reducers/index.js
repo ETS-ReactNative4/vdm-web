@@ -6,9 +6,11 @@ import dataElements from './dataElements'
 import conformedDataElements from './conformedDataElements'
 import conformedDataObjects from './conformedDataObjects'
 import acquireCanvas from './acquireCanvas'
+import governNewCanvas from './governNewCanvas'
 
 export default combineReducers({
     acquireCanvas,
+    governNewCanvas,
     jobs,
     dataElements,
     conformedDataElements,

@@ -1,7 +1,7 @@
 {
     "ConformedDataObjectList": [
         {
-            "idi": 11,
+            "id": 11,
             "name": "Customer",
             "fescription": "Conformed Customer object",
             "dtatus": "Approved"

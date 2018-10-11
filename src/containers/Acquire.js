@@ -28,7 +28,6 @@ class Acquire extends Component {
             error: null,
             isLoaded: false,
             dataSources: [],
-            acquiredDatasets: [],
             zTreeObj: null,
             currentNode: null,
             plumb: null,
@@ -447,7 +446,7 @@ class Acquire extends Component {
                                     <ItemList
                                         icon='play-circle'
                                         dropTarget='canvas'
-                                        listType='jobList'
+                                        itemType='job'
                                         title='Data Acquisition Flows'
                                         items={jobs.jobList} />
                                 </div>
@@ -465,7 +464,7 @@ class Acquire extends Component {
                                         addNode={addNode}
                                         plumb={plumb}
                                         nodeClicked={nodeClicked}
-                                        nodes={this.props.acquireCanvas.nodes}
+                                        nodes={this.props.acquireCanvas}
                                         currentNode={currentNode} />
                                 </div>
 

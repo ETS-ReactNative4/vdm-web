@@ -72,6 +72,7 @@ class ItemList extends Component {
     // let items = this.state.displayedItems;
     let items = this.state.displayedItems;
     let icon = this.props.icon
+    let itemType = this.props.itemType
     return (
       <div className="list-panel">
         <h4>{this.props.title}</h4>
@@ -81,6 +82,7 @@ class ItemList extends Component {
             items.map((el) => {
               return <ListItem
                 key={el.id}
+                itemType={itemType}
                 icon={icon}
                 id={el.id}
                 name={el.name}

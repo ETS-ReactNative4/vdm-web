@@ -20,8 +20,8 @@ class Canvas extends Component {
   }
 
   componentDidMount() {
-    let nodes = this.props.acquireCanvas.nodes;
-    let connections = this.props.acquireCanvas.connections;
+    let nodes = this.props.nodes.nodes;
+    let connections = this.props.nodes.connections;
     let plumb = this.props.plumb;
     let addNode = this.props.addNode;
     let nodeClicked = this.props.nodeClicked;

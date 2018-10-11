@@ -25,9 +25,6 @@ class GovernNew extends Component {
         this.state = {
             error: null,
             isLoaded: false,
-            dataSources: [],
-            acquiredDatasets: [],
-            zTreeObj: null,
             currentNode: null,
             plumb: null,
             actionStates: {
@@ -44,20 +41,15 @@ class GovernNew extends Component {
         this.clearCanvas = this.clearCanvas.bind(this);
         this.closeJob = this.closeJob.bind(this)
         this.onRunJob = this.onRunJob.bind(this)
-        this.createNewJob = this.createNewJob.bind(this)
-
-        this.handleShow = this.handleShow.bind(this);
-        this.handleClose = this.handleClose.bind(this);
+        // this.createNewJob = this.createNewJob.bind(this)
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
 
-        // API calls
-        this.fetchDataElements = this.fetchDataElements.bind(this)
     }
 
-    
+
     ///////////////////////////
     // API calls
     ///////////////////////////
@@ -149,20 +141,20 @@ class GovernNew extends Component {
     // API calls - END
     ///////////////////////////
 
-    createNewJob(dataElement) {
-        this.setState({
-            actionStates: {
-                ...this.state.actionStates,
-                canClose: true,
-                canShowProps: true,
-                canSave: false,
-                canNew: false
-            }
-        })
+    // createNewJob(dataElement) {
+    //     this.setState({
+    //         actionStates: {
+    //             ...this.state.actionStates,
+    //             canClose: true,
+    //             canShowProps: true,
+    //             canSave: false,
+    //             canNew: false
+    //         }
+    //     })
 
-        this.props.addJob(dataElement)
-        // this.svcCreateJob(dataElement)
-    }
+    //     this.props.addJob(dataElement)
+    //     // this.svcCreateJob(dataElement)
+    // }
 
     onRunJob() {
         // Call the rawfile api method
@@ -265,7 +257,7 @@ class GovernNew extends Component {
 
     clearCanvas() {
         this.props.clearCanvas();
-        this.state.plumb.empty('canvas')
+        this.state.plumb.empty('governNewCanvas')
     }
 
     // Update the current selected node
@@ -275,58 +267,13 @@ class GovernNew extends Component {
         console.log(clickedNode);
     }
 
-    handleClose() {
-        $('#modal1').hide();
-        this.setState({ show: false });
-    }
-
-    handleShow() {
-        console.log('redirect to explore');
-        $("#waitdiv").show();
-        this.setState({ show: true });
-        $('#modal1').hide();
-
-
-        var result = JSON.parse($('#triurl').val());
-        console.log(result)
-
-
-
-        var win = window.open(result.url, '_blank');
-        var timer = setInterval(function () {
-            if (win.closed) {
-                clearInterval(timer);
-                document.getElementById('explorebtn').click();
-                console.log('closed');
-                $("#waitdiv").hide();
-            }
-        }, 1000);
-    }
-
-    handleClose() {
-        $('#modal1').hide();
-        this.setState({ show: false });
-    }
-
-    handleShow() {
-        console.log('redirect to explore');
-        this.setState({ show: true });
-        $('#modal1').hide();
-
-        //document.getElementById('explorebtn').click();
-
-        var result = JSON.parse($('#triurl').val());
-        console.log(result)
-        window.open(result.url, '_blank');
-
-    }
     // Add the node to the node list and to the canvas
     addNode(node, plumb, nodeClicked, isNewNode) {
 
-        if (this.props.dataElements.currentJob == undefined || this.props.dataElements.currentJob.name === '') {
-            window.acquireActions.handleNewButtonClicked()
-            return
-        }
+        // if (this.props.dataElements.currentJob == undefined || this.props.dataElements.currentJob.name === '') {
+        //     window.acquireActions.handleNewButtonClicked()
+        //     return
+        // }
 
         if (node.type == "data") {
             return false;
@@ -348,7 +295,7 @@ class GovernNew extends Component {
                     var nodeId = ui.helper[0].nodeId
                     console.log(nodeId)
                     console.log(ui.position)
-                    var node = window.acquireCanvas.nodes.find(node => node.id === nodeId)
+                    var node = window.governNewCanvas.nodes.find(node => node.id === nodeId)
                     node.left = ui.position.left
                     node.top = ui.position.top
                 }
@@ -396,10 +343,10 @@ class GovernNew extends Component {
         newNode();
 
         if (isNewNode === true) {
-            this.props.onAddNode(node)
+            this.props.onAddDataElementNode(node)
         }
 
-        window.acquireCanvas = this.props.acquireCanvas
+        window.governNewCanvas = this.props.governNewCanvas
 
         $(".w").on('click', function (e) {
             console.log('clicked ' + e.currentTarget.id)
@@ -412,7 +359,7 @@ class GovernNew extends Component {
 
     componentDidMount() {
 
-        let self = this
+        let addNode = this.addNode;
 
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
@@ -428,7 +375,7 @@ class GovernNew extends Component {
                 }],
                 // ["Label", { label: "", id: "label", cssClass: "aLabel" }]
             ],
-            Container: "canvas",
+            Container: "governNewCanvas",
             Connector: ["Bezier"]
         });
 
@@ -467,39 +414,39 @@ class GovernNew extends Component {
             // window.onUpdateNodeClassName({ id: info.connection.targetId, className: "target-form" })
         });
 
-        this.setState({ plumb: plumb });    
+        this.setState({ plumb: plumb });
 
         this.fetchDataElements(config)
         this.fetchConformedDataElements(config)
         this.fetchConformedDataObjects(config)
 
+        $(document).ready(function () {
+            $('#governNewCanvas').droppable({
+                drop: function (event, ui) {
 
-        // var xmlhttp = new XMLHttpRequest();
+                    // Capture the position of the mouse pointer
+                    var wrapper = $(this).parent();
+                    var parentOffset = wrapper.offset();
+                    var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
+                    var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
 
-        // xmlhttp.onreadystatechange = function () {
-        //     if (xmlhttp.readyState === 4) {
-        //         if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+                    if (ui.draggable[0].className.indexOf('data-element') >= 0) {
+                        var node = {left: left, top: top, type:'data-element', name:'something'};
+                        var isNewNode = true;
+                        addNode(node, plumb, null, isNewNode);
+                        return
+                    }
 
-        //             var json = JSON.parse(xmlhttp.responseText)
-        //             console.log(json);
-
-        //             self.setState({
-        //                 isLoaded: true
-        //             });
-
-        //             // Update the state
-        //             self.props.onInitDataElementList(json.DataElementList)
-
-
-        //         } else {
-        //             console.log('failed');
-        //         }
-        //     }
-        // }
-
-        // xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/dataElements');
-        // xmlhttp.send();
-
+                    if (ui.draggable[0].className.indexOf('list-item') >= 0) {
+                        console.log('Load the selected job ' + ui.draggable[0].id)
+                        // Load the job
+                        // if (props.listType == 'jobList') {
+                        // 	console.log('Load the selected job ' + ui.draggable[0].id)
+                        // }
+                    }
+                }
+            });
+        });
     }
 
     render() {
@@ -525,39 +472,39 @@ class GovernNew extends Component {
                                     <ItemList
                                         icon='columns'
                                         dropTarget='governNewCanvas'
-                                        listType='dataElementList'
+                                        itemType='data-element'
                                         title='Data Elements'
                                         items={dataElements.dataElementList} />
 
                                     <ItemList
                                         icon='check-square'
                                         dropTarget='governNewCanvas'
-                                        listType='conformedDataElementList'
+                                        itemType='conformed-data-element'
                                         title='Conformed Data Elements'
                                         items={conformedDataElements.conformedDataElementList} />
 
                                     <ItemList
                                         icon='archive'
                                         dropTarget='governNewCanvas'
-                                        listType='conformedDataObjectList'
+                                        itemType='conformed-data-object'
                                         title='Conformed Data Objects'
                                         items={conformedDataObjects.conformedDataObjectList} />
                                 </div>
 
                                 <div className="col-lg-8">
-                                    <AcquireActions
+                                    {/* <AcquireActions
                                         actionStates={actionStates}
                                         onCreateNewJob={this.createNewJob}
                                         onClearCanvas={this.clearCanvas}
                                         onCloseJob={this.closeJob}
                                         onRunJob={this.onRunJob}
-                                    ></AcquireActions>
+                                    ></AcquireActions> */}
                                     <Canvas
-                                        id='canvas'
+                                        id='governNewCanvas'
                                         addNode={addNode}
                                         plumb={plumb}
                                         nodeClicked={nodeClicked}
-                                        nodes={this.props.acquireCanvas.nodes}
+                                        nodes={this.props.governNewCanvas}
                                         currentNode={currentNode} />
                                 </div>
 
@@ -591,7 +538,7 @@ class GovernNew extends Component {
 const mapStateToProps = state => {
     console.log(state);
     return {
-        acquireCanvas: state.acquireCanvas,
+        governNewCanvas: state.governNewCanvas,
         dataElements: state.dataElements,
         conformedDataElements: state.conformedDataElements,
         conformedDataObjects: state.conformedDataObjects
@@ -603,7 +550,7 @@ const mapDispatchToProps = dispatch => {
         onInitDataElementList: dataElementList => dispatch({ type: 'INIT_DATA_ELEMENT_LIST', dataElementList: dataElementList }),
         onInitConformedDataElementList: conformedDataElementList => dispatch({ type: 'INIT_CONFORMED_DATA_ELEMENT_LIST', conformedDataElementList: conformedDataElementList }),
         onInitConformedDataObjectList: conformedDataObjectList => dispatch({ type: 'INIT_CONFORMED_DATA_OBJECT_LIST', conformedDataObjectList: conformedDataObjectList }),
-        onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
+        onAddDataElementNode: node => dispatch({ type: 'ADD_DATA_ELEMENT_NODE', node: node }),
         addConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
         addJob: dataElement => dispatch({ type: 'ADD_JOB', dataElement: dataElement }),
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
