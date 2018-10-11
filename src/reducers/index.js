@@ -4,7 +4,7 @@ import flows from './flows'
 import jobs from './jobs'
 import dataElements from './dataElements'
 import conformedDataElements from './conformedDataElements'
-import conformedObjects from './conformedObjects'
+import conformedDataObjects from './conformedDataObjects'
 import acquireCanvas from './acquireCanvas'
 
 export default combineReducers({
@@ -12,7 +12,7 @@ export default combineReducers({
     jobs,
     dataElements,
     conformedDataElements,
-    conformedObjects,
+    conformedDataObjects,
     datasources,
     flows
 })

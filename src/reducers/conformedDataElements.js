@@ -16,18 +16,16 @@ const conformedDataElementsInitialState = {
             name: " CustomerFirstName",
             description: "Customer First Name",
             status: "Approved"
-        },
-        {
-            id: 12,
-            name: " CustomerLastName ",
-            description: "Customer Last Name",
-            status: "Approved"
         }
     ]
 }
 
 const conformedDataElements = (state = conformedDataElementsInitialState, action) => {
     switch (action.type) {
+        case 'INIT_CONFORMED_DATA_ELEMENT_LIST':
+            return { ...state, conformedDataElementList: action.conformedDataElementList }
+
+
         case 'ADD_CONFORMED_DATA_ELEMENT':
             action.conformedDataElement.updateDate = (new Date()).toLocaleString();
             return {

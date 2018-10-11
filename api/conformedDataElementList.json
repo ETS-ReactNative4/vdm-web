@@ -1,0 +1,16 @@
+{
+    "ConformedDataElementList": [
+        {
+            "id": 1,
+            "name": " CustomerFirstName",
+            "description": "Customer First Name",
+            "status": "Approved"
+        },
+        {
+            "id": 2,
+            "name": " CustomerLastName ",
+            "description": "Customer Last Name",
+            "status": "Approved"
+        }
+    ]
+}

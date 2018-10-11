@@ -93,6 +93,33 @@ router.get('/exploredDatasets', (request, response) => {
     response.json(JSON.parse(fs.readFileSync('exploredDatasets.json', "utf8")));
 });
 
+
+/////////////////////
+// DataElements
+/////////////////
+router.get('/dataElements', (request, response) => {
+    response.json(JSON.parse(fs.readFileSync('dataElementList.json', "utf8")));
+});
+
+router.get('/dataElements/:id', (request, response) => {
+    var id = request.params.id;
+    console.log(request.params);
+    response.json(JSON.parse(fs.readFileSync('dataElement.json', "utf8")));
+});
+
+//////////
+// Conformed data elements
+router.get('/conformedDataElements', (request, response) => {
+    response.json(JSON.parse(fs.readFileSync('conformedDataElementList.json', "utf8")));
+});
+
+//////////
+// Conformed Data Object
+router.get('/conformedDataObjects', (request, response) => {
+    response.json(JSON.parse(fs.readFileSync('conformedDataObjectList.json', "utf8")));
+});
+
+
 // set the server to listen on port 4000
 app.listen(port, () => console.log(`Listening on port ${port}`));
 

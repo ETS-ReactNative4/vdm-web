@@ -116,7 +116,7 @@ class Acquire extends Component {
         console.log(rawFilePayload)
 
         // TODO: update the war so that this allows origin *. Using LOCAL for now
-        xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/vdm/rawfile');
+        xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/rawfile');
         xmlhttp.send(rawFilePayload);
     }
 
@@ -417,7 +417,7 @@ class Acquire extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/vdm/getConnections');
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/getConnections');
         xmlhttp.send();
 
     }

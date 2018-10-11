@@ -51,12 +51,18 @@ class ItemList extends Component {
   componentDidUpdate(prevProps) {
     $(".list-item").draggable({
       helper: 'clone',
-      drag: function (event, ui) {
-      },
-      stop: function (event, ui) {
-      },
       start: function (event, ui) {
-        var itemId = event.currentTarget.id;
+        console.log(event.currentTarget.id);
+      }
+    });
+
+  }
+
+  componentDidMount() {
+    $(".list-item").draggable({
+      helper: 'clone',
+      start: function (event, ui) {
+        console.log(event.currentTarget.id);
       }
     });
 
@@ -70,7 +76,7 @@ class ItemList extends Component {
       <div className="list-panel">
         <h4>{this.props.title}</h4>
         <input placeholder='Search' type="text" className="search-text" onChange={this.searchHandler} />
-        <ul>
+        <ul className='list'>
           {
             items.map((el) => {
               return <ListItem

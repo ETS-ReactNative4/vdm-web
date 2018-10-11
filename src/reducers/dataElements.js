@@ -26,6 +26,9 @@ const dataElementsInitialState = {
 
 const dataElements = (state = dataElementsInitialState, action) => {
     switch (action.type) {
+        case 'INIT_DATA_ELEMENT_LIST':
+            return { ...state, dataElementList: action.dataElementList }
+
         case 'ADD_DATA_ELEMENT':
             action.dataElement.updateDate = (new Date()).toLocaleString();
             return {

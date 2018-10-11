@@ -1,0 +1,14 @@
+{
+    "DataElement": {
+        "dataElementID": 1,
+        "name": "cust_nm",
+        "description": "Customer Name",
+        "type": "String",
+        "length": 25,
+        "contraints": [
+            "No Spaces Allowed"
+        ],
+        "knownAs": "CustomerName",
+        "rawSourceID": 12
+    }
+}

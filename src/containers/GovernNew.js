@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import ConnectionsList from '../components/ConnectionsList'
 import ItemList from '../components/ItemList'
 import Canvas from '../components/Canvas'
-import ListItem from '../components/ListItem'
 import AcquireActions from '../components/AcquireActions'
 import "./Acquire.css";
 // eslint-disable-next-line
@@ -54,28 +52,102 @@ class GovernNew extends Component {
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
+
+        // API calls
+        this.fetchDataElements = this.fetchDataElements.bind(this)
     }
 
+    
     ///////////////////////////
     // API calls
     ///////////////////////////
-    svcCreateJob = (dataElement) => {
-        fetch(config.VDM_META_SERVICE_HOST + '/dataElements', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            method: 'post',
-            body: JSON.stringify(dataElement)
-        }).then(function (response) {
-            var result = response.json()
-            dataElement.ID = result.ID
-            this.props.addJob(dataElement)
+    fetchDataElements = (config) => {
+        var self = this
+        var xmlhttp = new XMLHttpRequest();
 
-        }).then(function (data) {
-            console.log('Create dataElement failed: ${dataElement.name} ${data}');
-        });
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+                    var json = JSON.parse(xmlhttp.responseText)
+                    console.log(json);
+
+                    self.setState({
+                        isLoaded: true
+                    });
+
+                    // Update the state
+                    self.props.onInitDataElementList(json.DataElementList)
+
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/dataElements');
+        xmlhttp.send();
     }
+
+    fetchConformedDataElements = (config) => {
+        var self = this
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+                    var json = JSON.parse(xmlhttp.responseText)
+                    console.log(json);
+
+                    self.setState({
+                        isLoaded: true
+                    });
+
+                    // Update the state
+                    self.props.onInitConformedDataElementList(json.ConformedDataElementList)
+
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/conformedDataElements');
+        xmlhttp.send();
+    }
+
+    fetchConformedDataObjects = (config) => {
+        var self = this
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+                    var json = JSON.parse(xmlhttp.responseText)
+                    console.log(json);
+
+                    self.setState({
+                        isLoaded: true
+                    });
+
+                    // Update the state
+                    self.props.onInitConformedDataObjectList(json.ConformedDataObjectList)
+
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/conformedDataObjects');
+        xmlhttp.send();
+    }
+
+    ///////////////////////////
+    // API calls - END
+    ///////////////////////////
 
     createNewJob(dataElement) {
         this.setState({
@@ -337,6 +409,7 @@ class GovernNew extends Component {
 
     }
 
+
     componentDidMount() {
 
         let self = this
@@ -394,31 +467,38 @@ class GovernNew extends Component {
             // window.onUpdateNodeClassName({ id: info.connection.targetId, className: "target-form" })
         });
 
-        this.setState({ plumb: plumb });
+        this.setState({ plumb: plumb });    
 
-        var xmlhttp = new XMLHttpRequest();
-
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState === 4) {
-                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-
-                    var json = JSON.parse(xmlhttp.responseText)
-                    console.log(json);
-
-                    self.setState({
-                        isLoaded: true,
-                        dataSources: json
-                    });
+        this.fetchDataElements(config)
+        this.fetchConformedDataElements(config)
+        this.fetchConformedDataObjects(config)
 
 
-                } else {
-                    console.log('failed');
-                }
-            }
-        }
+        // var xmlhttp = new XMLHttpRequest();
 
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/vdm/getConnections');
-        xmlhttp.send();
+        // xmlhttp.onreadystatechange = function () {
+        //     if (xmlhttp.readyState === 4) {
+        //         if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+        //             var json = JSON.parse(xmlhttp.responseText)
+        //             console.log(json);
+
+        //             self.setState({
+        //                 isLoaded: true
+        //             });
+
+        //             // Update the state
+        //             self.props.onInitDataElementList(json.DataElementList)
+
+
+        //         } else {
+        //             console.log('failed');
+        //         }
+        //     }
+        // }
+
+        // xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/dataElements');
+        // xmlhttp.send();
 
     }
 
@@ -428,7 +508,7 @@ class GovernNew extends Component {
         const nodeClicked = this.nodeClicked;
         const dataElements = this.props.dataElements
         const conformedDataElements = this.props.conformedDataElements
-        const conformedObjects = this.props.conformedObjects
+        const conformedDataObjects = this.props.conformedDataObjects
 
 
         if (error) {
@@ -459,9 +539,9 @@ class GovernNew extends Component {
                                     <ItemList
                                         icon='archive'
                                         dropTarget='governNewCanvas'
-                                        listType='conformedObjectList'
-                                        title='ConformedObjects'
-                                        items={conformedObjects.conformedObjectList} />
+                                        listType='conformedDataObjectList'
+                                        title='Conformed Data Objects'
+                                        items={conformedDataObjects.conformedDataObjectList} />
                                 </div>
 
                                 <div className="col-lg-8">
@@ -514,12 +594,15 @@ const mapStateToProps = state => {
         acquireCanvas: state.acquireCanvas,
         dataElements: state.dataElements,
         conformedDataElements: state.conformedDataElements,
-        conformedObjects: state.conformedObjects
+        conformedDataObjects: state.conformedDataObjects
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
+        onInitDataElementList: dataElementList => dispatch({ type: 'INIT_DATA_ELEMENT_LIST', dataElementList: dataElementList }),
+        onInitConformedDataElementList: conformedDataElementList => dispatch({ type: 'INIT_CONFORMED_DATA_ELEMENT_LIST', conformedDataElementList: conformedDataElementList }),
+        onInitConformedDataObjectList: conformedDataObjectList => dispatch({ type: 'INIT_CONFORMED_DATA_OBJECT_LIST', conformedDataObjectList: conformedDataObjectList }),
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
         addConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
         addJob: dataElement => dispatch({ type: 'ADD_JOB', dataElement: dataElement }),

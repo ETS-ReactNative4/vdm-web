@@ -1,0 +1,19 @@
+{
+    "DataElementList": [
+        {
+            "id": 1,
+            "name": "cust_nm",
+            "description": "Customer Name"
+        },
+        {
+            "id": 2,
+            "name": "product_nm",
+            "description": "Product Name"
+        },
+        {
+            "id": 3,
+            "name": "prod_id",
+            "description": "Product ID"
+        }
+    ]
+}
