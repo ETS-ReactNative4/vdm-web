@@ -27,7 +27,7 @@ class Canvas extends Component {
     let nodeClicked = this.props.nodeClicked;
     let currentNode = this.props.currentNode
 
-    plumb.setContainer('canvas');
+    plumb.setContainer(this.props.id);
     jsPlumb.ready(function () {
       console.log('Plumb ready!')
 
@@ -49,7 +49,7 @@ class Canvas extends Component {
 
   render() {
     return (
-      <div id='canvas' className='col-lg-6 col-md-3' />
+      <div id={this.props.id} className='col-lg-6 col-md-3' />
     )
   }
 }

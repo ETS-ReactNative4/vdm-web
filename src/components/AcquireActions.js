@@ -56,7 +56,7 @@ class AcquireActions extends Component {
 
         // TODO: The job id should be coming from the service
         var nextJobId = window.uuid();
-        this.props.onCreateNewJob({ jobID: nextJobId, name: flowName, description: this.state.description })
+        this.props.onCreateNewJob({ id: nextJobId, jobId: nextJobId, name: flowName, description: this.state.description })
         this.props.onClearCanvas();
     }
 

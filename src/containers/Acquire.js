@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ConnectionsList from '../components/ConnectionsList'
-import DatasetList from '../components/DatasetList'
+import ItemList from '../components/ItemList'
 import Canvas from '../components/Canvas'
-import PropertyPage from '../components/PropertyPage'
+import ListItem from '../components/ListItem'
 import AcquireActions from '../components/AcquireActions'
 import "./Acquire.css";
 // eslint-disable-next-line
@@ -71,7 +71,7 @@ class Acquire extends Component {
             var result = response.json()
             job.ID = result.ID
             this.props.addJob(job)
-            
+
         }).then(function (data) {
             console.log('Create job failed: ${job.name} ${data}');
         });
@@ -115,6 +115,7 @@ class Acquire extends Component {
         var rawFilePayload = JSON.stringify({ rawFile: this.props.jobs.currentJob.Target })
         console.log(rawFilePayload)
 
+        // TODO: update the war so that this allows origin *. Using LOCAL for now
         xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/vdm/rawfile');
         xmlhttp.send(rawFilePayload);
     }
@@ -374,7 +375,6 @@ class Acquire extends Component {
         // this listener sets the connection's internal
         // id as the label overlay's text.
         plumb.bind("connection", function (info, e) {
-            var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
             console.log(info)
             console.log(info.source.nodeId)
             e.preventDefault();
@@ -426,6 +426,7 @@ class Acquire extends Component {
         const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb, actionStates } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
+        const jobs = this.props.jobs
 
         if (error) {
             return <div>Error: {error.message}</div>;
@@ -437,15 +438,21 @@ class Acquire extends Component {
                     <div className='sub-menu'>
                         <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
                             <Tab className='tab-content' eventKey={1} title="RCG Enable">
-                                <div className='col-lg-3  col-md-3 left-pane'>
+                                <div className='col-lg-4  col-md-4 left-pane'>
                                     <ConnectionsList
                                         dataSources={dataSources} zTreeObj={zTreeObj}
                                         currentNode={currentNode} addNode={addNode} plumb={plumb}
                                         nodeClicked={nodeClicked}
                                     />
+                                    <ItemList
+                                        icon='play-circle'
+                                        dropTarget='canvas'
+                                        listType='jobList'
+                                        title='Data Acquisition Flows'
+                                        items={jobs.jobList} />
                                 </div>
 
-                                <div className="col-8">
+                                <div className="col-lg-8">
                                     <AcquireActions
                                         actionStates={actionStates}
                                         onCreateNewJob={this.createNewJob}
@@ -454,12 +461,14 @@ class Acquire extends Component {
                                         onRunJob={this.onRunJob}
                                     ></AcquireActions>
                                     <Canvas
+                                        id='canvas'
                                         addNode={addNode}
                                         plumb={plumb}
                                         nodeClicked={nodeClicked}
                                         nodes={this.props.acquireCanvas.nodes}
                                         currentNode={currentNode} />
                                 </div>
+
                             </Tab>
 
                         </Tabs>

@@ -35,6 +35,12 @@ class App extends Component {
               <LinkContainer to="/explore">
                 <NavItem id="explorebtn"><FontAwesomeIcon icon="search" /> Explore</NavItem>
               </LinkContainer>
+
+              <LinkContainer to="/governNew">
+                <NavItem><FontAwesomeIcon icon="gavel" /> Govern New</NavItem>
+              </LinkContainer>
+
+
               <LinkContainer to="/govern">
                 <NavItem><FontAwesomeIcon icon="gavel" /> Govern</NavItem>
               </LinkContainer>

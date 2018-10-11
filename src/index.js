@@ -6,6 +6,7 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import Acquire from './containers/Acquire'
 import Explore from './containers/Explore'
 import Govern from './containers/Govern'
+import GovernNew from './containers/GovernNew'
 import Operationalize from './containers/Operationalize'
 import Monitor from './containers/Monitor'
 import About from './containers/About'
@@ -27,6 +28,7 @@ ReactDOM.render(
                 <Route path="/acquire" render={(props) => (<Acquire {...props} state={window.nodes} />)} />
                 <Route path="/explore" component={Explore} />
                 <Route path="/govern" component={Govern} />
+                <Route path="/governNew" component={GovernNew} />
                 <Route path="/operationalize" component={Operationalize} />
                 <Route path="/monitor" component={Monitor} />
                 <Route path="/about" component={About} />

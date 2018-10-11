@@ -43,7 +43,7 @@
 
 #connectionsAccordion .ui-accordion-content { 
   padding: 0; 
-  min-height:620px;
+  min-height:400px;
 }
 
 .ui-accordion-header, .ui-accordion-content   { 
@@ -57,7 +57,7 @@
 .w {
   width : 250px;
   opacity: 1 !important;
-  border:0 !important;
+  border:3px solid white !important;
 	/* border-radius : 0px !important; */
 	padding : 0px  !important;
     /* -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.2) !important; */

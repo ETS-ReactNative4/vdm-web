@@ -46,9 +46,9 @@ class Govern extends Component {
 
     // Update the current selected node
     nodeClicked = nodeId => {
-        var clickedNode = this.props.acquireNodes.find(n => n.id === nodeId);
-        this.setState({ currentNode: clickedNode });
-        console.log(clickedNode);
+        // var clickedNode = this.props.acquireNodes.find(n => n.id === nodeId);
+        // this.setState({ currentNode: clickedNode });
+        // console.log(clickedNode);
     }
     
       handleClose() {
@@ -125,13 +125,13 @@ class Govern extends Component {
                     console.log(ui.helper[0].id)
                     console.log(ui.position)
                     
-                   console.log(self.props.acquireNodes)
-                    // Update the node position
-                    var node = window.acquireNodes.find(node => node.id === ui.helper[0].id)
-                    if(node){
-	                    node.relX = ui.position.left + hOffset
-	                    node.relY = ui.position.top + vOffset
-                    }
+                //    console.log(self.props.acquireNodes)
+                //     // Update the node position
+                //     var node = window.acquireNodes.find(node => node.id === ui.helper[0].id)
+                //     if(node){
+	            //         node.relX = ui.position.left + hOffset
+	            //         node.relY = ui.position.top + vOffset
+                //     }
                 }
             });
 
@@ -198,15 +198,8 @@ class Govern extends Component {
         node.relX = relX;
         node.relY = relY;
 
-        if (this.props.acquireNodes.find(x => x.id === node.id) == null) {
-            this.props.onAddNode(node)
-        } else {
-            if (isNewNode === true) {
-                plumb.getContainer().removeChild(d);
-            }
-        }
-
-        window.acquireNodes = this.props.acquireNodes
+        
+        // window.acquireNodes = this.props.acquireNodes
 
         $(".w").on('click', function (e) {
             console.log('clicked ' + e.currentTarget.id)
@@ -233,7 +226,7 @@ class Govern extends Component {
                 }],
                // ["Label", { label: "", id: "label", cssClass: "aLabel" }]
             ],
-            Container: "canvas",
+            Container: "governCanvas",
         	Connector : [ "Bezier" ]
         });
         
@@ -355,7 +348,9 @@ class Govern extends Component {
                                 </div>
                                 <div className="col-2">
                                    
-                                    <Canvas addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
+                                    <Canvas 
+                                    id='governCanvas'
+                                    addNode={addNode} plumb={plumb} nodeClicked={nodeClicked} nodes={this.props.acquireNodes} currentNode={currentNode} />
                                 </div>
                                 <div className='col-lg-2  col-md-3'>
                                     <PropertyPage node={currentNode} />

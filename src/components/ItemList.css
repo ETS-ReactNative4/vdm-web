@@ -1,0 +1,32 @@
+.list-panel{
+  background-color: aliceblue;
+    padding: 3px 10px 5px 10px;
+    border: 1px solid #CCC;
+    margin-top: 3px;
+}
+
+ul {
+    list-style-type: none;
+    padding-inline-start: 0;
+    font-family: 'Calibri', Helvetica, sans-serif;
+  }
+
+  .list-item {
+    overflow: hidden;
+    margin: 0 0 3px;
+    border-bottom: 1px solid #eee;
+    padding: 3px;
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+
+  .search-text{
+    width: 100%;
+  }
+
+  .update-date{
+    font-size: smaller;
+    float: right;
+  }
