@@ -77,7 +77,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/dataElements');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/dataElements');
         xmlhttp.send();
     }
 
@@ -105,7 +105,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataElements');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/conformedDataElements');
         xmlhttp.send();
     }
 
@@ -133,7 +133,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataObjects');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/conformedDataObjects');
         xmlhttp.send();
     }
 
@@ -186,25 +186,29 @@ class GovernNew extends Component {
 
     onAddConnection(connection) {
         // At this point we already have a defined connection
-        console.log(this.props.acquireCanvas)
         this.props.addConnection(connection)
 
         // fluff up the dataElement with the connection info
         var dataElement = Object.assign({}, this.props.dataElements.currentJob)
 
-        var source = this.props.acquireCanvas.nodes.find(node => node.id === connection.source)
+        var source = this.props.governNewCanvas.nodes.find(node => node.id === connection.source)
         dataElement.Source = {
             id: source.id,
-            location: source.data.config.path,
-            name: source.name
+            description: source.description,
+            location: "/home/user/data",
+            name: source.name,
+            delimiter: ':',
+            fileFormat: 'Data Source',
+            sourceID: source.id,
+            status: 'Active'
         }
 
         // Hardcoding some of the parameters for now
-        var target = this.props.acquireCanvas.nodes.find(node => node.id === connection.target)
+        var target = this.props.governNewCanvas.nodes.find(node => node.id === connection.target)
         dataElement.Target = {
             ID: target.id,
             description: target.description,
-            location: source.data.config.path,
+            location: "/home/user/data",
             name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
@@ -223,7 +227,7 @@ class GovernNew extends Component {
             }
         })
 
-        this.props.onUpdateCurrentJob(dataElement)
+        // this.props.onUpdateCurrentJob(dataElement)
 
         console.log(this.props.dataElements)
     }
@@ -279,6 +283,26 @@ class GovernNew extends Component {
             return false;
         }
 
+        // Init new node properties
+        if (isNewNode === true) {
+            if(node.id == null || node.id === undefined || node.id == ''){
+                node.id = window.uuid()
+            }
+
+            // Since the metadata id is not UUID we need to make our own
+            // since we need to identify nodes uniquely
+            node.dataId = node.id
+            node.id = window.uuid()
+
+
+            if (node.type === 'data-element') {
+                node.itemType = "Data Element"
+            } else if (node.type === 'conformed-data-element') {
+                node.itemType = "Conformed Data Element"
+            }
+
+        }
+
         var initNode = function (el) {
 
             // initialise draggable elements.
@@ -292,61 +316,68 @@ class GovernNew extends Component {
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
-                    var nodeId = ui.helper[0].nodeId
-                    console.log(nodeId)
-                    console.log(ui.position)
-                    var node = window.governNewCanvas.nodes.find(node => node.id === nodeId)
+                    var node = window.governNewCanvas.nodes.find(node => node.id === ui.helper[0].id)
                     node.left = ui.position.left
                     node.top = ui.position.top
                 }
             });
 
-            plumb.makeSource(el, {
-                filter: ".ep",
-                anchor: "Continuous",
-                connectionType: "basic",
-                extract: {
-                    "action": "the-action"
-                },
-                maxConnections: 2,
-                onMaxConnections: function (info, e) {
-                    alert("Maximum connections (" + info.maxConnections + ") reached");
-                }
-            });
+            if (node.type === 'data-element') {
+                plumb.makeSource(el, {
+                    filter: ".ep",
+                    anchor: "Continuous",
+                    connectionType: "basic",
+                    extract: {
+                        "action": "the-action"
+                    },
+                    maxConnections: 2,
+                    onMaxConnections: function (info, e) {
+                        alert("Maximum connections (" + info.maxConnections + ") reached");
+                    }
+                });
+            }
 
-            plumb.makeTarget(el, {
-                dropOptions: { hoverClass: "dragHover" },
-                anchor: "Continuous",
-                allowLoopback: true
-            });
+            if (node.type === 'conformed-data-element') {
+                plumb.makeTarget(el, {
+                    dropOptions: { hoverClass: "dragHover" },
+                    anchor: "Continuous",
+                    allowLoopback: false
+                });
 
+            }
+
+            return true;
         };
 
         var newNode = function () {
             var d = document.createElement("div");
             var nodeName = node.name;
             if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
-            d.className = "w";
+
+            d.className = "w" ;
             d.id = node.id;
-            d.nodeId = node.id;
-            d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
+            d.dataId = node.dataId;
+            d.innerHTML = `<div class='headerdiv ${node.type}'><b>` + node.itemType + `</b></div><div class='detaildiv ${node.type}'><table class="detailtable">` +
                 `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
                 `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
-                `<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` +
+                `<tr><td>Source ID:</td><td><input value='${node.dataId}'/></td></tr>` +
                 `</table></div><div class=\"ep\"></div>`;
             d.style.left = node.left + "px";
             d.style.top = node.top + "px";
             plumb.getContainer().appendChild(d);
-            initNode(d);
+            return initNode(d);
         };
 
-        newNode();
+        
 
-        if (isNewNode === true) {
-            this.props.onAddDataElementNode(node)
+        // Create the node
+        if (newNode() === true) {
+            // Add the new node only if it does not already exist
+            if(isNewNode === true){
+                this.props.onAddDataElementNode(node)
+            }
+            
         }
-
-        window.governNewCanvas = this.props.governNewCanvas
 
         $(".w").on('click', function (e) {
             console.log('clicked ' + e.currentTarget.id)
@@ -429,13 +460,24 @@ class GovernNew extends Component {
                     var parentOffset = wrapper.offset();
                     var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
                     var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
+                    var el = ui.draggable[0];
+                    var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id };
 
-                    if (ui.draggable[0].className.indexOf('data-element') >= 0) {
-                        var node = {left: left, top: top, type:'data-element', name:'something'};
+                    if (el.className.indexOf('conformed-data-element') >= 0) {
+                        node.type = 'conformed-data-element'
                         var isNewNode = true;
                         addNode(node, plumb, null, isNewNode);
                         return
                     }
+
+                    if (el.className.indexOf('data-element') >= 0) {
+                        node.type = 'data-element'
+                        var isNewNode = true;
+                        addNode(node, plumb, null, isNewNode);
+                        return
+                    }
+
+
 
                     if (ui.draggable[0].className.indexOf('list-item') >= 0) {
                         console.log('Load the selected job ' + ui.draggable[0].id)
@@ -447,6 +489,8 @@ class GovernNew extends Component {
                 }
             });
         });
+
+        window.governNewCanvas = this.props.governNewCanvas
     }
 
     render() {
@@ -467,7 +511,7 @@ class GovernNew extends Component {
                 <div>
                     <div className='sub-menu'>
                         <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
-                            <Tab className='tab-content' eventKey={1} title="RCG Enable">
+                            <Tab className='tab-content' eventKey={1} title="Conformed Data">
                                 <div className='col-lg-4  col-md-4 left-pane'>
                                     <ItemList
                                         icon='columns'
@@ -483,12 +527,6 @@ class GovernNew extends Component {
                                         title='Conformed Data Elements'
                                         items={conformedDataElements.conformedDataElementList} />
 
-                                    <ItemList
-                                        icon='archive'
-                                        dropTarget='governNewCanvas'
-                                        itemType='conformed-data-object'
-                                        title='Conformed Data Objects'
-                                        items={conformedDataObjects.conformedDataObjectList} />
                                 </div>
 
                                 <div className="col-lg-8">
@@ -510,6 +548,36 @@ class GovernNew extends Component {
 
                             </Tab>
 
+                            {/* <Tab className='tab-content' eventKey={2} title="Conformed Object">
+                                <div className='col-lg-4  col-md-4 left-pane'>
+
+                                    <ItemList
+                                        icon='check-square'
+                                        dropTarget='conformedObjectCanvas'
+                                        itemType='conformed-data-element'
+                                        title='Conformed Data Elements'
+                                        items={conformedDataElements.conformedDataElementList} />
+
+                                    <ItemList
+                                        icon='archive'
+                                        dropTarget='conformedObjectCanvas'
+                                        itemType='conformed-data-object'
+                                        title='Conformed Data Objects'
+                                        items={conformedDataObjects.conformedDataObjectList} />
+                                </div>
+
+                                <div className="col-lg-8">
+                                    
+                                    <Canvas
+                                        id='conformedObjectCanvas'
+                                        addNode={addNode}
+                                        plumb={plumb}
+                                        nodeClicked={nodeClicked}
+                                        nodes={this.props.governNewCanvas}
+                                        currentNode={currentNode} />
+                                </div>
+
+                            </Tab> */}
                         </Tabs>
                     </div>
                     <div className="static-modal" id='modal1' style={{ display: 'none' }}>
@@ -551,7 +619,7 @@ const mapDispatchToProps = dispatch => {
         onInitConformedDataElementList: conformedDataElementList => dispatch({ type: 'INIT_CONFORMED_DATA_ELEMENT_LIST', conformedDataElementList: conformedDataElementList }),
         onInitConformedDataObjectList: conformedDataObjectList => dispatch({ type: 'INIT_CONFORMED_DATA_OBJECT_LIST', conformedDataObjectList: conformedDataObjectList }),
         onAddDataElementNode: node => dispatch({ type: 'ADD_DATA_ELEMENT_NODE', node: node }),
-        addConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
+        addConnection: connection => dispatch({ type: 'ADD_DE_TO_CDE_CONNECTION', connection: connection }),
         addJob: dataElement => dispatch({ type: 'ADD_JOB', dataElement: dataElement }),
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
         closeCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),

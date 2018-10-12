@@ -31,10 +31,13 @@ class ItemList extends Component {
   }
 
   static getDerivedStateFromProps(props, current_state) {
-    let displayedItems = props.items.filter((el) => {
-      let searchValue = el.name.toLowerCase();
-      return searchValue.indexOf(current_state.currentFilter) !== -1;
-    })
+    let displayedItems = []
+    if(props.items){
+      displayedItems = props.items.filter((el) => {
+        let searchValue = el.name.toLowerCase();
+        return searchValue.indexOf(current_state.currentFilter) !== -1;
+      })
+    }
 
     return {
       currentFilter: current_state.currentFilter,

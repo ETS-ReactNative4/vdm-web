@@ -10,19 +10,20 @@ const governNewCanvasInitialState = {
     ]
 
 }
-const governNewCanvas = (state = governNewCanvasInitialState, action) => {
+const governNewCanvas = (state = { nodes: [], connections: [] }, action) => {
     switch (action.type) {
         case 'ADD_DATA_ELEMENT_NODE':
             state.nodes = [...state.nodes, action.node]
             return state
-            
+
+
 
         case 'ADD_DE_TO_CDE_CONNECTION':
             state.connections = [...state.connections, action.connection]
             return state
 
         case 'CLEAR_GOVERN_CANVAS':
-            return {nodes:[], connections:[]};
+            return { nodes: [], connections: [] };
 
         default:
             return state

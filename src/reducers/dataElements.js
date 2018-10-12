@@ -24,7 +24,7 @@ const dataElementsInitialState = {
     ]
 }
 
-const dataElements = (state = dataElementsInitialState, action) => {
+const dataElements = (state = {}, action) => {
     switch (action.type) {
         case 'INIT_DATA_ELEMENT_LIST':
             return { ...state, dataElementList: action.dataElementList }
