@@ -57,7 +57,7 @@ class Canvas extends Component {
 const mapStateToProps = state => {
   console.log(state);
   return {
-    acquireCanvas: state.acquireCanvas
+    
   }
 }
 

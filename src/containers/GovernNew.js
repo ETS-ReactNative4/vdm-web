@@ -77,7 +77,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/dataElements');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/dataElements');
         xmlhttp.send();
     }
 
@@ -105,7 +105,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/conformedDataElements');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataElements');
         xmlhttp.send();
     }
 
@@ -133,7 +133,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/conformedDataObjects');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataObjects');
         xmlhttp.send();
     }
 

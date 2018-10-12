@@ -88,7 +88,7 @@ class Acquire extends Component {
         })
 
         this.props.addJob(job)
-        // this.svcCreateJob(job)
+        this.svcCreateJob(job)
     }
 
     onRunJob() {
