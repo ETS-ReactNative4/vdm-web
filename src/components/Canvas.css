@@ -7,18 +7,90 @@
   width: 100%;
 }
 
+/* Canvas Styles */
 .w {
   width : 250px;
+  padding: 16px;
+  position: absolute;
+  z-index: 4;
   opacity: 1 !important;
-  border:0px solid white !important;
-  font-family: Arial, Helvetica, sans-serif;
+  border:0px solid white;
   color : #000000 !important;
-	/* border-radius : 0px !important; */
 	padding : 0px  !important;
-    /* -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.2) !important; */
-    /* -moz-box-shadow: 5px 5px 3px 0px rgba(0,0,0,0.2) !important; */
-    /* box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.2) !important; */
+  box-shadow: 2px 2px 19px #e0e0e0;
+  -o-box-shadow: 2px 2px 19px #e0e0e0;
+  -webkit-box-shadow: 2px 2px 19px #e0e0e0;
+  -moz-box-shadow: 2px 2px 19px #e0e0e0;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  opacity: 0.8;
+  cursor: move;
+  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  -webkit-transition: background-color 0.25s ease-in;
+  -moz-transition: background-color 0.25s ease-in;
+  transition: background-color 0.25s ease-in;
 }
+
+.w:hover {
+  background-color: #5c96bc;
+  color: white;
+
+}
+
+.aLabel {
+  -webkit-transition: background-color 0.25s ease-in;
+  -moz-transition: background-color 0.25s ease-in;
+  transition: background-color 0.25s ease-in;
+}
+
+.aLabel.jtk-hover, .jtk-source-hover, .jtk-target-hover {
+  background-color: #1e8151;
+  color: white;
+}
+
+.aLabel {
+  background-color: white;
+  opacity: 0.8;
+  padding: 0.3em;
+  border-radius: 0.5em;
+  border: 1px solid #346789;
+  cursor: pointer;
+}
+
+.ep {
+  position: absolute;
+  bottom: 37%;
+  right: 5px;
+  width: 1em;
+  height: 1em;
+  background-color: orange;
+  cursor: pointer;
+  box-shadow: 0 0 2px black;
+  -webkit-transition: -webkit-box-shadow 0.25s ease-in;
+  -moz-transition: -moz-box-shadow 0.25s ease-in;
+  transition: box-shadow 0.25s ease-in;
+}
+
+.ep:hover {
+  box-shadow: 0 0 6px black;
+}
+
+.statemachine-demo .jtk-endpoint {
+  z-index: 3;
+}
+
+#opened {
+  left: 10em;
+  top: 5em;
+}
+
+.dragHover {
+  border: 2px solid orange;
+}
+
+path, .jtk-endpoint { cursor:pointer; }
 
 .detaildiv {
   background-color : #D6EBFF !important;
@@ -74,4 +146,24 @@
 
 .detaildiv.conformed-data-element {
   background-color : rgb(214, 255, 232) !important;
+}
+
+.preferred{
+  float: right;
+}
+
+input {
+  padding: 0;
+  margin:0;
+  vertical-align: bottom;
+  position: relative;
+  top: -1px;
+  *overflow: hidden;
+}
+
+
+label {
+  display: block;
+  padding-left: 15px;
+  text-indent: -15px;
 }

@@ -357,11 +357,27 @@ class GovernNew extends Component {
             d.className = "w" ;
             d.id = node.id;
             d.dataId = node.dataId;
-            d.innerHTML = `<div class='headerdiv ${node.type}'><b>` + node.itemType + `</b></div><div class='detaildiv ${node.type}'><table class="detailtable">` +
-                `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
-                `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
-                `<tr><td>Source ID:</td><td><input value='${node.dataId}'/></td></tr>` +
-                `</table></div><div class=\"ep\"></div>`;
+
+            var ep  = ''
+            var preferred = ''
+            if(node.type === 'data-element'){
+                ep = '<div class="ep"></div>'
+                preferred = `<div class="preferred"><label><input type="checkbox" id="${node.id}" alt="${node.dataId}" name="${node.name}"/>Preferred</label></div>`
+            }
+
+            var header = `<div class='headerdiv ${node.type}'><b>` + node.itemType + '</b>'+ preferred +'</div>'
+
+            var detail = `<div class='detaildiv ${node.type}'><table class="detailtable">` +
+            `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
+            `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
+            `<tr><td>Source ID:</td><td><input value='${node.dataId}'/></td></tr>` +
+            `</table></div>`
+
+            
+
+            d.innerHTML = header + detail + ep
+            
+
             d.style.left = node.left + "px";
             d.style.top = node.top + "px";
             plumb.getContainer().appendChild(d);
@@ -382,7 +398,18 @@ class GovernNew extends Component {
         $(".w").on('click', function (e) {
             console.log('clicked ' + e.currentTarget.id)
             // nodeClicked(e.currentTarget.id);
-            e.preventDefault();
+            // e.preventDefault();
+        });
+
+        $('.preferred input[type=checkbox]').change(function(e){
+            var elId = e.currentTarget.id
+            var isPreferred = e.currentTarget.checked
+            var preferredId = e.currentTarget.alt
+            var preferredName = e.currentTarget.name
+            // Update the state
+            if(isPreferred == true){
+
+            }
         });
 
     }
