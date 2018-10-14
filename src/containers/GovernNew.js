@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ItemList from '../components/ItemList'
 import Canvas from '../components/Canvas'
-import AcquireActions from '../components/AcquireActions'
+import Actions from '../components/Actions'
 import "./Acquire.css";
 // eslint-disable-next-line
 import { Button, Tabs, Tab } from 'react-bootstrap';
@@ -38,15 +38,33 @@ class GovernNew extends Component {
 
         this.addNode = this.addNode.bind(this);
         this.nodeClicked = this.nodeClicked.bind(this);
-        this.clearCanvas = this.clearCanvas.bind(this);
-        this.closeJob = this.closeJob.bind(this)
+        this.clearConformedDataElementCanvas = this.clearConformedDataElementCanvas.bind(this);
+        this.closeConformedDataElement = this.closeConformedDataElement.bind(this)
         this.onRunJob = this.onRunJob.bind(this)
-        // this.createNewJob = this.createNewJob.bind(this)
-
+  
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
 
+        this.createConformedDataElement = this.createConformedDataElement.bind(this)
+
+    }
+
+    ////////////////////////////
+    // Actions
+    createConformedDataElement(element) {
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: false
+            }
+        })
+
+        this.props.addConformedDataElement(element)
+        // this.svcCreateJob(element)
     }
 
 
@@ -141,20 +159,7 @@ class GovernNew extends Component {
     // API calls - END
     ///////////////////////////
 
-    // createNewJob(dataElement) {
-    //     this.setState({
-    //         actionStates: {
-    //             ...this.state.actionStates,
-    //             canClose: true,
-    //             canShowProps: true,
-    //             canSave: false,
-    //             canNew: false
-    //         }
-    //     })
-
-    //     this.props.addJob(dataElement)
-    //     // this.svcCreateJob(dataElement)
-    // }
+    
 
     onRunJob() {
         // Call the rawfile api method
@@ -244,9 +249,9 @@ class GovernNew extends Component {
         })
     }
 
-    closeJob() {
-        this.props.closeCurrentJob();
-        this.clearCanvas();
+    closeConformedDataElement() {
+        this.props.closeConformedDataElement();
+        this.clearConformedDataElementCanvas();
 
         this.setState({
             actionStates: {
@@ -259,8 +264,8 @@ class GovernNew extends Component {
         })
     }
 
-    clearCanvas() {
-        this.props.clearCanvas();
+    clearConformedDataElementCanvas() {
+        this.props.clearConformedDataElementCanvas();
         this.state.plumb.empty('governNewCanvas')
     }
 
@@ -557,13 +562,15 @@ class GovernNew extends Component {
                                 </div>
 
                                 <div className="col-lg-8">
-                                    {/* <AcquireActions
+                                    <Actions
+                                        element={conformedDataElements.currentConformedDataElement}
+                                        elementType="Conformed Data Element"
                                         actionStates={actionStates}
-                                        onCreateNewJob={this.createNewJob}
-                                        onClearCanvas={this.clearCanvas}
-                                        onCloseJob={this.closeJob}
-                                        onRunJob={this.onRunJob}
-                                    ></AcquireActions> */}
+                                        onCreate={this.createConformedDataElement}
+                                        onClearCanvas={this.clearConformedDataElementCanvas}
+                                        onClose={this.closeConformedDataElement}
+                                        onRun={this.onRunJob}
+                                    ></Actions>
                                     <Canvas
                                         id='governNewCanvas'
                                         addNode={addNode}
@@ -647,10 +654,12 @@ const mapDispatchToProps = dispatch => {
         onInitConformedDataObjectList: conformedDataObjectList => dispatch({ type: 'INIT_CONFORMED_DATA_OBJECT_LIST', conformedDataObjectList: conformedDataObjectList }),
         onAddDataElementNode: node => dispatch({ type: 'ADD_DATA_ELEMENT_NODE', node: node }),
         addConnection: connection => dispatch({ type: 'ADD_DE_TO_CDE_CONNECTION', connection: connection }),
-        addJob: dataElement => dispatch({ type: 'ADD_JOB', dataElement: dataElement }),
+        addConformedDataElement: conformedDataElement => dispatch({ type: 'ADD_CONFORMED_DATA_ELEMENT', conformedDataElement: conformedDataElement }),
+        closeConformedDataElement: () => dispatch({ type: 'CLEAR_CURRENT_CONFORMED_DATA_ELEMENT' }),
+        clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
-        closeCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
-        clearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
+        
+        
 
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
