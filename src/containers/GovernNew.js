@@ -731,7 +731,7 @@ const mapDispatchToProps = dispatch => {
         updateCurrentConformedDataElement: conformedDataElement => dispatch({ type: 'UPDATE_CURRENT_CONFORMED_DATA_ELEMENT', conformedDataElement: conformedDataElement }),
         // setPreferredDataElement: preferred => dispatch({ type: 'SET_PREFERRED_D_E', preferred: preferred }),
         closeConformedDataElement: () => dispatch({ type: 'CLEAR_CURRENT_CONFORMED_DATA_ELEMENT' }),
-        clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
+        clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_GOVERN_CANVAS' }),
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
 
 
