@@ -3,6 +3,12 @@ const app = express();
 const router = express.Router();
 const port = 4000;
 
+var bodyParser = require('body-parser')
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
+
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -26,38 +32,8 @@ var fs = require('fs');
 var file = fs.readFileSync('connections.txt', "utf8");
 const jsonData = JSON.parse(file);
 
-const nodes = [{
-    name: 'Nkia',
-    id: 0,
-    children: [{
-        name: 'R&D',
-        id: 1
-    }, {
-        name: 'Sales',
-        id: 2,
-        children: [{
-            name: 'Global',
-            id: 3
-        }]
-    }]
-},
-
-{
-    name: 'Hello',
-    id: 0,
-    children: [{
-        name: 'R&D',
-        id: 1
-    }, {
-        name: 'Sales',
-        id: 2,
-        children: [{
-            name: 'Global',
-            id: 3
-        }]
-    }]
-}
-];
+var jobs = []
+var conformedDataElements = []
 
 router.get('/getConnections', (request, response) => {
     var fs = require('fs');
@@ -69,7 +45,7 @@ router.get('/getConnections', (request, response) => {
 
 
 router.post('/rawfile', (request, response) => {
-    var jsonData = {dataSetId:447,wrangledId:1190,name:"/data/Ins_Demo_Parameters.csv",flowId:310,url:"http://52.201.45.52:3005/data/304/1177"}
+    var jsonData = { dataSetId: 447, wrangledId: 1190, name: "/data/Ins_Demo_Parameters.csv", flowId: 310, url: "http://52.201.45.52:3005/data/304/1177" }
     response.json(jsonData);
 });
 
@@ -93,6 +69,19 @@ router.get('/exploredDatasets', (request, response) => {
     response.json(JSON.parse(fs.readFileSync('exploredDatasets.json', "utf8")));
 });
 
+///////
+// Jobs
+////////////
+router.get('/jobs', (request, response) => {
+    response.json(JSON.parse(fs.readFileSync('jobs.json', "utf8")));
+});
+
+router.post('/jobs', (request, response) => {
+    console.log(request.body)
+    jobs.push(request.body)
+    var ret = { id: jobs.length};
+    response.json(ret);
+});
 
 /////////////////////
 // DataElements

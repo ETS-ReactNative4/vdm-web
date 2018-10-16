@@ -1,0 +1,86 @@
+{
+    "JobList": [
+        {
+            "jobId": 1,
+            "name": "Ingest Customer",
+            "description": "Ingest Customer data from …",
+            "type": "Batch",
+            "layer": "Source-To-Raw",
+            "sources": [
+                {
+                    "ID": 1,
+                    "name": " Customers.csv"
+                }
+            ],
+            "targets": [
+                {
+                    "ID": 2,
+                    "name": "Customers.csv"
+                }
+            ],
+            "schedule": {
+                "Frequency": "Weekly",
+                "DayOfWeek": "Fri",
+                "Time": "23:00"
+            },
+            "activeIndicator": "Y",
+            "runHistory": [
+                {
+                    "StartTime": "1/1/2018 23:00",
+                    "EndTime": "1/1/2018 23:30",
+                    "Status": "Completed",
+                    "Records Read": 100,
+                    "Records Written": 100
+                },
+                {
+                    "StartTime": "1/8/2018 23:00",
+                    "EndTime": "1/8/2018 23:30",
+                    "Status": "Failed",
+                    "Records Read": 100,
+                    "Records Written": 90
+                }
+            ]
+        },
+        {
+            "jobId": 2,
+            "name": "Ingest Product",
+            "description": "Ingest Product data from …",
+            "type": "Batch",
+            "layer": "Source-To-Raw",
+            "sources": [
+                {
+                    "ID": 1,
+                    "name": " Products.csv"
+                }
+            ],
+            "targets": [
+                {
+                    "ID": 2,
+                    "name": "Productss.csv"
+                }
+            ],
+            "schedule": {
+                "Frequency": "Weekly",
+                "DayOfWeek": "Fri",
+                "Time": "23:00"
+            },
+            "activeIndicator": "Y",
+            "runHistory": [
+                {
+                    "StartTime": "1/1/2018 23:00",
+                    "EndTime": "1/1/2018 23:30",
+                    "Status": "Completed",
+                    "Records Read": 100,
+                    "Records Written": 100
+                },
+                {
+                    "StartTime": "1/8/2018 23:00",
+                    "EndTime": "1/8/2018 23:30",
+                    "Status": "Failed",
+                    "Records Read": 100,
+                    "Records Written": 90
+                }
+            ]
+        }
+    ]
+}

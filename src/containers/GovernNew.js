@@ -40,8 +40,9 @@ class GovernNew extends Component {
         this.nodeClicked = this.nodeClicked.bind(this);
         this.clearConformedDataElementCanvas = this.clearConformedDataElementCanvas.bind(this);
         this.closeConformedDataElement = this.closeConformedDataElement.bind(this)
-        this.onRunJob = this.onRunJob.bind(this)
-  
+        this.updateCurrentConformedDataElement = this.updateCurrentConformedDataElement.bind(this)
+        this.setCurrentConformedDataElement = this.setCurrentConformedDataElement.bind(this)
+
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
@@ -52,7 +53,7 @@ class GovernNew extends Component {
 
     ////////////////////////////
     // Actions
-    createConformedDataElement(element) {
+    createConformedDataElement(el) {
         this.setState({
             actionStates: {
                 ...this.state.actionStates,
@@ -63,8 +64,59 @@ class GovernNew extends Component {
             }
         })
 
-        this.props.addConformedDataElement(element)
-        // this.svcCreateJob(element)
+        // Add to metaservice
+
+
+        // Add to state
+        this.props.addConformedDataElement(el)
+
+        var node = { left: 300, top: 50, type: 'conformed-data-element', name: el.name, id: el.id };
+        this.clearConformedDataElementCanvas()
+        this.addNode(node, this.state.plumb, null, true);
+    }
+
+    setPreferredDataElement(preferred) {
+        var de = this.props.conformedDataElements.currentConformedDataElement
+        de.preferredSource = preferred
+        this.updateCurrentConformedDataElement()
+
+    }
+
+    ////////////
+    // UI Actions
+    //////////////
+    updateCurrentConformedDataElement() {
+        var self = this
+        var element = this.props.conformedDataElements.currentConformedDataElement
+        // Update the sources if any based onthe connections
+        let connections = this.props.governNewCanvas.connections.filter(c => c.targetDataId == element.id)
+        element.sources = []
+
+        for (let c of connections) {
+            console.log(c);
+            let de = self.props.dataElements.dataElementList.find(d => d.id == c.sourceDataId)
+            if (de) {
+                element.sources.push(de)
+            }
+        }
+
+
+        console.log(element)
+        this.props.updateCurrentConformedDataElement(element)
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
+                canNew: true
+            }
+        })
+    }
+
+    setCurrentConformedDataElement(dataId){
+        let element = this.props.conformedDataElements.conformedDataElementList.find(j => j.id == dataId)
+        this.props.updateCurrentConformedDataElement(element)
     }
 
 
@@ -95,7 +147,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/dataElements');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/dataElements');
         xmlhttp.send();
     }
 
@@ -123,7 +175,7 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/conformedDataElements');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataElements');
         xmlhttp.send();
     }
 
@@ -151,43 +203,37 @@ class GovernNew extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/conformedDataObjects');
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataObjects');
         xmlhttp.send();
     }
 
-    ///////////////////////////
-    // API calls - END
-    ///////////////////////////
-
-    
-
-    onRunJob() {
-        // Call the rawfile api method
+    svcCreateConformedDataElement(conformedDataElement) {
         var xmlhttp = new XMLHttpRequest();
-
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
-
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-
                     console.log(xmlhttp.responseText);
-
-                    $('#triurl').val(xmlhttp.responseText);
-                    $('#modal1').show()
-
                 } else {
                     console.log('failed');
                 }
             }
         }
 
-        var rawFilePayload = JSON.stringify({ rawFile: this.props.dataElements.currentJob.Target })
-        console.log(rawFilePayload)
+        var payload = JSON.stringify(conformedDataElement)
+        console.log(payload)
 
         // TODO: update the war so that this allows origin *. Using LOCAL for now
-        xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/vdm/rawfile');
-        xmlhttp.send(rawFilePayload);
+        xmlhttp.open("POST", config.VDM_META_SERVICE_HOST + '/conformedDataObjects');
+        xmlhttp.send(payload);
     }
+
+    ///////////////////////////
+    // API calls - END
+    ///////////////////////////
+
+
+
+
 
     onAddConnection(connection) {
         // At this point we already have a defined connection
@@ -279,10 +325,7 @@ class GovernNew extends Component {
     // Add the node to the node list and to the canvas
     addNode(node, plumb, nodeClicked, isNewNode) {
 
-        // if (this.props.dataElements.currentJob == undefined || this.props.dataElements.currentJob.name === '') {
-        //     window.acquireActions.handleNewButtonClicked()
-        //     return
-        // }
+        var self = this
 
         if (node.type == "data") {
             return false;
@@ -290,7 +333,7 @@ class GovernNew extends Component {
 
         // Init new node properties
         if (isNewNode === true) {
-            if(node.id == null || node.id === undefined || node.id == ''){
+            if (node.id == null || node.id === undefined || node.id == '') {
                 node.id = window.uuid()
             }
 
@@ -354,34 +397,40 @@ class GovernNew extends Component {
             return true;
         };
 
-        var newNode = function () {
+        var newNode = function (self) {
+            console.log(self.props.conformedDataElements.currentConformedDataElement)
             var d = document.createElement("div");
             var nodeName = node.name;
             if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
 
-            d.className = "w" ;
+            d.className = "w";
             d.id = node.id;
             d.dataId = node.dataId;
 
-            var ep  = ''
+            var ep = ''
             var preferred = ''
-            if(node.type === 'data-element'){
+            if (node.type === 'data-element') {
+                if (self.props.conformedDataElements.currentConformedDataElement.preferredSource) {
+                    node.preferredId = self.props.conformedDataElements.currentConformedDataElement.preferredSource.id
+                }
                 ep = '<div class="ep"></div>'
-                preferred = `<div class="preferred"><label><input type="checkbox" id="${node.id}" alt="${node.dataId}" name="${node.name}"/>Preferred</label></div>`
+                var isPreferred = node.dataId == node.preferredId + "" ? "checked" : ""
+                preferred = `<div class="preferred"><label><input type="checkbox" class="preferred-d-e" id="${node.id}" alt="${node.dataId}" name="${node.name}" ${isPreferred}/>Preferred</label></div>`
             }
 
-            var header = `<div class='headerdiv ${node.type}'><b>` + node.itemType + '</b>'+ preferred +'</div>'
+
+            var header = `<div class='headerdiv ${node.type}'><b>` + node.itemType + '</b>' + preferred + '</div>'
 
             var detail = `<div class='detaildiv ${node.type}'><table class="detailtable">` +
-            `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
-            `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
-            `<tr><td>Source ID:</td><td><input value='${node.dataId}'/></td></tr>` +
-            `</table></div>`
+                `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
+                `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
+                `<tr><td>Source ID:</td><td><input value='${node.dataId}'/></td></tr>` +
+                `</table></div>`
 
-            
+
 
             d.innerHTML = header + detail + ep
-            
+
 
             d.style.left = node.left + "px";
             d.style.top = node.top + "px";
@@ -389,31 +438,44 @@ class GovernNew extends Component {
             return initNode(d);
         };
 
-        
+
 
         // Create the node
-        if (newNode() === true) {
+        if (newNode(self) === true) {
             // Add the new node only if it does not already exist
-            if(isNewNode === true){
+            if (isNewNode === true) {
                 this.props.onAddDataElementNode(node)
             }
-            
+
         }
 
         $(".w").on('click', function (e) {
             console.log('clicked ' + e.currentTarget.id)
+
+
             // nodeClicked(e.currentTarget.id);
             // e.preventDefault();
         });
 
-        $('.preferred input[type=checkbox]').change(function(e){
-            var elId = e.currentTarget.id
+        $('.preferred input[type=checkbox]').change(function (e) {
+            var elementId = e.currentTarget.id
             var isPreferred = e.currentTarget.checked
-            var preferredId = e.currentTarget.alt
-            var preferredName = e.currentTarget.name
+            var preferred = {
+                id: e.currentTarget.alt,
+                name: e.currentTarget.name
+            }
             // Update the state
-            if(isPreferred == true){
+            // Uncheck the other sources
+            $('.preferred-d-e').each(function (index, obj) {
+                if (this.id != elementId) {
+                    this.checked = false
+                }
+            });
 
+            if (isPreferred) {
+                self.setPreferredDataElement(preferred)
+            } else {
+                self.setPreferredDataElement({ id: 0 })
             }
         });
 
@@ -421,8 +483,7 @@ class GovernNew extends Component {
 
 
     componentDidMount() {
-
-        let addNode = this.addNode;
+        let self = this
 
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
@@ -465,9 +526,12 @@ class GovernNew extends Component {
             console.log("Source:" + info.connection.sourceId)
             console.log("Target:" + info.connection.targetId)
 
+            // Have to add the data Id since the dataid is not unique between object types
             var connection = {
                 source: info.connection.sourceId,
+                sourceDataId: info.source.dataId,
                 target: info.connection.targetId,
+                targetDataId: info.target.dataId,
                 type: 'basic'
             }
             window.onAddConnection(connection)
@@ -495,17 +559,26 @@ class GovernNew extends Component {
                     var el = ui.draggable[0];
                     var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id };
 
+
                     if (el.className.indexOf('conformed-data-element') >= 0) {
                         node.type = 'conformed-data-element'
                         var isNewNode = true;
-                        addNode(node, plumb, null, isNewNode);
+                        self.clearConformedDataElementCanvas()
+                        self.addNode(node, plumb, null, isNewNode);
+
+                        // Update the current conformed data element
+                        self.setCurrentConformedDataElement(node.dataId)
                         return
                     }
 
                     if (el.className.indexOf('data-element') >= 0) {
+                        if (self.props.conformedDataElements.currentConformedDataElement.preferredSource) {
+                            node.preferredId = self.props.conformedDataElements.currentConformedDataElement.preferredSource.id
+                        }
+
                         node.type = 'data-element'
                         var isNewNode = true;
-                        addNode(node, plumb, null, isNewNode);
+                        self.addNode(node, plumb, null, isNewNode);
                         return
                     }
 
@@ -569,7 +642,7 @@ class GovernNew extends Component {
                                         onCreate={this.createConformedDataElement}
                                         onClearCanvas={this.clearConformedDataElementCanvas}
                                         onClose={this.closeConformedDataElement}
-                                        onRun={this.onRunJob}
+                                        onSave={this.updateCurrentConformedDataElement}
                                     ></Actions>
                                     <Canvas
                                         id='governNewCanvas'
@@ -655,11 +728,13 @@ const mapDispatchToProps = dispatch => {
         onAddDataElementNode: node => dispatch({ type: 'ADD_DATA_ELEMENT_NODE', node: node }),
         addConnection: connection => dispatch({ type: 'ADD_DE_TO_CDE_CONNECTION', connection: connection }),
         addConformedDataElement: conformedDataElement => dispatch({ type: 'ADD_CONFORMED_DATA_ELEMENT', conformedDataElement: conformedDataElement }),
+        updateCurrentConformedDataElement: conformedDataElement => dispatch({ type: 'UPDATE_CURRENT_CONFORMED_DATA_ELEMENT', conformedDataElement: conformedDataElement }),
+        // setPreferredDataElement: preferred => dispatch({ type: 'SET_PREFERRED_D_E', preferred: preferred }),
         closeConformedDataElement: () => dispatch({ type: 'CLEAR_CURRENT_CONFORMED_DATA_ELEMENT' }),
         clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
-        
-        
+
+
 
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };

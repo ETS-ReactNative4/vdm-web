@@ -27,6 +27,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "body-parser": "^1.18.3",
     "jquery": "^3.3.1",
     "jqueryui": "^1.11.1",
     "react-jsonschema-form": "^1.0.4",

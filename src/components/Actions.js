@@ -33,7 +33,7 @@ class Actions extends Component {
 
     handleSave() {
         this.setState({ isSaving: true });
-        this.props.onRunConformedDataElement()
+        this.props.onSave()
     }
 
     handleNewButtonClicked() {
@@ -121,7 +121,7 @@ class Actions extends Component {
                     >Properties</Button>
                 </ButtonGroup>
 
-                <Label className='job-name-label' bsStyle="primary">{name}</Label>
+                <Label className='name-label' bsStyle="primary">{name}</Label>
                 <Modal show={this.state.showNewTextInput} onHide={this.handleClose}>
                     <Modal.Header>
                         <Modal.Title>Create New {elementType}</Modal.Title>

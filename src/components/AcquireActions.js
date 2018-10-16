@@ -115,7 +115,7 @@ class AcquireActions extends Component {
                     >Properties</Button>
                 </ButtonGroup>
 
-                <Label className='job-name-label' bsStyle="primary">{jobName}</Label>
+                <Label className='name-label' bsStyle="primary">{jobName}</Label>
                 <Modal show={this.state.showNewTextInput} onHide={this.handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Create a New Flow</Modal.Title>

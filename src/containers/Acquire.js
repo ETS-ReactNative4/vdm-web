@@ -46,6 +46,8 @@ class Acquire extends Component {
         this.closeJob = this.closeJob.bind(this)
         this.onRunJob = this.onRunJob.bind(this)
         this.createNewJob = this.createNewJob.bind(this)
+        this.svcCreateJob = this.svcCreateJob.bind(this)
+        this.fetchJobs = this.fetchJobs.bind(this)
 
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -53,12 +55,32 @@ class Acquire extends Component {
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
+
+
     }
 
     ///////////////////////////
     // API calls
     ///////////////////////////
+    fetchJobs = () => {
+        var self = this
+        fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            method: 'get'
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            console.log(data.JobList)
+            self.props.onInitJobList(data.JobList)
+        });
+
+    }
+
     svcCreateJob = (job) => {
+        var self = this
         fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
             headers: {
                 'Content-Type': 'application/json',
@@ -67,13 +89,11 @@ class Acquire extends Component {
             method: 'post',
             body: JSON.stringify(job)
         }).then(function (response) {
-            var result = response.json()
-            job.ID = result.ID
-            this.props.addJob(job)
-
+            return response.json()
         }).then(function (data) {
-            console.log('Create job failed: ${job.name} ${data}');
+            console.log(data);
         });
+
     }
 
     createNewJob(job) {
@@ -419,6 +439,8 @@ class Acquire extends Component {
         xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/getConnections');
         xmlhttp.send();
 
+        this.fetchJobs()
+
     }
 
     render() {
@@ -507,6 +529,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
         addConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
+        onInitJobList: jobList => dispatch({ type: 'INIT_JOB_LIST', jobList: jobList }),
         addJob: job => dispatch({ type: 'ADD_JOB', job: job }),
         onUpdateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
         closeCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
@@ -515,27 +538,6 @@ const mapDispatchToProps = dispatch => {
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };
 };
-
-
-
-/*const getDatasources = () => {
-    return fetch('http://localhost:4000/api/datasources')
-        .then(res => res.json())
-        .then((result) => JSON.parse(result))
-};
-
-const getAcquiredDatasets = () => {
-    return fetch('http://localhost:4000/api/acquiredDatasets', {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    }).then(res => res.json())
-};*/
-
-/*const getAllData = () => {
-    return Promise.all([getDatasources(), getAcquiredDatasets()])
-};*/
 
 export default connect(
     mapStateToProps,

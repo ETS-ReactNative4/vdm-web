@@ -1,0 +1,26 @@
+{
+    "Job": {
+        "name": "Ingest Cubstomer",
+        "description": "Ingest Customer data from …",
+        "type": "Batch",
+        "layer": "Source-To-Raw",
+        "sources": [
+            {
+                "id": 1,
+                "name": " Customers.csv"
+            }
+        ],
+        "targets": [
+            {
+                "id": 2,
+                "name": "Customers.csv"
+            }
+        ],
+        "schedule": {
+            "frequency": "Weekly",
+            "dayOfWeek": "Fri",
+            "time": "23:00"
+        },
+        "activeIndicator": "Y"
+    }
+}
