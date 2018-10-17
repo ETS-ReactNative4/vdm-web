@@ -65,6 +65,10 @@ class GovernNew extends Component {
         })
 
         // Add to metaservice
+        // This will get the id
+
+        // For now just assgin an id
+        el.id = window.uuid()
 
 
         // Add to state
@@ -114,7 +118,7 @@ class GovernNew extends Component {
         })
     }
 
-    setCurrentConformedDataElement(dataId){
+    setCurrentConformedDataElement(dataId) {
         let element = this.props.conformedDataElements.conformedDataElementList.find(j => j.id == dataId)
         this.props.updateCurrentConformedDataElement(element)
     }
@@ -326,6 +330,7 @@ class GovernNew extends Component {
     addNode(node, plumb, nodeClicked, isNewNode) {
 
         var self = this
+        window.governNewCanvas = self.props.governNewCanvas
 
         if (node.type == "data") {
             return false;
@@ -352,8 +357,7 @@ class GovernNew extends Component {
         }
 
         var initNode = function (el) {
-
-            // initialise draggable elements.
+              // initialise draggable elements.
             plumb.draggable(el, {
                 containment: true,
                 grid: [50, 50]
@@ -595,7 +599,7 @@ class GovernNew extends Component {
             });
         });
 
-        window.governNewCanvas = this.props.governNewCanvas
+        
     }
 
     render() {
