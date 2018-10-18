@@ -94,7 +94,7 @@ class Explore extends Component {
         	    // show the loading overlay
         	    this.setState({loading: true})
         	    // fetch your data
-        	   fetch(config.VDM_SERVICE_HOST + '/vdm/getWrangledSets')
+        	   fetch(config.VDM_SERVICE_HOST + '/getWrangledSets')
             .then(res => res.json())
             .then(
                 (result) => {
