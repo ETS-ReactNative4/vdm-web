@@ -148,6 +148,14 @@ path, .jtk-endpoint { cursor:pointer; }
   background-color : rgb(214, 255, 232) !important;
 }
 
+.headerdiv.conformed-data-object {
+  background-color : rgb(221, 177, 94) !important;
+}
+
+.detaildiv.conformed-data-object {
+  background-color : rgb(240, 212, 161) !important;
+}
+
 .preferred{
   float: right;
 }

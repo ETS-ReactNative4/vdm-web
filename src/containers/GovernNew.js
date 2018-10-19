@@ -54,6 +54,8 @@ class GovernNew extends Component {
         this.createConformedDataElement = this.createConformedDataElement.bind(this)
         this.getPlumbInstance = this.getPlumbInstance.bind(this)
 
+        this.clearCdoCanvas = this.clearCdoCanvas.bind(this)
+        this.setCurrentCdo = this.setCurrentCdo.bind(this)
     }
 
     ////////////////////////////
@@ -92,7 +94,7 @@ class GovernNew extends Component {
     }
 
     ////////////
-    // UI Actions
+    // CDE - UI Actions
     //////////////
     updateCurrentConformedDataElement() {
         var self = this
@@ -126,6 +128,44 @@ class GovernNew extends Component {
     setCurrentConformedDataElement(dataId) {
         let element = this.props.conformedDataElements.conformedDataElementList.find(j => j.id == dataId)
         this.props.updateCurrentConformedDataElement(element)
+    }
+
+
+    /////////
+    // CDO - UI Actions
+    //////
+    updateCurrentCdo() {
+        var self = this
+        var element = this.props.conformedDataObjects.currentConformedDataObject
+        // Update the sources if any based onthe connections
+        let connections = this.props.cdoCanvas.connections.filter(c => c.targetDataId == element.id)
+        element.sources = []
+
+        for (let c of connections) {
+            console.log(c);
+            let de = self.props.dataElements.dataElementList.find(d => d.id == c.sourceDataId)
+            if (de) {
+                element.sources.push(de)
+            }
+        }
+
+
+        console.log(element)
+        this.props.updateCurrentCdo(element)
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
+                canNew: true
+            }
+        })
+    }
+
+    setCurrentCdo(dataId) {
+        let element = this.props.conformedDataObjects.conformedDataObjectList.find(j => j.id == dataId)
+        this.props.updateCurrentCdo(element)
     }
 
 
@@ -324,6 +364,11 @@ class GovernNew extends Component {
         this.state.cdePlumb.empty(CDE_CANVAS)
     }
 
+    clearCdoCanvas() {
+        this.props.clearCdoCanvas();
+        this.state.cdoPlumb.empty(CDO_CANVAS)
+    }
+
     // Update the current selected node
     nodeClicked = nodeId => {
         var clickedNode = this.props.acquireCanvas.nodes.find(n => n.id === nodeId);
@@ -358,6 +403,8 @@ class GovernNew extends Component {
                 node.itemType = "Data Element"
             } else if (node.type === 'conformed-data-element') {
                 node.itemType = "Conformed Data Element"
+            } else if (node.type === 'conformed-data-object') {
+                node.itemType = "Conformed Data Object"
             }
 
         }
@@ -401,9 +448,7 @@ class GovernNew extends Component {
                             alert("Maximum connections (" + info.maxConnections + ") reached");
                         }
                     });
-                }
-
-                if (node.type === 'conformed-data-element') {
+                } else if (node.type === 'conformed-data-element') {
                     plumb.makeTarget(el, {
                         dropOptions: { hoverClass: "dragHover" },
                         anchor: "Continuous",
@@ -439,7 +484,6 @@ class GovernNew extends Component {
         };
 
         var newNode = function (self) {
-            console.log(self.props.conformedDataElements.currentConformedDataElement)
             var d = document.createElement("div");
             var nodeName = node.name;
             if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
@@ -632,7 +676,13 @@ class GovernNew extends Component {
                     }
 
                     if (el.className.indexOf('conformed-data-object') >= 0) {
+                        node.type = 'conformed-data-object'
+                        var isNewNode = true;
+                        self.clearCdoCanvas()
+                        self.addNode(node, self.state.cdoPlumb, null, isNewNode);
 
+                        // Update the current conformed data element
+                        self.setCurrentCdo(node.dataId)
                         return
                     }
 
@@ -751,7 +801,7 @@ class GovernNew extends Component {
                                         onCreate={this.createConformedDataObject}
                                         onClearCanvas={this.clearConformedDataObjectCanvas}
                                         onClose={this.closeConformedDataObject}
-                                        onSave={this.updateCurrentConformedDataObject}
+                                        onSave={this.updateCurrentCdo}
                                     ></Actions>
                                     <Canvas
                                         id={CDO_CANVAS}
@@ -813,8 +863,8 @@ const mapDispatchToProps = dispatch => {
         clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_GOVERN_CANVAS' }),
         onAddCdeNode: node => dispatch({ type: 'ADD_CDE_NODE', node: node }),
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
-
-
+        clearCdoCanvas: () => dispatch({ type: 'CLEAR_CDO_CANVAS' }),
+        updateCurrentCdo: cdo => dispatch({ type: 'UPDATE_CURRENT_CDO', cdo: cdo }),
 
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };

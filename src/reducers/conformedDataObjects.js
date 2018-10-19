@@ -28,18 +28,18 @@ const conformedDataObjects = (state = conformedDataObjectsInitialState, action) 
         case 'ADD_CONFORMED_DATA_OBJECT':
             action.conformedDataObject.updateDate = (new Date()).toLocaleString();
             return {
-                currentDataElement: action.conformedDataObject,
+                currentConformedDataObject: action.conformedDataObject,
                 conformedDataObjectList: [...state.conformedDataObjectList, action.conformedDataObject],
             }
 
-        case 'UPDATE_CURRENT_CONFORMED_DATA_OBJECT': {
-            action.conformedDataObject.updateDate = (new Date()).toLocaleString();
-            var cleaned = state.conformedDataObjectList.filter(j => j.conformedDataObjectId != action.conformedDataObject.conformedDataObjectId)
-            return { ...state, currentDataElement: action.conformedDataObject, conformedDataObjectList: cleaned.concat(action.conformedDataObject) }
+        case 'UPDATE_CURRENT_CDO': {
+            action.cdo.updateDate = (new Date()).toLocaleString();
+            var cleaned = state.conformedDataObjectList.filter(j => j.id != action.cdo.id)
+            return { ...state, currentConformedDataObject: action.cdo, conformedDataObjectList: cleaned.concat(action.cdo) }
         }
 
         case 'CLEAR_CURRENT_CONFORMED_DATA_OBJECT':
-            return { ...state, currentDataElement: { name: '' } }
+            return { ...state, currentConformedDataObject: { name: '' } }
 
         default:
             return state
