@@ -76,6 +76,7 @@ class ItemList extends Component {
     let items = this.state.displayedItems;
     let icon = this.props.icon
     let itemType = this.props.itemType
+    let dropTarget = this.props.dropTarget
     return (
       <div className="list-panel">
         <h4>{this.props.title}</h4>
@@ -89,6 +90,7 @@ class ItemList extends Component {
                 icon={icon}
                 id={el.id}
                 name={el.name}
+                dropTarget={dropTarget}
                 updateDate={el.updateDate}
               />
             })

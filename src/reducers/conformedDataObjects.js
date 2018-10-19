@@ -1,6 +1,6 @@
 // Reducer to keep track of conformedDataObjects within the UI
 const conformedDataObjectsInitialState = {
-    currentDataElement: {
+    currentConformedDataObject: {
         id: '',
         conformedDataObjectId: 0,
         name: '',

@@ -1,4 +1,4 @@
-#canvas, #governCanvas, #governNewCanvas {
+.canvas {
   padding: 20px;
   height: calc(100vh - 100px);
   background-image: url('/images/grid.gif');

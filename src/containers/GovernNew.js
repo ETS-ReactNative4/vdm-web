@@ -18,6 +18,9 @@ const log = (type) => console.log.bind(console, type);
 
 const jsPlumb = window.jsPlumb;
 
+const CDE_CANVAS = "governNewCanvas"
+const CDO_CANVAS = "cdoCanvas"
+
 class GovernNew extends Component {
 
     constructor(props) {
@@ -26,7 +29,8 @@ class GovernNew extends Component {
             error: null,
             isLoaded: false,
             currentNode: null,
-            plumb: null,
+            cdePlumb: null,
+            cdoPlumb: null,
             actionStates: {
                 canNew: true,
                 canSave: false,
@@ -48,6 +52,7 @@ class GovernNew extends Component {
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
 
         this.createConformedDataElement = this.createConformedDataElement.bind(this)
+        this.getPlumbInstance = this.getPlumbInstance.bind(this)
 
     }
 
@@ -76,7 +81,7 @@ class GovernNew extends Component {
 
         var node = { left: 300, top: 50, type: 'conformed-data-element', name: el.name, id: el.id };
         this.clearConformedDataElementCanvas()
-        this.addNode(node, this.state.plumb, null, true);
+        this.addNode(node, this.state.cdePlumb, null, true);
     }
 
     setPreferredDataElement(preferred) {
@@ -143,7 +148,7 @@ class GovernNew extends Component {
                     });
 
                     // Update the state
-                    self.props.onInitDataElementList(json.DataElementList)
+                    self.props.onInitDataElementList(json.dataElementList)
 
                 } else {
                     console.log('failed');
@@ -316,7 +321,7 @@ class GovernNew extends Component {
 
     clearConformedDataElementCanvas() {
         this.props.clearConformedDataElementCanvas();
-        this.state.plumb.empty('governNewCanvas')
+        this.state.cdePlumb.empty(CDE_CANVAS)
     }
 
     // Update the current selected node
@@ -331,6 +336,7 @@ class GovernNew extends Component {
 
         var self = this
         window.governNewCanvas = self.props.governNewCanvas
+        window.cdoCanvas = self.props.cdoCanvas
 
         if (node.type == "data") {
             return false;
@@ -357,7 +363,7 @@ class GovernNew extends Component {
         }
 
         var initNode = function (el) {
-              // initialise draggable elements.
+            // initialise draggable elements.
             plumb.draggable(el, {
                 containment: true,
                 grid: [50, 50]
@@ -368,35 +374,66 @@ class GovernNew extends Component {
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
-                    var node = window.governNewCanvas.nodes.find(node => node.id === ui.helper[0].id)
-                    node.left = ui.position.left
-                    node.top = ui.position.top
+                    var dropTarget = event.target.dropTarget
+                    if (dropTarget == CDE_CANVAS) {
+                        let node = window.governNewCanvas.nodes.find(node => node.id === event.target.id)
+                        node.left = ui.position.left
+                        node.top = ui.position.top
+                    } else if (dropTarget == CDO_CANVAS) {
+                        node = window.cdoCanvas.nodes.find(node => node.id === ui.helper[0].id)
+                        node.left = ui.position.left
+                        node.top = ui.position.top
+                    }
                 }
             });
 
-            if (node.type === 'data-element') {
-                plumb.makeSource(el, {
-                    filter: ".ep",
-                    anchor: "Continuous",
-                    connectionType: "basic",
-                    extract: {
-                        "action": "the-action"
-                    },
-                    maxConnections: 2,
-                    onMaxConnections: function (info, e) {
-                        alert("Maximum connections (" + info.maxConnections + ") reached");
-                    }
-                });
+            if (node.dropTarget === CDE_CANVAS) {
+                if (node.type === 'data-element') {
+                    plumb.makeSource(el, {
+                        filter: ".ep",
+                        anchor: "Continuous",
+                        connectionType: "basic",
+                        extract: {
+                            "action": "the-action"
+                        },
+                        maxConnections: 2,
+                        onMaxConnections: function (info, e) {
+                            alert("Maximum connections (" + info.maxConnections + ") reached");
+                        }
+                    });
+                }
+
+                if (node.type === 'conformed-data-element') {
+                    plumb.makeTarget(el, {
+                        dropOptions: { hoverClass: "dragHover" },
+                        anchor: "Continuous",
+                        allowLoopback: false
+                    });
+                }
+            } else if (node.dropTarget === CDO_CANVAS) {
+                if (node.type === 'conformed-data-element') {
+                    plumb.makeSource(el, {
+                        filter: ".ep",
+                        anchor: "Continuous",
+                        connectionType: "basic",
+                        extract: {
+                            "action": "the-action"
+                        },
+                        maxConnections: 2,
+                        onMaxConnections: function (info, e) {
+                            alert("Maximum connections (" + info.maxConnections + ") reached");
+                        }
+                    });
+                } else if (node.type === 'conformed-data-object') {
+                    plumb.makeTarget(el, {
+                        dropOptions: { hoverClass: "dragHover" },
+                        anchor: "Continuous",
+                        allowLoopback: false
+                    });
+
+                }
             }
 
-            if (node.type === 'conformed-data-element') {
-                plumb.makeTarget(el, {
-                    dropOptions: { hoverClass: "dragHover" },
-                    anchor: "Continuous",
-                    allowLoopback: false
-                });
-
-            }
 
             return true;
         };
@@ -410,6 +447,7 @@ class GovernNew extends Component {
             d.className = "w";
             d.id = node.id;
             d.dataId = node.dataId;
+            d.dropTarget = node.dropTarget
 
             var ep = ''
             var preferred = ''
@@ -420,6 +458,10 @@ class GovernNew extends Component {
                 ep = '<div class="ep"></div>'
                 var isPreferred = node.dataId == node.preferredId + "" ? "checked" : ""
                 preferred = `<div class="preferred"><label><input type="checkbox" class="preferred-d-e" id="${node.id}" alt="${node.dataId}" name="${node.name}" ${isPreferred}/>Preferred</label></div>`
+            } else if (node.type === 'conformed-data-element') {
+                if (node.dropTarget === CDO_CANVAS) {
+                    ep = '<div class="ep"></div>'
+                }
             }
 
 
@@ -448,7 +490,13 @@ class GovernNew extends Component {
         if (newNode(self) === true) {
             // Add the new node only if it does not already exist
             if (isNewNode === true) {
-                this.props.onAddDataElementNode(node)
+                var containerId = plumb.getContainer().id
+                if (containerId === CDE_CANVAS) {
+                    this.props.onAddDataElementNode(node)
+                } else if (containerId === CDO_CANVAS) {
+                    this.props.onAddCdeNode(node)
+                }
+
             }
 
         }
@@ -485,10 +533,8 @@ class GovernNew extends Component {
 
     }
 
-
-    componentDidMount() {
+    getPlumbInstance(container) {
         let self = this
-
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
             Endpoint: ["Dot", { radius: 2 }],
@@ -503,7 +549,7 @@ class GovernNew extends Component {
                 }],
                 // ["Label", { label: "", id: "label", cssClass: "aLabel" }]
             ],
-            Container: "governNewCanvas",
+            Container: container,
             Connector: ["Bezier"]
         });
 
@@ -538,6 +584,7 @@ class GovernNew extends Component {
                 targetDataId: info.target.dataId,
                 type: 'basic'
             }
+
             window.onAddConnection(connection)
 
             // Prepare form for submission
@@ -545,14 +592,12 @@ class GovernNew extends Component {
             // window.onUpdateNodeClassName({ id: info.connection.targetId, className: "target-form" })
         });
 
-        this.setState({ plumb: plumb });
-
         this.fetchDataElements(config)
         this.fetchConformedDataElements(config)
         this.fetchConformedDataObjects(config)
 
         $(document).ready(function () {
-            $('#governNewCanvas').droppable({
+            $('#' + container).droppable({
                 drop: function (event, ui) {
 
                     // Capture the position of the mouse pointer
@@ -561,17 +606,33 @@ class GovernNew extends Component {
                     var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
                     var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
                     var el = ui.draggable[0];
-                    var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id };
+                    var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id, dropTarget: el.getAttribute('dropTarget') };
 
 
                     if (el.className.indexOf('conformed-data-element') >= 0) {
                         node.type = 'conformed-data-element'
                         var isNewNode = true;
-                        self.clearConformedDataElementCanvas()
-                        self.addNode(node, plumb, null, isNewNode);
 
-                        // Update the current conformed data element
-                        self.setCurrentConformedDataElement(node.dataId)
+                        if (container === CDE_CANVAS) {
+                            self.clearConformedDataElementCanvas()
+                            self.addNode(node, self.state.cdePlumb, null, isNewNode);
+
+                            // Update the current conformed data element
+                            self.setCurrentConformedDataElement(node.dataId)
+                            return
+                        }
+
+                        if (container === CDO_CANVAS) {
+                            node.type = 'conformed-data-element'
+                            var isNewNode = true;
+                            self.addNode(node, self.state.cdoPlumb, null, isNewNode);
+                            return
+                        }
+
+                    }
+
+                    if (el.className.indexOf('conformed-data-object') >= 0) {
+
                         return
                     }
 
@@ -582,28 +643,33 @@ class GovernNew extends Component {
 
                         node.type = 'data-element'
                         var isNewNode = true;
-                        self.addNode(node, plumb, null, isNewNode);
+                        self.addNode(node, self.state.cdePlumb, null, isNewNode);
                         return
                     }
 
 
 
-                    if (ui.draggable[0].className.indexOf('list-item') >= 0) {
-                        console.log('Load the selected job ' + ui.draggable[0].id)
-                        // Load the job
-                        // if (props.listType == 'jobList') {
-                        // 	console.log('Load the selected job ' + ui.draggable[0].id)
-                        // }
-                    }
                 }
             });
         });
 
-        
+        return plumb
+    }
+
+
+    componentDidMount() {
+        let self = this
+
+        let cdePlumb = this.getPlumbInstance(CDE_CANVAS)
+        this.setState({ cdePlumb: cdePlumb });
+
+        let cdoPlumb = this.getPlumbInstance(CDO_CANVAS)
+        this.setState({ cdoPlumb: cdoPlumb });
+
     }
 
     render() {
-        const { error, isLoaded, dataSources, zTreeObj, currentNode, plumb, actionStates } = this.state;
+        const { error, isLoaded, dataSources, zTreeObj, currentNode, cdePlumb, cdoPlumb, actionStates } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
         const dataElements = this.props.dataElements
@@ -624,14 +690,14 @@ class GovernNew extends Component {
                                 <div className='col-lg-4  col-md-4 left-pane'>
                                     <ItemList
                                         icon='columns'
-                                        dropTarget='governNewCanvas'
+                                        dropTarget={CDE_CANVAS}
                                         itemType='data-element'
                                         title='Data Elements'
                                         items={dataElements.dataElementList} />
 
                                     <ItemList
                                         icon='check-square'
-                                        dropTarget='governNewCanvas'
+                                        dropTarget={CDE_CANVAS}
                                         itemType='conformed-data-element'
                                         title='Conformed Data Elements'
                                         items={conformedDataElements.conformedDataElementList} />
@@ -649,9 +715,9 @@ class GovernNew extends Component {
                                         onSave={this.updateCurrentConformedDataElement}
                                     ></Actions>
                                     <Canvas
-                                        id='governNewCanvas'
+                                        id={CDE_CANVAS}
                                         addNode={addNode}
-                                        plumb={plumb}
+                                        plumb={cdePlumb}
                                         nodeClicked={nodeClicked}
                                         nodes={this.props.governNewCanvas}
                                         currentNode={currentNode} />
@@ -659,36 +725,44 @@ class GovernNew extends Component {
 
                             </Tab>
 
-                            {/* <Tab className='tab-content' eventKey={2} title="Conformed Object">
+                            <Tab className='tab-content' eventKey={2} title="Conformed Object">
                                 <div className='col-lg-4  col-md-4 left-pane'>
-
                                     <ItemList
-                                        icon='check-square'
-                                        dropTarget='conformedObjectCanvas'
+                                        icon='columns'
+                                        dropTarget={CDO_CANVAS}
                                         itemType='conformed-data-element'
                                         title='Conformed Data Elements'
                                         items={conformedDataElements.conformedDataElementList} />
 
                                     <ItemList
-                                        icon='archive'
-                                        dropTarget='conformedObjectCanvas'
+                                        icon='check-square'
+                                        dropTarget={CDO_CANVAS}
                                         itemType='conformed-data-object'
                                         title='Conformed Data Objects'
                                         items={conformedDataObjects.conformedDataObjectList} />
+
                                 </div>
 
                                 <div className="col-lg-8">
-                                    
+                                    <Actions
+                                        element={conformedDataObjects.currentConformedDataObject}
+                                        elementType="Conformed Data Element"
+                                        actionStates={actionStates}
+                                        onCreate={this.createConformedDataObject}
+                                        onClearCanvas={this.clearConformedDataObjectCanvas}
+                                        onClose={this.closeConformedDataObject}
+                                        onSave={this.updateCurrentConformedDataObject}
+                                    ></Actions>
                                     <Canvas
-                                        id='conformedObjectCanvas'
+                                        id={CDO_CANVAS}
                                         addNode={addNode}
-                                        plumb={plumb}
+                                        plumb={cdoPlumb}
                                         nodeClicked={nodeClicked}
-                                        nodes={this.props.governNewCanvas}
+                                        nodes={this.props.cdoCanvas}
                                         currentNode={currentNode} />
                                 </div>
 
-                            </Tab> */}
+                            </Tab>
                         </Tabs>
                     </div>
                     <div className="static-modal" id='modal1' style={{ display: 'none' }}>
@@ -718,6 +792,7 @@ const mapStateToProps = state => {
     console.log(state);
     return {
         governNewCanvas: state.governNewCanvas,
+        cdoCanvas: state.cdoCanvas,
         dataElements: state.dataElements,
         conformedDataElements: state.conformedDataElements,
         conformedDataObjects: state.conformedDataObjects
@@ -736,6 +811,7 @@ const mapDispatchToProps = dispatch => {
         // setPreferredDataElement: preferred => dispatch({ type: 'SET_PREFERRED_D_E', preferred: preferred }),
         closeConformedDataElement: () => dispatch({ type: 'CLEAR_CURRENT_CONFORMED_DATA_ELEMENT' }),
         clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_GOVERN_CANVAS' }),
+        onAddCdeNode: node => dispatch({ type: 'ADD_CDE_NODE', node: node }),
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
 
 

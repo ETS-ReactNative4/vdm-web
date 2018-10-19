@@ -27,29 +27,33 @@ class Canvas extends Component {
     let nodeClicked = this.props.nodeClicked;
     let currentNode = this.props.currentNode
 
-    plumb.setContainer(this.props.id);
-    jsPlumb.ready(function () {
-      console.log('Plumb ready!')
-
-      plumb.batch(function () {
-        // Restore nodes
-        if(nodes){
-          nodes.forEach(node => {
-            addNode(node, plumb, nodeClicked, false)
-          });
+    if(plumb){
+      plumb.setContainer(this.props.id);
+      jsPlumb.ready(function () {
+        console.log('Plumb ready!')
   
-          for (const c of connections) {
-            plumb.connect(c);
+        plumb.batch(function () {
+          // Restore nodes
+          if(nodes){
+            nodes.forEach(node => {
+              addNode(node, plumb, nodeClicked, false)
+            });
+    
+            for (const c of connections) {
+              plumb.connect(c);
+            }
           }
-        }
+        });
       });
-    });
+    }else{
+      console.log("ERROR: Plumb instance is not defined for " + this.props.id)
+    }
 
   }
 
   render() {
     return (
-      <div id={this.props.id} className='col-lg-6 col-md-3' />
+      <div id={this.props.id} className='canvas col-lg-6 col-md-3' />
     )
   }
 }

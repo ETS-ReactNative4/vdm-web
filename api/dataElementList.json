@@ -1,5 +1,5 @@
 {
-    "DataElementList": [
+    "dataElementList": [
         {
             "id": 1,
             "name": "cust_nm",
