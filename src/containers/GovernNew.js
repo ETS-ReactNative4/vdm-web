@@ -54,6 +54,8 @@ class GovernNew extends Component {
         this.createConformedDataElement = this.createConformedDataElement.bind(this)
         this.getPlumbInstance = this.getPlumbInstance.bind(this)
 
+        this.addCdeConnection = this.addCdeConnection.bind(this)
+
         this.clearCdoCanvas = this.clearCdoCanvas.bind(this)
         this.setCurrentCdo = this.setCurrentCdo.bind(this)
     }
@@ -281,18 +283,15 @@ class GovernNew extends Component {
     ///////////////////////////
 
 
-
-
-
-    onAddConnection(connection) {
+    addCdeConnection(connection) {
         // At this point we already have a defined connection
         this.props.addConnection(connection)
 
-        // fluff up the dataElement with the connection info
-        var dataElement = Object.assign({}, this.props.dataElements.currentJob)
+        // fluff up the CDE with the connection info
+        var cde = Object.assign({}, this.props.conformedDataElement.currentConformedDataElement)
 
         var source = this.props.governNewCanvas.nodes.find(node => node.id === connection.source)
-        dataElement.Source = {
+        cde.Source = {
             id: source.id,
             description: source.description,
             location: "/home/user/data",
@@ -305,7 +304,7 @@ class GovernNew extends Component {
 
         // Hardcoding some of the parameters for now
         var target = this.props.governNewCanvas.nodes.find(node => node.id === connection.target)
-        dataElement.Target = {
+        cde.Target = {
             ID: target.id,
             description: target.description,
             location: "/home/user/data",
@@ -326,10 +325,60 @@ class GovernNew extends Component {
                 canNew: false
             }
         })
+    }
 
-        // this.props.onUpdateCurrentJob(dataElement)
 
-        console.log(this.props.dataElements)
+    addCdoConnection(connection) {
+        // At this point we already have a defined connection
+        this.props.addCdoConnection(connection)
+
+        // fluff up the dataElement with the connection info
+        var cdo = Object.assign({}, this.props.conformedDataElements.currentConformedDataElement)
+
+        var source = this.props.cdoCanvas.nodes.find(node => node.id === connection.source)
+        cdo.Source = {
+            id: source.id,
+            description: source.description,
+            location: "/home/user/data",
+            name: source.name,
+            delimiter: ':',
+            fileFormat: 'Data Source',
+            sourceID: source.id,
+            status: 'Active'
+        }
+
+        // Hardcoding some of the parameters for now
+        var target = this.props.cdoCanvas.nodes.find(node => node.id === connection.target)
+        cdo.Target = {
+            ID: target.id,
+            description: target.description,
+            location: "/home/user/data",
+            name: source.name,
+            delimiter: ':',
+            fileFormat: 'Data Source',
+            sourceID: source.id,
+            status: 'Active'
+        }
+
+        // Time to enable the save button
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
+                canNew: false
+            }
+        })
+    }
+
+
+    onAddConnection(connection, canvas) {
+        if (canvas === CDE_CANVAS) {
+            this.addCdeConnection(connection)
+        }else if (canvas === CDO_CANVAS) {
+            this.addCdoConnection(connection)
+        }
     }
 
     onDeleteConnection() {
@@ -620,6 +669,8 @@ class GovernNew extends Component {
             console.log("Source:" + info.connection.sourceId)
             console.log("Target:" + info.connection.targetId)
 
+            let canvas = info.target.dropTarget
+
             // Have to add the data Id since the dataid is not unique between object types
             var connection = {
                 source: info.connection.sourceId,
@@ -629,7 +680,7 @@ class GovernNew extends Component {
                 type: 'basic'
             }
 
-            window.onAddConnection(connection)
+            window.onAddConnection(connection, canvas)
 
             // Prepare form for submission
             // window.onUpdateNodeClassName({ id: info.connection.sourceId, className: "source-form" })
@@ -641,7 +692,7 @@ class GovernNew extends Component {
         this.fetchConformedDataObjects(config)
 
         $(document).ready(function () {
-            $('#' + container).droppable({
+            $('.canvas').droppable({
                 drop: function (event, ui) {
 
                     // Capture the position of the mouse pointer
@@ -652,7 +703,7 @@ class GovernNew extends Component {
                     var el = ui.draggable[0];
                     var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id, dropTarget: el.getAttribute('dropTarget') };
 
-
+                    let container =wrapper.prevObject[0].id
                     if (el.className.indexOf('conformed-data-element') >= 0) {
                         node.type = 'conformed-data-element'
                         var isNewNode = true;
