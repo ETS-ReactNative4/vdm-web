@@ -737,9 +737,12 @@ class GovernNew extends Component {
         this.fetchConformedDataElements(config)
         this.fetchConformedDataObjects(config)
 
+        console.log($(this.refs))
+
         $(document).ready(function () {
-            $('.canvas').droppable({
-                drop: function (event, ui) {
+            $('.canvas').droppable();
+
+            $( ".canvas" ).on( "drop", function( event, ui ) {
 
                     // Capture the position of the mouse pointer
                     var wrapper = $(this).parent();
@@ -793,11 +796,7 @@ class GovernNew extends Component {
                         self.addNode(node, self.state.cdePlumb, null, isNewNode);
                         return
                     }
-
-
-
-                }
-            });
+            } );
         });
 
         return plumb
