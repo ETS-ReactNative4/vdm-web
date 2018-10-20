@@ -25,11 +25,11 @@ const conformedDataObjects = (state = conformedDataObjectsInitialState, action) 
         case 'INIT_CONFORMED_DATA_OBJECT_LIST':
         return { ...state, conformedDataObjectList: action.conformedDataObjectList }
 
-        case 'ADD_CONFORMED_DATA_OBJECT':
-            action.conformedDataObject.updateDate = (new Date()).toLocaleString();
+        case 'ADD_CDO':
+            action.cdo.updateDate = (new Date()).toLocaleString();
             return {
-                currentConformedDataObject: action.conformedDataObject,
-                conformedDataObjectList: [...state.conformedDataObjectList, action.conformedDataObject],
+                currentConformedDataObject: action.cdo,
+                conformedDataObjectList: [...state.conformedDataObjectList, action.cdo],
             }
 
         case 'UPDATE_CURRENT_CDO': {
@@ -38,7 +38,7 @@ const conformedDataObjects = (state = conformedDataObjectsInitialState, action) 
             return { ...state, currentConformedDataObject: action.cdo, conformedDataObjectList: cleaned.concat(action.cdo) }
         }
 
-        case 'CLEAR_CURRENT_CONFORMED_DATA_OBJECT':
+        case 'CLEAR_CURRENT_CDO':
             return { ...state, currentConformedDataObject: { name: '' } }
 
         default:
