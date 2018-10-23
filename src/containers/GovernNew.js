@@ -37,7 +37,8 @@ class GovernNew extends Component {
                 canOpen: false,
                 canShowProps: false,
                 canClose: false
-            }
+            },
+            tabKey: 1
         };
 
         this.addNode = this.addNode.bind(this);
@@ -62,6 +63,13 @@ class GovernNew extends Component {
         this.setCurrentCdo = this.setCurrentCdo.bind(this)
         this.updateCurrentCdo = this.updateCurrentCdo.bind(this)
         this.addCdoConnection = this.addCdoConnection.bind(this)
+
+        this.handleTabSelect = this.handleTabSelect.bind(this)
+
+        this.onCdeCreated = this.onCdeCreated.bind(this)
+        this.onCdoCreated = this.onCdoCreated.bind(this)
+
+        this.onCdeUpdated = this.onCdeUpdated.bind(this)
     }
 
     ////////////////////////////
@@ -77,19 +85,22 @@ class GovernNew extends Component {
             }
         })
 
-        // Add to metaservice
+        var node = {
+            left: 300,
+            top: 50,
+            type: 'conformed-data-element',
+            name: el.name,
+            id: el.id,
+            description: el.description,
+            droptarget: CDE_CANVAS
+        };
+
+        // Add to metadata service
         // This will get the id
+        this.svcCreateConformedDataElement(node, this.onCdeCreated)
 
         // For now just assgin an id
-        el.id = window.uuid()
-
-
-        // Add to state
-        this.props.addConformedDataElement(el)
-
-        var node = { left: 300, top: 50, type: 'conformed-data-element', name: el.name, id: el.id };
-        this.clearConformedDataElementCanvas()
-        this.addNode(node, this.state.cdePlumb, null, true);
+        // el.id = window.uuid()
     }
 
     setPreferredDataElement(preferred) {
@@ -97,6 +108,40 @@ class GovernNew extends Component {
         de.preferredSource = preferred
         this.updateCurrentConformedDataElement()
 
+    }
+
+
+
+    ////////////
+    // Events
+    //////////
+    onCdeCreated(cde) {
+        // Add to state
+        this.props.addConformedDataElement(cde)
+        this.clearConformedDataElementCanvas()
+        // Add to canvas
+        this.addNode(cde, this.state.cdePlumb, null, true);
+    }
+
+    onCdeUpdated(cde){
+        this.props.updateCurrentConformedDataElement(cde)
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: true
+            }
+        })
+    }
+
+    onCdoCreated(cdo) {
+        // Add to state
+        this.props.addCdo(cdo)
+        this.clearCdoCanvas()
+        // Add to canvas
+        this.addNode(cdo, this.state.cdoPlumb, null, true);
     }
 
     ////////////
@@ -119,16 +164,10 @@ class GovernNew extends Component {
 
 
         console.log(cde)
-        this.props.updateCurrentConformedDataElement(cde)
-        this.setState({
-            actionStates: {
-                ...this.state.actionStates,
-                canClose: true,
-                canShowProps: true,
-                canSave: true,
-                canNew: true
-            }
-        })
+        
+        // TODO: Update meta data
+        this.svcUpdateCde(cde, this.onCdeUpdated)
+        
     }
 
     setCurrentConformedDataElement(dataId) {
@@ -152,19 +191,20 @@ class GovernNew extends Component {
             }
         })
 
-        // Add to metaservice
+        var node = {
+            left: 300,
+            top: 50,
+            type: 'conformed-data-object',
+            name: el.name,
+            id: el.id,
+            description: el.description,
+            droptarget: CDO_CANVAS
+        };
+
+        // Add to metadata service
         // This will get the id
+        this.svcCreateCdo(node, this.onCdoCreated)
 
-        // For now just assgin an id
-        el.id = window.uuid()
-
-
-        // Add to state
-        this.props.addCdo(el)
-
-        var node = { left: 300, top: 50, type: 'conformed-data-object', name: el.name, id: el.id };
-        this.clearCdoCanvas()
-        this.addNode(node, this.state.cdoPlumb, null, true);
     }
 
     updateCurrentCdo() {
@@ -242,14 +282,16 @@ class GovernNew extends Component {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
 
                     var json = JSON.parse(xmlhttp.responseText)
-                    console.log(json);
+                    var cdeList = []
+                    if (json.conformedDataElementList) {
+                        cdeList = json.conformedDataElementList
+                    }
+                    // Update the state
+                    self.props.onInitConformedDataElementList(cdeList)
 
                     self.setState({
                         isLoaded: true
                     });
-
-                    // Update the state
-                    self.props.onInitConformedDataElementList(json.ConformedDataElementList)
 
                 } else {
                     console.log('failed');
@@ -257,7 +299,9 @@ class GovernNew extends Component {
             }
         }
 
+
         xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataElements');
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send();
     }
 
@@ -270,14 +314,16 @@ class GovernNew extends Component {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
 
                     var json = JSON.parse(xmlhttp.responseText)
-                    console.log(json);
+                    var cdoList = []
+                    if (json.conformedDataObjectList) {
+                        cdoList = json.conformedDataObjectList
+                    }
+                    // Update the state
+                    self.props.onInitConformedDataObjectList(cdoList)
 
                     self.setState({
                         isLoaded: true
                     });
-
-                    // Update the state
-                    self.props.onInitConformedDataObjectList(json.ConformedDataObjectList)
 
                 } else {
                     console.log('failed');
@@ -289,23 +335,97 @@ class GovernNew extends Component {
         xmlhttp.send();
     }
 
-    svcCreateConformedDataElement(conformedDataElement) {
+    svcCreateConformedDataElement(conformedDataElement, callback) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    console.log(xmlhttp.responseText);
+                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
+                    var json = JSON.parse('{' + resp + '}')
+                    console.log(json);
+                    conformedDataElement.id = json.ID
+                    callback(conformedDataElement)
                 } else {
                     console.log('failed');
                 }
             }
         }
 
-        var payload = JSON.stringify(conformedDataElement)
+        var cde = {
+            ConformedDataElement: {
+                name: conformedDataElement.name,
+                description: conformedDataElement.description
+            }
+        }
+        var payload = JSON.stringify(cde)
         console.log(payload)
 
-        // TODO: update the war so that this allows origin *. Using LOCAL for now
+        xmlhttp.open("POST", config.VDM_META_SERVICE_HOST + '/conformedDataElements');
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(payload);
+    }
+
+    svcUpdateCde(cde, callback) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
+                    var json = JSON.parse('{' + resp + '}')
+                    console.log(json);
+                    cde.id = json.ID
+                    callback(cde)
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        var cdeTemp = {
+            ConformedDataElement: {
+                objectId: cde.id,
+                name: cde.name,
+                description: cde.description,
+                sources: cde.sources,
+                preferredSource: cde.preferredSource,
+                status: cde.status
+            }
+        }
+        var payload = JSON.stringify(cdeTemp)
+        console.log(payload)
+
+        xmlhttp.open("PUT", config.VDM_META_SERVICE_HOST + '/conformedDataObjects');
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(payload);
+    }
+
+    svcCreateCdo(cdo, callback) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
+                    var json = JSON.parse('{' + resp + '}')
+                    console.log(json);
+                    cdo.id = json.ID
+                    callback(cdo)
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        var cdoTemp = {
+            ConformedDataObject: {
+                name: cdo.name,
+                description: cdo.description
+            }
+        }
+        var payload = JSON.stringify(cdoTemp)
+        console.log(payload)
+
         xmlhttp.open("POST", config.VDM_META_SERVICE_HOST + '/conformedDataObjects');
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(payload);
     }
 
@@ -315,11 +435,19 @@ class GovernNew extends Component {
 
 
     addCdeConnection(connection) {
+
+        // Make sure connections are not duplicated
+        for(let c of this.props.governNewCanvas.connections){
+            if(c.source == connection.source){
+                return
+            }
+        }
+
         // At this point we already have a defined connection
         this.props.addConnection(connection)
 
         // fluff up the CDE with the connection info
-        var cde = Object.assign({}, this.props.conformedDataElement.currentConformedDataElement)
+        var cde = Object.assign({}, this.props.conformedDataElements.currentConformedDataElement)
 
         var source = this.props.governNewCanvas.nodes.find(node => node.id === connection.source)
         cde.Source = {
@@ -360,6 +488,13 @@ class GovernNew extends Component {
 
 
     addCdoConnection(connection) {
+
+        for(let c of this.props.cdoCanvas.connections){
+            if(c.source == connection.source){
+                return
+            }
+        }
+
         // At this point we already have a defined connection
         this.props.addCdoConnection(connection)
 
@@ -464,6 +599,10 @@ class GovernNew extends Component {
         })
     }
 
+    handleTabSelect(key) {
+        this.setState({ tabKey: key })
+    }
+
     // Update the current selected node
     nodeClicked = nodeId => {
         var clickedNode = this.props.acquireCanvas.nodes.find(n => n.id === nodeId);
@@ -516,12 +655,12 @@ class GovernNew extends Component {
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
-                    var dropTarget = event.target.dropTarget
-                    if (dropTarget == CDE_CANVAS) {
+                    var droptarget = event.target.droptarget
+                    if (droptarget == CDE_CANVAS) {
                         let node = window.governNewCanvas.nodes.find(node => node.id === event.target.id)
                         node.left = ui.position.left
                         node.top = ui.position.top
-                    } else if (dropTarget == CDO_CANVAS) {
+                    } else if (droptarget == CDO_CANVAS) {
                         node = window.cdoCanvas.nodes.find(node => node.id === ui.helper[0].id)
                         node.left = ui.position.left
                         node.top = ui.position.top
@@ -529,7 +668,7 @@ class GovernNew extends Component {
                 }
             });
 
-            if (node.dropTarget === CDE_CANVAS) {
+            if (node.droptarget === CDE_CANVAS) {
                 if (node.type === 'data-element') {
                     plumb.makeSource(el, {
                         filter: ".ep",
@@ -550,7 +689,7 @@ class GovernNew extends Component {
                         allowLoopback: false
                     });
                 }
-            } else if (node.dropTarget === CDO_CANVAS) {
+            } else if (node.droptarget === CDO_CANVAS) {
                 if (node.type === 'conformed-data-element') {
                     plumb.makeSource(el, {
                         filter: ".ep",
@@ -586,7 +725,7 @@ class GovernNew extends Component {
             d.className = "w";
             d.id = node.id;
             d.dataId = node.dataId;
-            d.dropTarget = node.dropTarget
+            d.droptarget = node.droptarget
 
             var ep = ''
             var preferred = ''
@@ -598,7 +737,7 @@ class GovernNew extends Component {
                 var isPreferred = node.dataId == node.preferredId + "" ? "checked" : ""
                 preferred = `<div class="preferred"><label><input type="checkbox" class="preferred-d-e" id="${node.id}" alt="${node.dataId}" name="${node.name}" ${isPreferred}/>Preferred</label></div>`
             } else if (node.type === 'conformed-data-element') {
-                if (node.dropTarget === CDO_CANVAS) {
+                if (node.droptarget === CDO_CANVAS) {
                     ep = '<div class="ep"></div>'
                 }
             }
@@ -710,12 +849,12 @@ class GovernNew extends Component {
         plumb.bind("connection", function (info, e) {
             console.log(info)
             console.log(info.source.nodeId)
-            e.preventDefault();
+            // e.preventDefault();
 
             console.log("Source:" + info.connection.sourceId)
             console.log("Target:" + info.connection.targetId)
 
-            let canvas = info.target.dropTarget
+            let canvas = info.target.droptarget
 
             // Have to add the data Id since the dataid is not unique between object types
             var connection = {
@@ -739,65 +878,7 @@ class GovernNew extends Component {
 
         console.log($(this.refs))
 
-        $(document).ready(function () {
-            $('.canvas').droppable();
 
-            $( ".canvas" ).on( "drop", function( event, ui ) {
-
-                    // Capture the position of the mouse pointer
-                    var wrapper = $(this).parent();
-                    var parentOffset = wrapper.offset();
-                    var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
-                    var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
-                    var el = ui.draggable[0];
-                    var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id, dropTarget: el.getAttribute('dropTarget') };
-
-                    let container = wrapper.prevObject[0].id
-                    if (el.className.indexOf('conformed-data-element') >= 0) {
-                        node.type = 'conformed-data-element'
-                        var isNewNode = true;
-
-                        if (container === CDE_CANVAS) {
-                            self.clearConformedDataElementCanvas()
-                            self.addNode(node, self.state.cdePlumb, null, isNewNode);
-
-                            // Update the current conformed data element
-                            self.setCurrentConformedDataElement(node.dataId)
-                            return
-                        }
-
-                        if (container === CDO_CANVAS) {
-                            node.type = 'conformed-data-element'
-                            var isNewNode = true;
-                            self.addNode(node, self.state.cdoPlumb, null, isNewNode);
-                            return
-                        }
-
-                    }
-
-                    if (el.className.indexOf('conformed-data-object') >= 0) {
-                        node.type = 'conformed-data-object'
-                        var isNewNode = true;
-                        self.clearCdoCanvas()
-                        self.addNode(node, self.state.cdoPlumb, null, isNewNode);
-
-                        // Update the current conformed data element
-                        self.setCurrentCdo(node.dataId)
-                        return
-                    }
-
-                    if (el.className.indexOf('data-element') >= 0) {
-                        if (self.props.conformedDataElements.currentConformedDataElement.preferredSource) {
-                            node.preferredId = self.props.conformedDataElements.currentConformedDataElement.preferredSource.id
-                        }
-
-                        node.type = 'data-element'
-                        var isNewNode = true;
-                        self.addNode(node, self.state.cdePlumb, null, isNewNode);
-                        return
-                    }
-            } );
-        });
 
         return plumb
     }
@@ -812,10 +893,76 @@ class GovernNew extends Component {
         let cdoPlumb = this.getPlumbInstance(CDO_CANVAS)
         this.setState({ cdoPlumb: cdoPlumb });
 
+        setTimeout(() => {
+            $('.canvas').droppable();
+
+            $('.canvas').on("drop", function (event, ui) {
+
+                // Capture the position of the mouse pointer
+                var wrapper = $(this).parent();
+                var parentOffset = wrapper.offset();
+                var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
+                var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
+                var el = ui.draggable[0];
+                var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id, droptarget: el.getAttribute('droptarget') };
+
+                let container = wrapper.prevObject[0].id
+                if (el.className.indexOf('conformed-data-element') >= 0) {
+                    node.type = 'conformed-data-element'
+                    var isNewNode = true;
+
+                    if (container === CDE_CANVAS) {
+                        self.clearConformedDataElementCanvas()
+
+                        var cde = self.props.conformedDataElements.conformedDataElementList.find(n=>n.id == node.id)
+                        node.description = cde.description
+                        self.addNode(node, self.state.cdePlumb, null, isNewNode);
+
+                        // Update the current conformed data element
+                        self.setCurrentConformedDataElement(node.dataId)
+                        return
+                    }
+
+                    if (container === CDO_CANVAS) {
+                        node.type = 'conformed-data-element'
+                        var isNewNode = true;
+                        self.addNode(node, self.state.cdoPlumb, null, isNewNode);
+                        return
+                    }
+
+                }
+
+                if (el.className.indexOf('conformed-data-object') >= 0) {
+                    node.type = 'conformed-data-object'
+                    var isNewNode = true;
+                    self.clearCdoCanvas()
+
+                    var cdo = self.props.conformedDataObjects.conformedDataObjectList.find(n=>n.id == node.id)
+                    node.description = cdo.description
+                    self.addNode(node, self.state.cdoPlumb, null, isNewNode);
+
+                    // Update the current conformed data element
+                    self.setCurrentCdo(node.dataId)
+                    return
+                }
+
+                if (el.className.indexOf('data-element') >= 0) {
+                    if (self.props.conformedDataElements.currentConformedDataElement.preferredSource) {
+                        node.preferredId = self.props.conformedDataElements.currentConformedDataElement.preferredSource.id
+                    }
+
+                    node.type = 'data-element'
+                    var isNewNode = true;
+                    self.addNode(node, self.state.cdePlumb, null, isNewNode);
+                    return
+                }
+            });
+        }, 1000);
+
     }
 
     render() {
-        const { error, isLoaded, dataSources, zTreeObj, currentNode, cdePlumb, cdoPlumb, actionStates } = this.state;
+        const { error, isLoaded, dataSources, tabKey, currentNode, cdePlumb, cdoPlumb, actionStates } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
         const dataElements = this.props.dataElements
@@ -831,19 +978,19 @@ class GovernNew extends Component {
             return (
                 <div>
                     <div className='sub-menu'>
-                        <Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
+                        <Tabs defaultActiveKey={tabKey} onSelect={this.handleTabSelect} animation={false} id="noanim-tab-example">
                             <Tab className='tab-content' eventKey={1} title="Conformed Data">
                                 <div className='col-lg-4  col-md-4 left-pane'>
                                     <ItemList
                                         icon='columns'
-                                        dropTarget={CDE_CANVAS}
+                                        droptarget={CDE_CANVAS}
                                         itemType='data-element'
                                         title='Data Elements'
                                         items={dataElements.dataElementList} />
 
                                     <ItemList
                                         icon='check-square'
-                                        dropTarget={CDE_CANVAS}
+                                        droptarget={CDE_CANVAS}
                                         itemType='conformed-data-element'
                                         title='Conformed Data Elements'
                                         items={conformedDataElements.conformedDataElementList} />
@@ -875,14 +1022,14 @@ class GovernNew extends Component {
                                 <div className='col-lg-4  col-md-4 left-pane'>
                                     <ItemList
                                         icon='columns'
-                                        dropTarget={CDO_CANVAS}
+                                        droptarget={CDO_CANVAS}
                                         itemType='conformed-data-element'
                                         title='Conformed Data Elements'
                                         items={conformedDataElements.conformedDataElementList} />
 
                                     <ItemList
                                         icon='check-square'
-                                        dropTarget={CDO_CANVAS}
+                                        droptarget={CDO_CANVAS}
                                         itemType='conformed-data-object'
                                         title='Conformed Data Objects'
                                         items={conformedDataObjects.conformedDataObjectList} />
@@ -961,6 +1108,7 @@ const mapDispatchToProps = dispatch => {
 
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
 
+        refreshCdoCanvas: () => dispatch({ type: 'REFRESH_CDO_CANVAS' }),
         clearCdoCanvas: () => dispatch({ type: 'CLEAR_CDO_CANVAS' }),
         closeCdo: () => dispatch({ type: 'CLEAR_CURRENT_CDO' }),
         updateCurrentCdo: cdo => dispatch({ type: 'UPDATE_CURRENT_CDO', cdo: cdo }),

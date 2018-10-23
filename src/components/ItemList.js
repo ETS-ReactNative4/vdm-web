@@ -32,10 +32,12 @@ class ItemList extends Component {
 
   static getDerivedStateFromProps(props, current_state) {
     let displayedItems = []
-    if(props.items){
+    if (props.items) {
       displayedItems = props.items.filter((el) => {
-        let searchValue = el.name.toLowerCase();
-        return searchValue.indexOf(current_state.currentFilter) !== -1;
+        if (el.name) {
+          let searchValue = el.name.toLowerCase();
+          return searchValue.indexOf(current_state.currentFilter) !== -1;
+        }
       })
     }
 
@@ -76,7 +78,7 @@ class ItemList extends Component {
     let items = this.state.displayedItems;
     let icon = this.props.icon
     let itemType = this.props.itemType
-    let dropTarget = this.props.dropTarget
+    let droptarget = this.props.droptarget
     return (
       <div className="list-panel">
         <h4>{this.props.title}</h4>
@@ -90,7 +92,7 @@ class ItemList extends Component {
                 icon={icon}
                 id={el.id}
                 name={el.name}
-                dropTarget={dropTarget}
+                droptarget={droptarget}
                 updateDate={el.updateDate}
               />
             })

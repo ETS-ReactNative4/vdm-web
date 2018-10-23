@@ -467,7 +467,7 @@ class Acquire extends Component {
                                     />
                                     <ItemList
                                         icon='play-circle'
-                                        dropTarget='canvas'
+                                        droptarget='canvas'
                                         itemType='job'
                                         title='Data Acquisition Flows'
                                         items={jobs.jobList} />
