@@ -70,6 +70,8 @@ class GovernNew extends Component {
         this.onCdoCreated = this.onCdoCreated.bind(this)
 
         this.onCdeUpdated = this.onCdeUpdated.bind(this)
+
+        this.fetchConformedDataElementId = this.fetchConformedDataElementId.bind(config)
     }
 
     ////////////////////////////
@@ -305,6 +307,26 @@ class GovernNew extends Component {
         xmlhttp.send();
     }
 
+    fetchConformedDataElementId = (cde) => {
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+                    var json = JSON.parse(xmlhttp.responseText)
+                    return json
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+        // Make this synchronous
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/conformedDataElements/' + cde.id, false);
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send();
+    }
+
     fetchConformedDataObjects = (config) => {
         var self = this
         var xmlhttp = new XMLHttpRequest();
@@ -394,7 +416,7 @@ class GovernNew extends Component {
         var payload = JSON.stringify(cdeTemp)
         console.log(payload)
 
-        xmlhttp.open("PUT", config.VDM_META_SERVICE_HOST + '/conformedDataObjects');
+        xmlhttp.open("PUT", config.VDM_META_SERVICE_HOST + '/conformedDataElements/' + cde.id);
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(payload);
     }
@@ -916,6 +938,11 @@ class GovernNew extends Component {
 
                         var cde = self.props.conformedDataElements.conformedDataElementList.find(n=>n.id == node.id)
                         node.description = cde.description
+
+                        // See if we can get the details of this CDE
+                        // var cde = self.getCdeDetail(node.id)
+                        // var detail = self.fetchConformedDataElementId(cde)
+
                         self.addNode(node, self.state.cdePlumb, null, isNewNode);
 
                         // Update the current conformed data element
@@ -926,6 +953,9 @@ class GovernNew extends Component {
                     if (container === CDO_CANVAS) {
                         node.type = 'conformed-data-element'
                         var isNewNode = true;
+
+                        
+
                         self.addNode(node, self.state.cdoPlumb, null, isNewNode);
                         return
                     }

@@ -102,6 +102,13 @@ router.get('/conformedDataElements', (request, response) => {
     response.json(JSON.parse(fs.readFileSync('conformedDataElementList.json', "utf8")));
 });
 
+router.get('/conformedDataElements/:id', (request, response) => {
+    var id = request.params.id;
+    // always returns CDE id:2
+    response.json(JSON.parse(fs.readFileSync('cdeDetail.json', "utf8")));
+});
+
+
 //////////
 // Conformed Data Object
 router.get('/conformedDataObjects', (request, response) => {
