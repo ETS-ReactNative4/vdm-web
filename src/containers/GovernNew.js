@@ -47,6 +47,7 @@ class GovernNew extends Component {
         this.closeConformedDataElement = this.closeConformedDataElement.bind(this)
         this.updateCurrentConformedDataElement = this.updateCurrentConformedDataElement.bind(this)
         this.setCurrentConformedDataElement = this.setCurrentConformedDataElement.bind(this)
+        this.getCdeDetail = this.getCdeDetail.bind(this)
 
         window.onUpdateNodeClassName = this.props.onUpdateNodeClassName;
         window.onAddConnection = this.onAddConnection.bind(this);
@@ -67,15 +68,20 @@ class GovernNew extends Component {
         this.handleTabSelect = this.handleTabSelect.bind(this)
 
         this.onCdeCreated = this.onCdeCreated.bind(this)
+        this.onCdeUpdated = this.onCdeUpdated.bind(this)
+        this.onCdeDetailReceived = this.onCdeDetailReceived.bind(this)
+
         this.onCdoCreated = this.onCdoCreated.bind(this)
 
-        this.onCdeUpdated = this.onCdeUpdated.bind(this)
-
-        this.fetchConformedDataElementId = this.fetchConformedDataElementId.bind(config)
     }
 
     ////////////////////////////
     // Actions
+    ///////////
+    getCdeDetail(cde){
+        this.svcGetCdeDetail(cde, this.onCdeDetailReceived)
+    }
+
     createConformedDataElement(el) {
         this.setState({
             actionStates: {
@@ -136,6 +142,11 @@ class GovernNew extends Component {
                 canNew: true
             }
         })
+    }
+
+    onCdeDetailReceived(detail, cde){
+        console.log(detail)
+        console.log(cde)
     }
 
     onCdoCreated(cdo) {
@@ -307,7 +318,7 @@ class GovernNew extends Component {
         xmlhttp.send();
     }
 
-    fetchConformedDataElementId = (cde) => {
+    svcGetCdeDetail = (cde, callback) => {
         var xmlhttp = new XMLHttpRequest();
 
         xmlhttp.onreadystatechange = function () {
@@ -315,14 +326,14 @@ class GovernNew extends Component {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
 
                     var json = JSON.parse(xmlhttp.responseText)
-                    return json
+                    callback(json, cde)
                 } else {
                     console.log('failed');
                 }
             }
         }
         // Make this synchronous
-        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST_LOCAL + '/conformedDataElements/' + cde.id, false);
+        xmlhttp.open("GET", config.VDM_META_SERVICE_HOST + '/conformedDataElements/' + cde.id);
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send();
     }
@@ -939,11 +950,30 @@ class GovernNew extends Component {
                         var cde = self.props.conformedDataElements.conformedDataElementList.find(n=>n.id == node.id)
                         node.description = cde.description
 
-                        // See if we can get the details of this CDE
-                        // var cde = self.getCdeDetail(node.id)
-                        // var detail = self.fetchConformedDataElementId(cde)
+                        // Update the details of this CDE from the service
+                        // self.getCdeDetail(cde)
 
                         self.addNode(node, self.state.cdePlumb, null, isNewNode);
+
+                        // If this CDE has sources create the nodes for those sources
+                        for (const s of cde.sources) {
+                            console.log(s)
+                            let n = { left: 50, top: 50, type: 'data-element', name: s.name, id: s.id, droptarget: el.getAttribute('droptarget') };
+                            self.addNode(n, self.state.cdePlumb, null, isNewNode);
+
+                            // Add a connection
+                            var c = {
+                                source: n.id,
+                                sourceDataId: n.dataId,
+                                target: node.id,
+                                targetDataId: node.dataId,
+                                type: 'basic'
+                            }
+                
+                            window.onAddConnection(c, container)
+                            self.state.cdePlumb.connect(c);
+                        }
+                        
 
                         // Update the current conformed data element
                         self.setCurrentConformedDataElement(node.dataId)
