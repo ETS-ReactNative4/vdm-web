@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import PropertyPage from '../components/PropertyPage'
 import './Canvas.css'
 require('jqueryui');
 require('jsplumb');
@@ -25,7 +24,6 @@ class Canvas extends Component {
     let plumb = this.props.plumb;
     let addNode = this.props.addNode;
     let nodeClicked = this.props.nodeClicked;
-    let currentNode = this.props.currentNode
 
     if(plumb){
       plumb.setContainer(this.props.id);

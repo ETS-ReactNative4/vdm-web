@@ -14,8 +14,6 @@ import * as config from '../config';
 require('jqueryui');
 require('jsplumb');
 
-const log = (type) => console.log.bind(console, type);
-
 const jsPlumb = window.jsPlumb;
 
 const CDE_CANVAS = "governNewCanvas"
@@ -164,12 +162,12 @@ class GovernNew extends Component {
         var self = this
         var cde = this.props.conformedDataElements.currentConformedDataElement
         // Update the sources if any based onthe connections
-        let connections = this.props.governNewCanvas.connections.filter(c => c.targetDataId == cde.id)
+        let connections = this.props.governNewCanvas.connections.filter(c => c.targetDataId === cde.id)
         cde.sources = []
 
         for (let c of connections) {
             console.log(c);
-            let de = self.props.dataElements.dataElementList.find(d => d.id == c.sourceDataId)
+            let de = self.props.dataElements.dataElementList.find(d => d.id === c.sourceDataId)
             if (de) {
                 cde.sources.push(de)
             }
@@ -184,7 +182,7 @@ class GovernNew extends Component {
     }
 
     setCurrentConformedDataElement(dataId) {
-        let element = this.props.conformedDataElements.conformedDataElementList.find(j => j.id == dataId)
+        let element = this.props.conformedDataElements.conformedDataElementList.find(j => j.id === dataId)
         this.props.updateCurrentConformedDataElement(element)
     }
 
@@ -224,12 +222,12 @@ class GovernNew extends Component {
         var self = this
         var cdo = this.props.conformedDataObjects.currentConformedDataObject
         // Update the sources if any based onthe connections
-        let connections = this.props.cdoCanvas.connections.filter(c => c.targetDataId == cdo.id)
+        let connections = this.props.cdoCanvas.connections.filter(c => c.targetDataId === cdo.id)
         cdo.sources = []
 
         for (let c of connections) {
             console.log(c);
-            let de = self.props.conformedDataElements.conformedDataElementList.find(d => d.id == c.sourceDataId)
+            let de = self.props.conformedDataElements.conformedDataElementList.find(d => d.id === c.sourceDataId)
             if (de) {
                 cdo.sources.push(de)
             }
@@ -250,7 +248,7 @@ class GovernNew extends Component {
     }
 
     setCurrentCdo(dataId) {
-        let element = this.props.conformedDataObjects.conformedDataObjectList.find(j => j.id == dataId)
+        let element = this.props.conformedDataObjects.conformedDataObjectList.find(j => j.id === dataId)
         this.props.updateCurrentCdo(element)
     }
 
@@ -471,7 +469,7 @@ class GovernNew extends Component {
 
         // Make sure connections are not duplicated
         for(let c of this.props.governNewCanvas.connections){
-            if(c.source == connection.source){
+            if(c.source === connection.source){
                 return
             }
         }
@@ -523,7 +521,7 @@ class GovernNew extends Component {
     addCdoConnection(connection) {
 
         for(let c of this.props.cdoCanvas.connections){
-            if(c.source == connection.source){
+            if(c.source === connection.source){
                 return
             }
         }
@@ -650,13 +648,13 @@ class GovernNew extends Component {
         window.governNewCanvas = self.props.governNewCanvas
         window.cdoCanvas = self.props.cdoCanvas
 
-        if (node.type == "data") {
+        if (node.type === "data") {
             return false;
         }
 
         // Init new node properties
         if (isNewNode === true) {
-            if (node.id == null || node.id === undefined || node.id == '') {
+            if (node.id == null || node.id === undefined || node.id === '') {
                 node.id = window.uuid()
             }
 
@@ -689,11 +687,11 @@ class GovernNew extends Component {
                 cancel: "div.ep",
                 stop: function (event, ui) {
                     var droptarget = event.target.droptarget
-                    if (droptarget == CDE_CANVAS) {
+                    if (droptarget === CDE_CANVAS) {
                         let node = window.governNewCanvas.nodes.find(node => node.id === event.target.id)
                         node.left = ui.position.left
                         node.top = ui.position.top
-                    } else if (droptarget == CDO_CANVAS) {
+                    } else if (droptarget === CDO_CANVAS) {
                         node = window.cdoCanvas.nodes.find(node => node.id === ui.helper[0].id)
                         node.left = ui.position.left
                         node.top = ui.position.top
@@ -767,7 +765,7 @@ class GovernNew extends Component {
                     node.preferredId = self.props.conformedDataElements.currentConformedDataElement.preferredSource.id
                 }
                 ep = '<div class="ep"></div>'
-                var isPreferred = node.dataId == node.preferredId + "" ? "checked" : ""
+                var isPreferred = node.dataId === node.preferredId + "" ? "checked" : ""
                 preferred = `<div class="preferred"><label><input type="checkbox" class="preferred-d-e" id="${node.id}" alt="${node.dataId}" name="${node.name}" ${isPreferred}/>Preferred</label></div>`
             } else if (node.type === 'conformed-data-element') {
                 if (node.droptarget === CDO_CANVAS) {
@@ -830,7 +828,7 @@ class GovernNew extends Component {
             // Update the state
             // Uncheck the other sources
             $('.preferred-d-e').each(function (index, obj) {
-                if (this.id != elementId) {
+                if (this.id !== elementId) {
                     this.checked = false
                 }
             });
@@ -845,7 +843,6 @@ class GovernNew extends Component {
     }
 
     getPlumbInstance(container) {
-        let self = this
         // Create an instance of jsplumb for this canvas
         let plumb = jsPlumb.getInstance({
             Endpoint: ["Dot", { radius: 2 }],
@@ -937,7 +934,8 @@ class GovernNew extends Component {
                 var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
                 var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
                 var el = ui.draggable[0];
-                var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: el.id, droptarget: el.getAttribute('droptarget') };
+                var id = parseInt(el.id)
+                var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: id, droptarget: el.getAttribute('droptarget') };
 
                 let container = wrapper.prevObject[0].id
                 if (el.className.indexOf('conformed-data-element') >= 0) {
@@ -947,8 +945,11 @@ class GovernNew extends Component {
                     if (container === CDE_CANVAS) {
                         self.clearConformedDataElementCanvas()
 
-                        var cde = self.props.conformedDataElements.conformedDataElementList.find(n=>n.id == node.id)
-                        node.description = cde.description
+                        var cde = self.props.conformedDataElements.conformedDataElementList.find(n=>n.id === node.id)
+                        if(cde.description){
+                            node.description = cde.description
+                        }
+
 
                         // Update the details of this CDE from the service
                         // self.getCdeDetail(cde)
@@ -982,10 +983,7 @@ class GovernNew extends Component {
 
                     if (container === CDO_CANVAS) {
                         node.type = 'conformed-data-element'
-                        var isNewNode = true;
-
-                        
-
+                        isNewNode = true;
                         self.addNode(node, self.state.cdoPlumb, null, isNewNode);
                         return
                     }
@@ -994,10 +992,10 @@ class GovernNew extends Component {
 
                 if (el.className.indexOf('conformed-data-object') >= 0) {
                     node.type = 'conformed-data-object'
-                    var isNewNode = true;
+                    isNewNode = true;
                     self.clearCdoCanvas()
 
-                    var cdo = self.props.conformedDataObjects.conformedDataObjectList.find(n=>n.id == node.id)
+                    var cdo = self.props.conformedDataObjects.conformedDataObjectList.find(n=>n.id === node.id)
                     node.description = cdo.description
                     self.addNode(node, self.state.cdoPlumb, null, isNewNode);
 
@@ -1012,7 +1010,7 @@ class GovernNew extends Component {
                     }
 
                     node.type = 'data-element'
-                    var isNewNode = true;
+                    isNewNode = true;
                     self.addNode(node, self.state.cdePlumb, null, isNewNode);
                     return
                 }
@@ -1022,7 +1020,7 @@ class GovernNew extends Component {
     }
 
     render() {
-        const { error, isLoaded, dataSources, tabKey, currentNode, cdePlumb, cdoPlumb, actionStates } = this.state;
+        const { error, isLoaded, tabKey, currentNode, cdePlumb, cdoPlumb, actionStates } = this.state;
         const addNode = this.addNode;
         const nodeClicked = this.nodeClicked;
         const dataElements = this.props.dataElements
@@ -1033,7 +1031,7 @@ class GovernNew extends Component {
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div className="loader"><br /><img src='images/wait.gif' /><br />Loading...</div>;
+            return <div className="loader"><br /><img src='images/wait.gif' alt='wait'/><br />Loading...</div>;
         } else {
             return (
                 <div>

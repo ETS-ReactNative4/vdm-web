@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import ConnectionsList from '../components/ConnectionsList'
 import ItemList from '../components/ItemList'
 import Canvas from '../components/Canvas'
-import ListItem from '../components/ListItem'
 import AcquireActions from '../components/AcquireActions'
 import "./Acquire.css";
 // eslint-disable-next-line
@@ -15,8 +14,6 @@ import * as config from '../config';
 
 require('jqueryui');
 require('jsplumb');
-
-const log = (type) => console.log.bind(console, type);
 
 const jsPlumb = window.jsPlumb;
 
@@ -80,7 +77,6 @@ class Acquire extends Component {
     }
 
     svcCreateJob = (job) => {
-        var self = this
         fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
             headers: {
                 'Content-Type': 'application/json',
@@ -227,33 +223,28 @@ class Acquire extends Component {
         this.setState({ show: false });
     }
 
-    handleShow() {
-        console.log('redirect to explore');
-        $("#waitdiv").show();
-        this.setState({ show: true });
-        $('#modal1').hide();
+    // handleShow() {
+    //     console.log('redirect to explore');
+    //     $("#waitdiv").show();
+    //     this.setState({ show: true });
+    //     $('#modal1').hide();
 
 
-        var result = JSON.parse($('#triurl').val());
-        console.log(result)
+    //     var result = JSON.parse($('#triurl').val());
+    //     console.log(result)
 
 
 
-        var win = window.open(result.url, '_blank');
-        var timer = setInterval(function () {
-            if (win.closed) {
-                clearInterval(timer);
-                document.getElementById('explorebtn').click();
-                console.log('closed');
-                $("#waitdiv").hide();
-            }
-        }, 1000);
-    }
-
-    handleClose() {
-        $('#modal1').hide();
-        this.setState({ show: false });
-    }
+    //     var win = window.open(result.url, '_blank');
+    //     var timer = setInterval(function () {
+    //         if (win.closed) {
+    //             clearInterval(timer);
+    //             document.getElementById('explorebtn').click();
+    //             console.log('closed');
+    //             $("#waitdiv").hide();
+    //         }
+    //     }, 1000);
+    // }
 
     handleShow() {
         console.log('redirect to explore');
@@ -270,12 +261,12 @@ class Acquire extends Component {
     // Add the node to the node list and to the canvas
     addNode(node, plumb, nodeClicked, isNewNode) {
 
-        if (this.props.jobs.currentJob == undefined || this.props.jobs.currentJob.name === '') {
+        if (this.props.jobs.currentJob === undefined || this.props.jobs.currentJob.name === '') {
             window.acquireActions.handleNewButtonClicked()
             return
         }
 
-        if (node.type == "data") {
+        if (node.type === "data") {
             return false;
         }
 
@@ -333,7 +324,7 @@ class Acquire extends Component {
                 `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
                 `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
                 `<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` +
-                `</table></div><div class=\"ep\"></div>`;
+                `</table></div><div class="ep"></div>`;
             d.style.left = node.left + "px";
             d.style.top = node.top + "px";
             plumb.getContainer().appendChild(d);
@@ -452,7 +443,7 @@ class Acquire extends Component {
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div className="loader"><br /><img src='images/wait.gif' /><br />Loading...</div>;
+            return <div className="loader"><br /><img src='images/wait.gif' alt='wait'/><br />Loading...</div>;
         } else {
             return (
                 <div>

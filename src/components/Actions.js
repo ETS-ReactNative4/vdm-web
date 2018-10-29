@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import { ButtonGroup, Button, Popover, Tooltip, OverlayTrigger, FormGroup, FormControl, ControlLabel, Label } from 'react-bootstrap';
-import $ from 'jquery';
+import { ButtonGroup, Button, FormGroup, FormControl, ControlLabel, Label } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 
 import './Actions.css'
@@ -47,7 +45,7 @@ class Actions extends Component {
     handleCreate() {
         const { elementName, description } = this.state;
 
-        if(elementName.length == 0){
+        if(elementName.length === 0){
             return
         }
 
@@ -69,7 +67,7 @@ class Actions extends Component {
         const length = this.state.elementName.length;
         if (length > 10) return 'success';
         else if (length > 5) return 'warning';
-        else if (length == 0) return 'error';
+        else if (length === 0) return 'error';
         return null;
     }
 
@@ -93,7 +91,7 @@ class Actions extends Component {
     }
 
     componentDidMount() {
-        let newConformedDataElementCreated = this.props.newConformedDataElementCreated;
+        // let newConformedDataElementCreated = this.props.newConformedDataElementCreated;
     }
 
     render() {

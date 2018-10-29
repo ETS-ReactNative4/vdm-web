@@ -34,7 +34,7 @@ const conformedDataObjects = (state = conformedDataObjectsInitialState, action) 
 
         case 'UPDATE_CURRENT_CDO': {
             action.cdo.updateDate = (new Date()).toLocaleString();
-            var cleaned = state.conformedDataObjectList.filter(j => j.id != action.cdo.id)
+            var cleaned = state.conformedDataObjectList.filter(j => j.id !== action.cdo.id)
             return { ...state, currentConformedDataObject: action.cdo, conformedDataObjectList: cleaned.concat(action.cdo) }
         }
 

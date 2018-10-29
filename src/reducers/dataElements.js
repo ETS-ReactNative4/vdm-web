@@ -1,28 +1,28 @@
 // Reducer to keep track of dataElements within the UI
-const dataElementsInitialState = {
-    currentDataElement: {
-        id: '',
-        dataElementId: 0,
-        name: '',
-        description: 'default description',
-        type: 'Batch',
-        layer: 'source-to-raw',
-        sources: [],
-        targets: []
-    },
-    dataElementList: [
-        {
-            id: 1,
-            name: "cust_nm",
-            description: "Customer Name"
-        },
-        {
-            id: 12,
-            name: "product_nm",
-            description: "Product Name"
-        }
-    ]
-}
+// const dataElementsInitialState = {
+//     currentDataElement: {
+//         id: '',
+//         dataElementId: 0,
+//         name: '',
+//         description: 'default description',
+//         type: 'Batch',
+//         layer: 'source-to-raw',
+//         sources: [],
+//         targets: []
+//     },
+//     dataElementList: [
+//         {
+//             id: 1,
+//             name: "cust_nm",
+//             description: "Customer Name"
+//         },
+//         {
+//             id: 12,
+//             name: "product_nm",
+//             description: "Product Name"
+//         }
+//     ]
+// }
 
 const dataElements = (state = {}, action) => {
     switch (action.type) {
@@ -38,7 +38,7 @@ const dataElements = (state = {}, action) => {
 
         case 'UPDATE_CURRENT_DATA_ELEMENT': {
             action.dataElement.updateDate = (new Date()).toLocaleString();
-            var cleaned = state.dataElementList.filter(j => j.dataElementId != action.dataElement.dataElementId)
+            var cleaned = state.dataElementList.filter(j => j.dataElementId !== action.dataElement.dataElementId)
             return { ...state, currentDataElement: action.dataElement, dataElementList: cleaned.concat(action.dataElement) }
         }
 

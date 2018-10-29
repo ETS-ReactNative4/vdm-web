@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import { ButtonGroup, Button, Popover, Tooltip, OverlayTrigger, FormGroup, FormControl, ControlLabel, Label } from 'react-bootstrap';
-import $ from 'jquery';
+import { ButtonGroup, Button, Tooltip, OverlayTrigger, FormGroup, FormControl, ControlLabel, Label } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 
 import './AcquireActions.css'
@@ -88,7 +86,7 @@ class AcquireActions extends Component {
     }
 
     componentDidMount() {
-        let newJobCreated = this.props.newJobCreated;
+        // let newJobCreated = this.props.newJobCreated;
     }
 
     render() {

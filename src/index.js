@@ -5,7 +5,6 @@ import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter, Route } from 'react-router-dom'
 import Acquire from './containers/Acquire'
 import Explore from './containers/Explore'
-import Govern from './containers/Govern'
 import GovernNew from './containers/GovernNew'
 import Operationalize from './containers/Operationalize'
 import Monitor from './containers/Monitor'
@@ -27,7 +26,6 @@ ReactDOM.render(
                 <Route exact path="/" component={Acquire} />
                 <Route path="/acquire" render={(props) => (<Acquire {...props} state={window.nodes} />)} />
                 <Route path="/explore" component={Explore} />
-                <Route path="/govern" component={Govern} />
                 <Route path="/governNew" component={GovernNew} />
                 <Route path="/operationalize" component={Operationalize} />
                 <Route path="/monitor" component={Monitor} />
@@ -42,7 +40,7 @@ registerServiceWorker();
 // Global functions
 window.uuid = function() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          var r = Math.random() * 16 | 0, v = c === 'x' ? r : ((r & 0x3) | 0x8);
           return v.toString(16);
         });
       }

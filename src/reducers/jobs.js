@@ -27,7 +27,7 @@ const jobs = (state = jobsInitialState, action) => {
 
         case 'UPDATE_CURRENT_JOB': {
             action.job.updateDate = (new Date()).toLocaleString();
-            var cleaned = state.jobList.filter(j => j.jobId != action.job.jobId)
+            var cleaned = state.jobList.filter(j => j.jobId !== action.job.jobId)
             return { ...state, currentJob: action.job, jobList: cleaned.concat(action.job) }
         }
 

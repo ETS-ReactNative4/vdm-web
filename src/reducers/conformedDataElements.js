@@ -35,7 +35,7 @@ const conformedDataElements = (state = conformedDataElementsInitialState, action
 
         case 'UPDATE_CURRENT_CONFORMED_DATA_ELEMENT': {
             action.conformedDataElement.updateDate = (new Date()).toLocaleString();
-            var cleaned = state.conformedDataElementList.filter(j => j.id != action.conformedDataElement.id)
+            var cleaned = state.conformedDataElementList.filter(j => j.id !== action.conformedDataElement.id)
             return { ...state, currentConformedDataElement: action.conformedDataElement, conformedDataElementList: cleaned.concat(action.conformedDataElement) }
         }
 
