@@ -10,7 +10,7 @@
 //     ]
 
 // }
-const acquireCanvas = (state = {}, action) => {
+const acquireCanvas = (state = {nodes:[], connections:[]}, action) => {
     switch (action.type) {
         case 'ADD_NODE':
             state.nodes = [...state.nodes, action.node]

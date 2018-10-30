@@ -16,6 +16,7 @@ require('jqueryui');
 require('jsplumb');
 
 const jsPlumb = window.jsPlumb;
+const ACQUIRE_CANVAS = "canvas"
 
 class Acquire extends Component {
 
@@ -27,6 +28,7 @@ class Acquire extends Component {
             dataSources: [],
             zTreeObj: null,
             currentNode: null,
+            draggedNode: null,
             plumb: null,
             actionStates: {
                 canNew: true,
@@ -41,9 +43,7 @@ class Acquire extends Component {
         this.nodeClicked = this.nodeClicked.bind(this);
         this.clearCanvas = this.clearCanvas.bind(this);
         this.closeJob = this.closeJob.bind(this)
-        this.onRunJob = this.onRunJob.bind(this)
         this.createNewJob = this.createNewJob.bind(this)
-        this.svcCreateJob = this.svcCreateJob.bind(this)
         this.fetchJobs = this.fetchJobs.bind(this)
 
         this.handleShow = this.handleShow.bind(this);
@@ -53,44 +53,60 @@ class Acquire extends Component {
         window.onAddConnection = this.onAddConnection.bind(this);
         window.onDeleteConnection = this.onDeleteConnection.bind(this);
 
+        this.onJobCreated = this.onJobCreated.bind(this)
+        this.onJobUpdated = this.onJobUpdated.bind(this)
 
+        this.setCurrentJob = this.setCurrentJob.bind(this)
+        this.clearAcquireCanvas = this.clearAcquireCanvas.bind(this)
+        this.setDraggedNode = this.setDraggedNode.bind(this)
+        this.saveJob = this.saveJob.bind(this)
     }
 
-    ///////////////////////////
-    // API calls
-    ///////////////////////////
-    fetchJobs = () => {
-        var self = this
-        fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            method: 'get'
-        }).then(function (response) {
-            return response.json()
-        }).then(function (data) {
-            console.log(data.JobList)
-            self.props.onInitJobList(data.JobList)
-        });
 
+    ///////////////////
+    // Events
+    /////////////////
+    onJobCreated(job) {
+        this.props.addJob(job)
     }
 
-    svcCreateJob = (job) => {
-        fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            method: 'post',
-            body: JSON.stringify(job)
-        }).then(function (response) {
-            return response.json()
-        }).then(function (data) {
-            console.log(data);
-        });
-
+    onJobUpdated(job) {
+        this.props.updateCurrentJob(job)
     }
+
+
+    /////////////////
+    // State management
+    ///////////////
+    setCurrentJob(node) {
+
+        let job = this.props.jobs.jobList.find(j=>j.id === node.id)
+        this.clearAcquireCanvas()
+        this.props.updateCurrentJob(job)
+
+        // Recreate the job graph if possible
+        for (let s of job.sources) {
+            console.log(s);
+            
+        }
+
+        for (let t of job.targets) {
+            console.log(t);
+            
+        }
+    }
+
+    clearAcquireCanvas() {
+        this.props.clearCanvas();
+        this.state.plumb.empty(ACQUIRE_CANVAS)
+    }
+
+    // From connections list
+    setDraggedNode(node){
+        console.log(node)
+        this.setState({draggedNode: node})
+    }
+
 
     createNewJob(job) {
         this.setState({
@@ -103,11 +119,75 @@ class Acquire extends Component {
             }
         })
 
-        this.props.addJob(job)
-        this.svcCreateJob(job)
+        if (job.name !== "") {
+            this.svcCreateJob(job, this.onJobCreated)
+        }
+
     }
 
-    onRunJob() {
+    saveJob(){
+        let job = this.props.jobs.currentJob
+        this.svcUpdateJob(job, this.onJobUpdated)
+    }
+
+
+    ///////////////////////////
+    // API Calls
+    //////////
+    fetchJobs = () => {
+        var self = this
+        fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            method: 'get'
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            console.log(data.jobList)
+            self.props.onInitJobList(data.jobList)
+        });
+
+    }
+
+    svcCreateJob(job, callback) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
+                    var json = JSON.parse('{' + resp + '}')
+                    console.log(json);
+                    job.id = json.ID
+                    callback(job)
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        let newJob = {
+            Job: {
+                name: job.name,
+                description: job.description,
+                type: "Batch",
+                layer: "Source-To-Raw",
+                sources: [],
+                targets: [],
+                activeIndicator: "Y"
+            }
+        }
+
+        var payload = JSON.stringify(newJob)
+        console.log(payload)
+
+        xmlhttp.open("POST", config.VDM_META_SERVICE_HOST + '/jobs');
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(payload);
+    }
+
+    svcRunJob() {
         // Call the rawfile api method
         var xmlhttp = new XMLHttpRequest();
 
@@ -135,6 +215,35 @@ class Acquire extends Component {
         xmlhttp.send(rawFilePayload);
     }
 
+    svcUpdateJob(job, callback) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
+                    var json = JSON.parse('{' + resp + '}')
+                    console.log(json);
+                    job.id = json.ID
+                    callback(job)
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        let jobTemp = {Job:{}}
+        jobTemp.Job = job
+
+        var payload = JSON.stringify(jobTemp)
+        console.log(payload)
+
+        xmlhttp.open("PUT", config.VDM_META_SERVICE_HOST + '/jobs/' + job.id);
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(payload);
+    }
+
+    //////////////////////////////
+
     onAddConnection(connection) {
         // At this point we already have a defined connection
         console.log(this.props.acquireCanvas)
@@ -142,26 +251,35 @@ class Acquire extends Component {
 
         // fluff up the job with the connection info
         var job = Object.assign({}, this.props.jobs.currentJob)
+        // job.jobId = job.id
 
-        var source = this.props.acquireCanvas.nodes.find(node => node.id === connection.source)
-        job.Source = {
+        var source = this.props.acquireCanvas.nodes.find(node => node.id.toString() === connection.source)
+        job.sources.push({
             id: source.id,
-            location: source.data.config.path,
+            location: source.path,
             name: source.name
-        }
+        })
+        // job.sources.push({
+        //     id: source.id,
+        //     name: source.name
+        // })
 
         // Hardcoding some of the parameters for now
-        var target = this.props.acquireCanvas.nodes.find(node => node.id === connection.target)
-        job.Target = {
-            ID: target.id,
+        var target = this.props.acquireCanvas.nodes.find(node => node.id.toString() === connection.target)
+        job.targets.push({
+            id: target.id,
             description: target.description,
-            location: source.data.config.path,
+            location: target.path,
             name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
             sourceID: source.id,
             status: 'Active'
-        }
+        })
+        // job.targets.push({
+        //     id: target.id,
+        //     name: source.name
+        // })
 
         // Time to enable the save button
         this.setState({
@@ -174,7 +292,7 @@ class Acquire extends Component {
             }
         })
 
-        this.props.onUpdateCurrentJob(job)
+        this.props.updateCurrentJob(job)
 
         console.log(this.props.jobs)
     }
@@ -322,7 +440,7 @@ class Acquire extends Component {
             d.nodeId = node.id;
             d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
                 `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
-                `<tr><td>Description:</td><td><input value='${node.description}'/></td></tr>` +
+                `<tr><td>Path:</td><td><input value='${node.path}'/></td></tr>` +
                 `<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` +
                 `</table></div><div class="ep"></div>`;
             d.style.left = node.left + "px";
@@ -432,6 +550,37 @@ class Acquire extends Component {
 
         this.fetchJobs()
 
+        setTimeout(function () {
+            $('#canvas').droppable({
+                drop: function (event, ui) {
+                    var wrapper = $(this).parent();
+                    var parentOffset = wrapper.offset();
+                    var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
+                    var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
+                    var el = ui.draggable[0];
+                    var id = el.id
+                    var node = { left: left, top: top, type: '', name: el.innerText, id: id };
+                    var isNewNode = true;
+
+                    if (el.className.indexOf('node_name') >= 0) {
+                        let n = self.state.draggedNode
+                        let num = n.id.replace(/\D/g,'').substring(0,5);
+                        node.id = parseInt(num)
+                        node.itemType = n.itemType
+                        node.path = n.data.config.path
+                        self.addNode(node, plumb, null, isNewNode);
+                        return
+                    }
+
+                    if (el.className.indexOf('list-item') >= 0) {
+                        node.id = parseInt(node.id)
+                        self.setCurrentJob(node)
+                        return
+                    }
+                }
+            });
+        }, 1000)
+
     }
 
     render() {
@@ -443,7 +592,7 @@ class Acquire extends Component {
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div className="loader"><br /><img src='images/wait.gif' alt='wait'/><br />Loading...</div>;
+            return <div className="loader"><br /><img src='images/wait.gif' alt='wait' /><br />Loading...</div>;
         } else {
             return (
                 <div>
@@ -452,8 +601,11 @@ class Acquire extends Component {
                             <Tab className='tab-content' eventKey={1} title="RCG Enable">
                                 <div className='col-lg-4  col-md-4 left-pane'>
                                     <ConnectionsList
-                                        dataSources={dataSources} zTreeObj={zTreeObj}
-                                        currentNode={currentNode} addNode={addNode} plumb={plumb}
+                                        dataSources={dataSources}
+                                        zTreeObj={zTreeObj}
+                                        setDraggedNode={this.setDraggedNode}
+                                        addNode={addNode}
+                                        plumb={plumb}
                                         nodeClicked={nodeClicked}
                                     />
                                     <ItemList
@@ -470,7 +622,7 @@ class Acquire extends Component {
                                         onCreateNewJob={this.createNewJob}
                                         onClearCanvas={this.clearCanvas}
                                         onCloseJob={this.closeJob}
-                                        onRunJob={this.onRunJob}
+                                        onRunJob={this.saveJob}
                                     ></AcquireActions>
                                     <Canvas
                                         id='canvas'
@@ -522,7 +674,7 @@ const mapDispatchToProps = dispatch => {
         addConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
         onInitJobList: jobList => dispatch({ type: 'INIT_JOB_LIST', jobList: jobList }),
         addJob: job => dispatch({ type: 'ADD_JOB', job: job }),
-        onUpdateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
+        updateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
         closeCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
         clearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
 

@@ -17,10 +17,8 @@ class ConnectionsList extends Component {
 	componentDidMount() {
 		let dataSources = this.props.dataSources;
 		let zTreeObj = this.props.zTreeObj;
-		let currentNode = this.props.currentNode;
-		let addNode = this.props.addNode;
-		let nodeClicked = this.props.nodeClicked;
-		let plumb = this.props.plumb;
+		let self = this
+
 		$(document).ready(function () {
 			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, dataSources);
 			zTreeObj.expandAll(true);
@@ -34,36 +32,13 @@ class ConnectionsList extends Component {
 				start: function (event, ui) {
 					var nodeId = $(event)[0].currentTarget.id;
 					nodeId = nodeId.substring(0, nodeId.length - 5);
-					currentNode = zTreeObj.getNodeByParam('tId', nodeId);
+					let currentNode = zTreeObj.getNodeByParam('tId', nodeId);
 					zTreeObj.selectNode(currentNode);
+					self.props.setDraggedNode(currentNode)
 				}
 			});
 
-			$('#canvas').droppable({
-				drop: function (event, ui) {
-
-					if (ui.draggable[0].className.indexOf('node_name') >= 0) {
-						var node = $.extend(true, {}, currentNode);
-
-						var wrapper = $(this).parent();
-						var parentOffset = wrapper.offset();
-						node.left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
-						node.top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
-
-						var isNewNode = true;
-						addNode(node, plumb, nodeClicked, isNewNode);
-						return
-					}
-
-					if (ui.draggable[0].className.indexOf('list-item') >= 0) {
-						console.log('Load the selected job ' + ui.draggable[0].id)
-						// Load the job
-						// if (props.listType == 'jobList') {
-						// 	console.log('Load the selected job ' + ui.draggable[0].id)
-						// }
-					}
-				}
-			});
+			
 		});
 
 		$("#connectionsAccordion").accordion({
