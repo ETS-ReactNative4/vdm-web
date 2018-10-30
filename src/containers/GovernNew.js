@@ -71,11 +71,30 @@ class GovernNew extends Component {
 
         this.onCdoCreated = this.onCdoCreated.bind(this)
         this.onCdoUpdated = this.onCdoUpdated.bind(this)
+
+        this.removeNode = this.removeNode.bind(this)
     }
 
     ////////////////////////////
     // Actions
     ///////////
+    removeNode(node) {
+        if (node.canvas === CDE_CANVAS) {
+            this.props.removeDeNode(node.id)
+            this.props.removeCdeConnection({source: node.id})
+        }
+
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
+                canNew: false
+            }
+        })
+    }
+
     getCdeDetail(cde) {
         this.svcGetCdeDetail(cde, this.onCdeDetailReceived)
     }
@@ -837,21 +856,27 @@ class GovernNew extends Component {
 
             var ep = ''
             var preferred = ''
+            var removeBtn = ''
+
             if (node.type === 'data-element') {
                 if (self.props.conformedDataElements.currentConformedDataElement.preferredSource) {
                     node.preferredId = self.props.conformedDataElements.currentConformedDataElement.preferredSource.id
                 }
                 ep = '<div class="ep"></div>'
+                removeBtn = `<button class='remove-btn'>x</button>`
                 var isPreferred = node.dataId === node.preferredId + "" ? "checked" : ""
                 preferred = `<div class="preferred"><label><input type="checkbox" class="preferred-d-e" id="${node.id}" alt="${node.dataId}" name="${node.name}" ${isPreferred}/>Preferred</label></div>`
             } else if (node.type === 'conformed-data-element') {
                 if (node.droptarget === CDO_CANVAS) {
                     ep = '<div class="ep"></div>'
+                    removeBtn = `<button class='remove-btn'>x</button>`
                 }
             }
 
 
-            var header = `<div class='headerdiv ${node.type}'><b>` + node.itemType + '</b>' + preferred + '</div>'
+
+
+            var header = `<div class='headerdiv ${node.type}'><b>` + node.itemType + '</b>' + removeBtn + preferred + '</div>'
 
             var detail = `<div class='detaildiv ${node.type}'><table class="detailtable">` +
                 `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
@@ -888,8 +913,15 @@ class GovernNew extends Component {
         }
 
         $(".w").on('click', function (e) {
-            console.log('clicked ' + e.currentTarget.id)
-
+            let target = {
+                id: e.currentTarget.id,
+                canvas: e.currentTarget.droptarget
+            }
+            if (e.originalEvent.target.className === 'remove-btn') {
+                console.log("Removed: " + target)
+                self.removeNode(target)
+                plumb.remove(e.currentTarget)
+            }
 
             // nodeClicked(e.currentTarget.id);
             // e.preventDefault();
@@ -1269,6 +1301,9 @@ const mapDispatchToProps = dispatch => {
         closeConformedDataElement: () => dispatch({ type: 'CLEAR_CURRENT_CONFORMED_DATA_ELEMENT' }),
         clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_GOVERN_CANVAS' }),
         onAddCdeNode: node => dispatch({ type: 'ADD_CDE_NODE', node: node }),
+
+        // Remove nodes
+        removeDeNode: id => dispatch({ type: 'REMOVE_DE_NODE', id: id }),
 
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
 
