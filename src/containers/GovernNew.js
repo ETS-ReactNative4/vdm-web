@@ -70,13 +70,13 @@ class GovernNew extends Component {
         this.onCdeDetailReceived = this.onCdeDetailReceived.bind(this)
 
         this.onCdoCreated = this.onCdoCreated.bind(this)
-
+        this.onCdoUpdated = this.onCdoUpdated.bind(this)
     }
 
     ////////////////////////////
     // Actions
     ///////////
-    getCdeDetail(cde){
+    getCdeDetail(cde) {
         this.svcGetCdeDetail(cde, this.onCdeDetailReceived)
     }
 
@@ -129,8 +129,8 @@ class GovernNew extends Component {
         this.addNode(cde, this.state.cdePlumb, null, true);
     }
 
-    onCdeUpdated(cde){
-        this.props.updateCurrentConformedDataElement(cde)
+    onCdeUpdated(cde) {
+        this.props.updateCde(cde)
         this.setState({
             actionStates: {
                 ...this.state.actionStates,
@@ -142,7 +142,7 @@ class GovernNew extends Component {
         })
     }
 
-    onCdeDetailReceived(detail, cde){
+    onCdeDetailReceived(detail, cde) {
         console.log(detail)
         console.log(cde)
     }
@@ -153,6 +153,19 @@ class GovernNew extends Component {
         this.clearCdoCanvas()
         // Add to canvas
         this.addNode(cdo, this.state.cdoPlumb, null, true);
+    }
+
+    onCdoUpdated(cdo) {
+        this.props.updateCurrentCdo(cdo)
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: true
+            }
+        })
     }
 
     ////////////
@@ -175,15 +188,15 @@ class GovernNew extends Component {
 
 
         console.log(cde)
-        
+
         // TODO: Update meta data
         this.svcUpdateCde(cde, this.onCdeUpdated)
-        
+
     }
 
     setCurrentConformedDataElement(dataId) {
         let element = this.props.conformedDataElements.conformedDataElementList.find(j => j.id === dataId)
-        this.props.updateCurrentConformedDataElement(element)
+        this.props.updateCde(element)
     }
 
 
@@ -219,32 +232,21 @@ class GovernNew extends Component {
     }
 
     updateCurrentCdo() {
-        var self = this
-        var cdo = this.props.conformedDataObjects.currentConformedDataObject
-        // Update the sources if any based onthe connections
+        let self = this
+        let cdo = this.props.conformedDataObjects.currentConformedDataObject
+        // Update the sources if any based on the connections
         let connections = this.props.cdoCanvas.connections.filter(c => c.targetDataId === cdo.id)
         cdo.sources = []
 
         for (let c of connections) {
             console.log(c);
-            let de = self.props.conformedDataElements.conformedDataElementList.find(d => d.id === c.sourceDataId)
-            if (de) {
-                cdo.sources.push(de)
+            let cde = self.props.conformedDataObjects.conformedDataObjectList.find(d => d.id === c.sourceDataId)
+            if (cde) {
+                cdo.sources.push(cde)
             }
         }
-
-
         console.log(cdo)
-        this.props.updateCurrentCdo(cdo)
-        this.setState({
-            actionStates: {
-                ...this.state.actionStates,
-                canClose: true,
-                canShowProps: true,
-                canSave: true,
-                canNew: true
-            }
-        })
+        this.svcUpdateCdo(cdo, this.onCdoUpdated)
     }
 
     setCurrentCdo(dataId) {
@@ -460,6 +462,41 @@ class GovernNew extends Component {
         xmlhttp.send(payload);
     }
 
+    svcUpdateCdo(cdo, callback) {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+                    let resp = xmlhttp.responseText.replace('ID', '"ID"')
+                    let json = JSON.parse('{' + resp + '}')
+                    console.log(json);
+                    cdo.id = json.ID
+                    callback(cdo)
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        let newVersion = cdo.version + 1
+        let cdoTemp = {
+            ConformedDataObject: {
+                version: newVersion,
+                name: cdo.name,
+                description: cdo.description,
+                sources: cdo.sources,
+                preferredSource: cdo.preferredSource,
+                status: cdo.status
+            }
+        }
+        let payload = JSON.stringify(cdoTemp)
+        console.log(payload)
+
+        xmlhttp.open("PUT", config.VDM_META_SERVICE_HOST + '/conformedDataObjects/' + cdo.id);
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(payload);
+    }
+
     ///////////////////////////
     // API calls - END
     ///////////////////////////
@@ -468,8 +505,8 @@ class GovernNew extends Component {
     addCdeConnection(connection) {
 
         // Make sure connections are not duplicated
-        for(let c of this.props.governNewCanvas.connections){
-            if(c.source === connection.source){
+        for (let c of this.props.governNewCanvas.connections) {
+            if (c.source === connection.source) {
                 return
             }
         }
@@ -520,8 +557,8 @@ class GovernNew extends Component {
 
     addCdoConnection(connection) {
 
-        for(let c of this.props.cdoCanvas.connections){
-            if(c.source === connection.source){
+        for (let c of this.props.cdoCanvas.connections) {
+            if (c.source === connection.source) {
                 return
             }
         }
@@ -530,7 +567,11 @@ class GovernNew extends Component {
         this.props.addCdoConnection(connection)
 
         // fluff up the dataElement with the connection info
-        var cdo = Object.assign({}, this.props.conformedDataObjects.currentConformedDataObject)
+        let targetCdo = this.props.conformedDataObjects.conformedDataObjectList.find(c => c.id === connection.targetDataId)
+        if(targetCdo == null){
+            targetCdo = this.props.conformedDataObjects.currentConformedDataObject
+        }
+        var cdo = Object.assign({}, targetCdo)
 
         var source = this.props.cdoCanvas.nodes.find(node => node.id === connection.source)
         cdo.Source = {
@@ -576,15 +617,32 @@ class GovernNew extends Component {
         } else if (canvas === CDO_CANVAS) {
             this.addCdoConnection(connection)
         }
-    }
 
-    onDeleteConnection() {
         this.setState({
             actionStates: {
                 ...this.state.actionStates,
                 canClose: true,
                 canShowProps: true,
-                canSave: false,
+                canSave: true,
+                canNew: false
+            }
+        })
+    }
+
+    onDeleteConnection(connection, canvas) {
+        if (connection.canvas === CDE_CANVAS) {
+            this.props.removeCdeConnection(connection)
+        } else if (connection.canvas === CDO_CANVAS) {
+            this.props.removeCdoConnection(connection)
+        }
+        
+
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
                 canNew: false
             }
         })
@@ -869,7 +927,13 @@ class GovernNew extends Component {
         // happening.
         plumb.bind("click", function (connection) {
             plumb.deleteConnection(connection);
-            window.onDeleteConnection()
+
+            let c = {
+                canvas: plumb.getContainer().id,
+                source: connection.sourceId
+            }
+
+            window.onDeleteConnection(c)
         });
 
         // bind a connection listener. note that the parameter passed to this function contains more than
@@ -945,8 +1009,8 @@ class GovernNew extends Component {
                     if (container === CDE_CANVAS) {
                         self.clearConformedDataElementCanvas()
 
-                        var cde = self.props.conformedDataElements.conformedDataElementList.find(n=>n.id === node.id)
-                        if(cde.description){
+                        var cde = self.props.conformedDataElements.conformedDataElementList.find(n => n.id === node.id)
+                        if (cde.description) {
                             node.description = cde.description
                         }
 
@@ -970,11 +1034,11 @@ class GovernNew extends Component {
                                 targetDataId: node.dataId,
                                 type: 'basic'
                             }
-                
+
                             window.onAddConnection(c, container)
                             self.state.cdePlumb.connect(c);
                         }
-                        
+
 
                         // Update the current conformed data element
                         self.setCurrentConformedDataElement(node.dataId)
@@ -995,9 +1059,29 @@ class GovernNew extends Component {
                     isNewNode = true;
                     self.clearCdoCanvas()
 
-                    var cdo = self.props.conformedDataObjects.conformedDataObjectList.find(n=>n.id === node.id)
+                    var cdo = self.props.conformedDataObjects.conformedDataObjectList.find(n => n.id === node.id)
                     node.description = cdo.description
                     self.addNode(node, self.state.cdoPlumb, null, isNewNode);
+
+                    var top = 50
+                    for (const s of cdo.sources) {
+                        console.log(s)
+                        let n = { left: 50, top: top, type: 'conformed-data-element', name: s.name, id: s.id, droptarget: el.getAttribute('droptarget') };
+                        top = top + 150
+                        self.addNode(n, self.state.cdoPlumb, null, isNewNode);
+
+                        // Add a connection
+                        var c = {
+                            source: n.id,
+                            sourceDataId: n.dataId,
+                            target: node.id,
+                            targetDataId: node.dataId,
+                            type: 'basic'
+                        }
+
+                        window.onAddConnection(c, container)
+                        self.state.cdoPlumb.connect(c);
+                    }
 
                     // Update the current conformed data element
                     self.setCurrentCdo(node.dataId)
@@ -1031,7 +1115,7 @@ class GovernNew extends Component {
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div className="loader"><br /><img src='images/wait.gif' alt='wait'/><br />Loading...</div>;
+            return <div className="loader"><br /><img src='images/wait.gif' alt='wait' /><br />Loading...</div>;
         } else {
             return (
                 <div>
@@ -1157,8 +1241,9 @@ const mapDispatchToProps = dispatch => {
         onInitConformedDataObjectList: conformedDataObjectList => dispatch({ type: 'INIT_CONFORMED_DATA_OBJECT_LIST', conformedDataObjectList: conformedDataObjectList }),
         onAddDataElementNode: node => dispatch({ type: 'ADD_DATA_ELEMENT_NODE', node: node }),
         addConnection: connection => dispatch({ type: 'ADD_DE_TO_CDE_CONNECTION', connection: connection }),
+        removeCdeConnection: connection => dispatch({ type: 'REMOVE_DE_TO_CDE_CONNECTION', connection: connection }),
         addConformedDataElement: conformedDataElement => dispatch({ type: 'ADD_CONFORMED_DATA_ELEMENT', conformedDataElement: conformedDataElement }),
-        updateCurrentConformedDataElement: conformedDataElement => dispatch({ type: 'UPDATE_CURRENT_CONFORMED_DATA_ELEMENT', conformedDataElement: conformedDataElement }),
+        updateCde: conformedDataElement => dispatch({ type: 'UPDATE_CURRENT_CONFORMED_DATA_ELEMENT', conformedDataElement: conformedDataElement }),
         // setPreferredDataElement: preferred => dispatch({ type: 'SET_PREFERRED_D_E', preferred: preferred }),
         closeConformedDataElement: () => dispatch({ type: 'CLEAR_CURRENT_CONFORMED_DATA_ELEMENT' }),
         clearConformedDataElementCanvas: () => dispatch({ type: 'CLEAR_GOVERN_CANVAS' }),
@@ -1172,6 +1257,7 @@ const mapDispatchToProps = dispatch => {
         updateCurrentCdo: cdo => dispatch({ type: 'UPDATE_CURRENT_CDO', cdo: cdo }),
         addCdo: cdo => dispatch({ type: 'ADD_CDO', cdo: cdo }),
         addCdoConnection: connection => dispatch({ type: 'ADD_CDE_TO_CDO_CONNECTION', connection: connection }),
+        removeCdoConnection: connection => dispatch({ type: 'REMOVE_CDE_TO_CDO_CONNECTION', connection: connection }),
 
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };

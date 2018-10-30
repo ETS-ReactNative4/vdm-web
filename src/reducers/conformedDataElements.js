@@ -1,6 +1,6 @@
 // Reducer to keep track of conformedDataElements within the UI
 const conformedDataElementsInitialState = {
-    
+
     currentConformedDataElement: {
         id: '',
         conformedDataElementId: 0,
@@ -9,7 +9,7 @@ const conformedDataElementsInitialState = {
         type: 'Batch',
         layer: 'source-to-raw',
         sources: [],
-        preferredSource:{ id: 0 }
+        preferredSource: { id: 0 }
     },
     conformedDataElementList: [
         {
@@ -42,7 +42,7 @@ const conformedDataElements = (state = conformedDataElementsInitialState, action
         case 'CLEAR_CURRENT_CONFORMED_DATA_ELEMENT':
             return { ...state, currentConformedDataElement: { name: '' } }
 
-            case 'SET_PREFERRED_D_E':
+        case 'SET_PREFERRED_D_E':
             return { ...state, preferred: action.preferred }
 
         default:
