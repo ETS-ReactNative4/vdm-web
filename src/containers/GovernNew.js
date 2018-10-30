@@ -82,6 +82,9 @@ class GovernNew extends Component {
         if (node.canvas === CDE_CANVAS) {
             this.props.removeDeNode(node.id)
             this.props.removeCdeConnection({source: node.id})
+        }else if (node.canvas === CDO_CANVAS) {
+            this.props.removeCdeNode(node.id)
+            this.props.removeCdoConnection({source: node.id})
         }
 
         this.setState({
@@ -1304,6 +1307,7 @@ const mapDispatchToProps = dispatch => {
 
         // Remove nodes
         removeDeNode: id => dispatch({ type: 'REMOVE_DE_NODE', id: id }),
+        removeCdeNode: id => dispatch({ type: 'REMOVE_CDE_NODE', id: id }),
 
         onUpdateCurrentJob: (dataElement) => dispatch({ type: 'UPDATE_CURRENT_JOB', dataElement: dataElement }),
 

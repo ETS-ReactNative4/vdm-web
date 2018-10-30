@@ -21,7 +21,10 @@ const cdoCanvas = (state = { nodes: [], connections: [] }, action) => {
             return state
 
         case 'REMOVE_CDE_TO_CDO_CONNECTION':
-            return {...state, connections: state.connections.filter(c => c.source !== action.connection.source)}
+            return { ...state, connections: state.connections.filter(c => c.source !== action.connection.source) }
+
+        case 'REMOVE_CDE_NODE':
+            return { ...state, nodes: state.nodes.filter(n => n.id !== action.id) }
 
         case 'CLEAR_CDO_CANVAS':
             return { nodes: [], connections: [] };
