@@ -197,6 +197,15 @@ class GovernNew extends Component {
     setCurrentConformedDataElement(dataId) {
         let element = this.props.conformedDataElements.conformedDataElementList.find(j => j.id === dataId)
         this.props.updateCde(element)
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: false
+            }
+        })
     }
 
 
@@ -240,7 +249,7 @@ class GovernNew extends Component {
 
         for (let c of connections) {
             console.log(c);
-            let cde = self.props.conformedDataObjects.conformedDataObjectList.find(d => d.id === c.sourceDataId)
+            let cde = self.props.conformedDataElements.conformedDataElementList.find(d => d.id === c.sourceDataId)
             if (cde) {
                 cdo.sources.push(cde)
             }
@@ -252,6 +261,16 @@ class GovernNew extends Component {
     setCurrentCdo(dataId) {
         let element = this.props.conformedDataObjects.conformedDataObjectList.find(j => j.id === dataId)
         this.props.updateCurrentCdo(element)
+
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: false
+            }
+        })
     }
 
 
@@ -568,7 +587,7 @@ class GovernNew extends Component {
 
         // fluff up the dataElement with the connection info
         let targetCdo = this.props.conformedDataObjects.conformedDataObjectList.find(c => c.id === connection.targetDataId)
-        if(targetCdo == null){
+        if (targetCdo == null) {
             targetCdo = this.props.conformedDataObjects.currentConformedDataObject
         }
         var cdo = Object.assign({}, targetCdo)
@@ -635,7 +654,7 @@ class GovernNew extends Component {
         } else if (connection.canvas === CDO_CANVAS) {
             this.props.removeCdoConnection(connection)
         }
-        
+
 
         this.setState({
             actionStates: {
@@ -1020,10 +1039,12 @@ class GovernNew extends Component {
 
                         self.addNode(node, self.state.cdePlumb, null, isNewNode);
 
+                        var top = 50
                         // If this CDE has sources create the nodes for those sources
                         for (const s of cde.sources) {
                             console.log(s)
-                            let n = { left: 50, top: 50, type: 'data-element', name: s.name, id: s.id, droptarget: el.getAttribute('droptarget') };
+                            let n = { left: 50, top: top, type: 'data-element', name: s.name, id: s.id, droptarget: el.getAttribute('droptarget') };
+                            top = top + 150
                             self.addNode(n, self.state.cdePlumb, null, isNewNode);
 
                             // Add a connection
