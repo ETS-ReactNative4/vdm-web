@@ -10,19 +10,22 @@
 //     ]
 
 // }
-const acquireCanvas = (state = {nodes:[], connections:[]}, action) => {
+const acquireCanvas = (state = { nodes: [], connections: [] }, action) => {
     switch (action.type) {
         case 'ADD_NODE':
             state.nodes = [...state.nodes, action.node]
             return state
-            
 
         case 'ADD_CONNECTION':
             state.connections = [...state.connections, action.connection]
             return state
 
+        case 'REMOVE_CONNECTION':
+            return { ...state, connections: state.connections.filter(c => c.source !== action.connection.source) }
+
+
         case 'CLEAR_CANVAS':
-            return {nodes:[], connections:[]};
+            return { nodes: [], connections: [] };
 
         default:
             return state

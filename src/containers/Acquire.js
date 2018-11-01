@@ -245,8 +245,13 @@ class Acquire extends Component {
     //////////////////////////////
 
     onAddConnection(connection) {
-        // At this point we already have a defined connection
-        console.log(this.props.acquireCanvas)
+        // Make sure connections are not duplicated
+        for (let c of this.props.acquireCanvas.connections) {
+            if (c.source === connection.source) {
+                return
+            }
+        }
+
         this.props.addConnection(connection)
 
         // fluff up the job with the connection info
@@ -297,13 +302,17 @@ class Acquire extends Component {
         console.log(this.props.jobs)
     }
 
-    onDeleteConnection() {
+    onDeleteConnection(connection, canvas) {
+        if (connection.canvas === ACQUIRE_CANVAS) {
+            this.props.removeConnection(connection)
+        }
+
         this.setState({
             actionStates: {
                 ...this.state.actionStates,
                 canClose: true,
                 canShowProps: true,
-                canSave: false,
+                canSave: true,
                 canNew: false
             }
         })
@@ -495,7 +504,13 @@ class Acquire extends Component {
         // happening.
         plumb.bind("click", function (connection) {
             plumb.deleteConnection(connection);
-            window.onDeleteConnection()
+
+            let c = {
+                canvas: plumb.getContainer().id,
+                source: connection.sourceId
+            }
+
+            window.onDeleteConnection(c)
         });
 
         // bind a connection listener. note that the parameter passed to this function contains more than
@@ -672,6 +687,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onAddNode: node => dispatch({ type: 'ADD_NODE', node: node }),
         addConnection: connection => dispatch({ type: 'ADD_CONNECTION', connection: connection }),
+        removeConnection: connection => dispatch({ type: 'REMOVE_CONNECTION', connection: connection }),
         onInitJobList: jobList => dispatch({ type: 'INIT_JOB_LIST', jobList: jobList }),
         addJob: job => dispatch({ type: 'ADD_JOB', job: job }),
         updateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
