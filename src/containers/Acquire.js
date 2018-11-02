@@ -89,15 +89,37 @@ class Acquire extends Component {
     // State management
     ///////////////
     setCurrentJob(node) {
-
+        let self = this
         let job = this.props.jobs.jobList.find(j => j.id === node.id)
         this.clearAcquireCanvas()
         this.props.updateCurrentJob(job)
 
         // Recreate the job graph if possible
-        for (let s of job.sources) {
-            console.log(s);
+        // add the target first
+        let t = { left: node.left, top: node.top, type: 'data-source', name: job.targets[0].name, id: job.targets[0].id, droptarget: ACQUIRE_CANVAS };
+        self.addNode(t, self.state.plumb, null, true);
 
+        var top = 50
+        for (let s of job.sources) {
+            // Find the source in the data tree
+            let dataSources = self.state.dataSources.children[1].children
+            let s = dataSources.find(d => d.name === s.name)
+            if (s) {
+                console.log(s)
+                let n = { left: 50, top: top, type: 'data-source', name: s.name, id: s.id, droptarget: ACQUIRE_CANVAS };
+                top = top + 150
+                self.addNode(n, self.state.plumb, null, true);
+
+                // Add a connection
+                var c = {
+                    source: n.id,
+                    target: job.targets[0].id,
+                    type: 'basic'
+                }
+
+                window.onAddConnection(c, ACQUIRE_CANVAS)
+                self.state.plumb.connect(c);
+            }
         }
 
         for (let t of job.targets) {
@@ -156,9 +178,9 @@ class Acquire extends Component {
 
         for (let c of connections) {
             console.log(c);
-            let ds = dataSources.find(d => window.uuidToNum(d.id).toString() === c.source)
+            let ds = dataSources.find(d => d.id.toString() === c.source)
             if (ds) {
-                job.sources.push({ id: window.uuidToNum(ds.id), name: ds.name })
+                job.sources.push({ id: ds.id, name: ds.name })
             }
         }
 
@@ -179,7 +201,13 @@ class Acquire extends Component {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
 
                     var json = JSON.parse(xmlhttp.responseText)
-                    console.log(json);
+
+                    // WorkAround: change the UUID to num
+                    json.children[0].id = window.uuidToNumString(json.children[0].id)
+                    json.children[1].id = window.uuidToNumString(json.children[1].id)
+                    for (let s of json.children[1].children) {
+                        s.id = window.uuidToNumString(s.id)
+                    }
 
                     self.setState({
                         isLoaded: true,
@@ -193,7 +221,8 @@ class Acquire extends Component {
             }
         }
 
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/getConnections');
+        // Using local since the id of the server version changes randomly
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/getConnections');
         xmlhttp.send();
     }
 
@@ -277,12 +306,12 @@ class Acquire extends Component {
             // Fluff up this source since it is not saved as metadata
             let ds1 = this.state.dataSources.children
             let ds2 = this.state.dataSources.children[1].children
-            data = ds1.find(d => window.uuidToNum(d.id) === source.id)
+            data = ds1.find(d => d.id === source.id)
 
             if (data == null) {
-                data = ds2.find(d => window.uuidToNum(d.id) === source.id)
+                data = ds2.find(d => d.id === source.id)
             }
-        }else{
+        } else {
             console.log('No source specified');
             return
         }
@@ -295,7 +324,7 @@ class Acquire extends Component {
                 fileFormat: "Data Source",
                 delimiter: ":",
                 status: "Active",
-                sourceId: target.id
+                sourceId: data.id
             }
         }
 
@@ -303,7 +332,7 @@ class Acquire extends Component {
         console.log(rawFilePayload)
 
         // TODO: update the war so that this allows origin *. Using LOCAL for now
-        xmlhttp.open("POST", config.VDM_SERVICE_HOST + '/rawfile');
+        xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/rawfile');
         xmlhttp.send(rawFilePayload);
     }
 
@@ -344,13 +373,16 @@ class Acquire extends Component {
             }
         }
 
+        connection.source = connection.source.toString()
+        connection.target = connection.target.toString()
         this.props.addConnection(connection)
 
         // fluff up the job with the connection info
         var job = Object.assign({}, this.props.jobs.currentJob)
         // job.jobId = job.id
 
-        var source = this.props.acquireCanvas.nodes.find(node => node.id.toString() === connection.source)
+        var source = this.props.acquireCanvas.nodes.find(node => node.id === connection.source)
+        if (source == null) return
         // Limit to one source for now
         job.sources = []
         job.sources.push({
@@ -364,7 +396,9 @@ class Acquire extends Component {
         // })
 
         // Hardcoding some of the parameters for now
-        var target = this.props.acquireCanvas.nodes.find(node => node.id.toString() === connection.target)
+        var target = this.props.acquireCanvas.nodes.find(node => node.id === connection.target)
+        if (target == null) return
+
         // Limit to one target for now
         job.targets = []
         job.targets.push({
@@ -501,15 +535,11 @@ class Acquire extends Component {
                 grid: [50, 50]
             });
 
-
             // Update the node position
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
-                    var nodeId = ui.helper[0].nodeId
-                    console.log(nodeId)
-                    console.log(ui.position)
-                    var node = window.acquireCanvas.nodes.find(node => node.id === nodeId)
+                    var node = window.acquireCanvas.nodes.nodes.find(node => node.id === ui.helper[0].id)
                     node.left = ui.position.left
                     node.top = ui.position.top
                 }
@@ -540,18 +570,25 @@ class Acquire extends Component {
             var d = document.createElement("div");
             var nodeName = node.name;
             if (nodeName.length > 25) { nodeName = nodeName.substring(0, 25) + '...'; }
+
             d.className = "w";
             d.id = node.id;
-            d.nodeId = node.id;
+            d.dataId = node.dataId;
+
+            if (node.type === 'data-source') {
+                node.itemType = 'Data Source'
+            }
+
             d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
                 `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
                 `<tr><td>Path:</td><td><input value='${node.path}'/></td></tr>` +
                 `<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` +
                 `</table></div><div class="ep"></div>`;
+
             d.style.left = node.left + "px";
             d.style.top = node.top + "px";
             plumb.getContainer().appendChild(d);
-            initNode(d);
+            return initNode(d);
         };
 
         newNode();
@@ -616,7 +653,7 @@ class Acquire extends Component {
         plumb.bind("connection", function (info, e) {
             console.log(info)
             console.log(info.source.nodeId)
-            e.preventDefault();
+            // e.preventDefault();
 
             console.log("Source:" + info.connection.sourceId)
             console.log("Target:" + info.connection.targetId)
@@ -653,8 +690,7 @@ class Acquire extends Component {
 
                     if (el.className.indexOf('node_name') >= 0) {
                         let n = self.state.draggedNode
-                        let num = window.uuidToNum(n.id)
-                        node.id = parseInt(num)
+                        node.id = n.id
                         node.itemType = n.itemType
                         node.path = n.data.config.path
                         self.addNode(node, plumb, null, isNewNode);
