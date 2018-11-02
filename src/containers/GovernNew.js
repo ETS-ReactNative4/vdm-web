@@ -196,7 +196,7 @@ class GovernNew extends Component {
     updateCurrentConformedDataElement() {
         var self = this
         var cde = this.props.conformedDataElements.currentConformedDataElement
-        // Update the sources if any based onthe connections
+        // Update the sources if any based on the connections
         let connections = this.props.governNewCanvas.connections.filter(c => c.targetDataId === cde.id)
         cde.sources = []
 

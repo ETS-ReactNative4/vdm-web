@@ -72,6 +72,16 @@ class Acquire extends Component {
 
     onJobUpdated(job) {
         this.props.updateCurrentJob(job)
+        this.svcRunJob()
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: false,
+                canNew: true
+            }
+        })
     }
 
 
@@ -80,20 +90,30 @@ class Acquire extends Component {
     ///////////////
     setCurrentJob(node) {
 
-        let job = this.props.jobs.jobList.find(j=>j.id === node.id)
+        let job = this.props.jobs.jobList.find(j => j.id === node.id)
         this.clearAcquireCanvas()
         this.props.updateCurrentJob(job)
 
         // Recreate the job graph if possible
         for (let s of job.sources) {
             console.log(s);
-            
+
         }
 
         for (let t of job.targets) {
             console.log(t);
-            
+
         }
+
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
+                canNew: false
+            }
+        })
     }
 
     clearAcquireCanvas() {
@@ -102,9 +122,9 @@ class Acquire extends Component {
     }
 
     // From connections list
-    setDraggedNode(node){
+    setDraggedNode(node) {
         console.log(node)
-        this.setState({draggedNode: node})
+        this.setState({ draggedNode: node })
     }
 
 
@@ -125,8 +145,23 @@ class Acquire extends Component {
 
     }
 
-    saveJob(){
+    saveJob() {
+        let self = this
         let job = this.props.jobs.currentJob
+        let targetId = job.targets[0].id
+        let connections = this.props.acquireCanvas.connections.filter(c => c.target === targetId.toString())
+        job.sources = []
+
+        let dataSources = self.state.dataSources.children[1].children
+
+        for (let c of connections) {
+            console.log(c);
+            let ds = dataSources.find(d => window.uuidToNum(d.id).toString() === c.source)
+            if (ds) {
+                job.sources.push({ id: window.uuidToNum(ds.id), name: ds.name })
+            }
+        }
+
         this.svcUpdateJob(job, this.onJobUpdated)
     }
 
@@ -134,6 +169,34 @@ class Acquire extends Component {
     ///////////////////////////
     // API Calls
     //////////
+
+    fetchSources = () => {
+        var self = this
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+
+                    var json = JSON.parse(xmlhttp.responseText)
+                    console.log(json);
+
+                    self.setState({
+                        isLoaded: true,
+                        dataSources: json
+                    });
+
+
+                } else {
+                    console.log('failed');
+                }
+            }
+        }
+
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/getConnections');
+        xmlhttp.send();
+    }
+
     fetchJobs = () => {
         var self = this
         fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
@@ -207,7 +270,36 @@ class Acquire extends Component {
             }
         }
 
-        var rawFilePayload = JSON.stringify({ rawFile: this.props.jobs.currentJob.Target })
+        let source = this.props.jobs.currentJob.sources[0]
+        let target = this.props.jobs.currentJob.targets[0]
+        var data;
+        if (source) {
+            // Fluff up this source since it is not saved as metadata
+            let ds1 = this.state.dataSources.children
+            let ds2 = this.state.dataSources.children[1].children
+            data = ds1.find(d => window.uuidToNum(d.id) === source.id)
+
+            if (data == null) {
+                data = ds2.find(d => window.uuidToNum(d.id) === source.id)
+            }
+        }else{
+            console.log('No source specified');
+            return
+        }
+
+        let rawFile = {
+            rawFile: {
+                name: target.name,
+                description: "Customer file from Acme Company",
+                location: data.data.config.path,
+                fileFormat: "Data Source",
+                delimiter: ":",
+                status: "Active",
+                sourceId: target.id
+            }
+        }
+
+        var rawFilePayload = JSON.stringify(rawFile)
         console.log(rawFilePayload)
 
         // TODO: update the war so that this allows origin *. Using LOCAL for now
@@ -231,7 +323,7 @@ class Acquire extends Component {
             }
         }
 
-        let jobTemp = {Job:{}}
+        let jobTemp = { Job: {} }
         jobTemp.Job = job
 
         var payload = JSON.stringify(jobTemp)
@@ -259,6 +351,8 @@ class Acquire extends Component {
         // job.jobId = job.id
 
         var source = this.props.acquireCanvas.nodes.find(node => node.id.toString() === connection.source)
+        // Limit to one source for now
+        job.sources = []
         job.sources.push({
             id: source.id,
             location: source.path,
@@ -271,6 +365,8 @@ class Acquire extends Component {
 
         // Hardcoding some of the parameters for now
         var target = this.props.acquireCanvas.nodes.find(node => node.id.toString() === connection.target)
+        // Limit to one target for now
+        job.targets = []
         job.targets.push({
             id: target.id,
             description: target.description,
@@ -539,29 +635,7 @@ class Acquire extends Component {
 
         this.setState({ plumb: plumb });
 
-        var xmlhttp = new XMLHttpRequest();
-
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState === 4) {
-                if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-
-                    var json = JSON.parse(xmlhttp.responseText)
-                    console.log(json);
-
-                    self.setState({
-                        isLoaded: true,
-                        dataSources: json
-                    });
-
-
-                } else {
-                    console.log('failed');
-                }
-            }
-        }
-
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/getConnections');
-        xmlhttp.send();
+        this.fetchSources()
 
         this.fetchJobs()
 
@@ -579,7 +653,7 @@ class Acquire extends Component {
 
                     if (el.className.indexOf('node_name') >= 0) {
                         let n = self.state.draggedNode
-                        let num = n.id.replace(/\D/g,'').substring(0,5);
+                        let num = window.uuidToNum(n.id)
                         node.id = parseInt(num)
                         node.itemType = n.itemType
                         node.path = n.data.config.path
