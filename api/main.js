@@ -1,19 +1,22 @@
 const express = require('express');
+const fileUpload = require('express-fileupload');
 const app = express();
 const router = express.Router();
 const port = 4000;
 
 var bodyParser = require('body-parser')
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-})); 
+    extended: true
+}));
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
+app.use(fileUpload());
 
 // url: http://localhost:4000/
 app.get('/', (request, response) => response.send('Hello World'));
@@ -42,6 +45,27 @@ router.get('/getConnections', (request, response) => {
 
     response.json(jsonDatax);
 });
+
+////////////////
+// Upload
+////////////
+router.post('/upload', (req, res, next) => {
+    console.log(req.files);
+    let uploadFile = req.files.file
+    const fileName = req.files.file.name
+    uploadFile.mv(
+      `${__dirname}/public/files/${fileName}`,
+      function (err) {
+        if (err) {
+          return res.status(500).send(err)
+        }
+
+        res.json({
+          file: `public/${req.files.file.name}`,
+        })
+      },
+    )
+  })
 
 
 router.post('/rawfile', (request, response) => {
@@ -79,7 +103,7 @@ router.get('/jobs', (request, response) => {
 router.post('/jobs', (request, response) => {
     console.log(request.body)
     jobs.push(request.body)
-    var ret = { id: jobs.length};
+    var ret = { id: jobs.length };
     response.json(ret);
 });
 
