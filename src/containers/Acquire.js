@@ -229,7 +229,7 @@ class Acquire extends Component {
         }
 
         // Using local since the id of the server version changes randomly
-        xmlhttp.open("GET", config.VDM_SERVICE_HOST_LOCAL + '/getConnections');
+        xmlhttp.open("GET", config.VDM_SERVICE_HOST + '/getConnections');
         xmlhttp.send();
     }
 
