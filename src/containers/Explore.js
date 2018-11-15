@@ -33,7 +33,7 @@ class Explore extends Component {
         data.append('file', self.state.selectedFile, self.state.selectedFile.name)
 
         axios
-            .post(config.VDM_SERVICE_HOST_LOCAL + '/upload', data, {
+            .post(config.VDM_UPLOAD_HOST + '/upload', data, {
                 onUploadProgress: ProgressEvent => {
                     self.setState({
                         loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),

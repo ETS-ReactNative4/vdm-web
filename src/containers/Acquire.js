@@ -546,7 +546,7 @@ class Acquire extends Component {
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
-                    var node = window.acquireCanvas.nodes.find(node => node.id === ui.helper[0].id)
+                    var node = window.acquireCanvas.nodes.find(node => node.id.toString() === ui.helper[0].id)
                     node.left = ui.position.left
                     node.top = ui.position.top
                 }
