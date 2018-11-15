@@ -94,10 +94,14 @@ class Acquire extends Component {
         this.clearAcquireCanvas()
         this.props.updateCurrentJob(job)
 
+
         // Recreate the job graph if possible
         // add the target first
-        let t = { left: node.left, top: node.top, type: 'data-source', name: job.targets[0].name, id: job.targets[0].id, droptarget: ACQUIRE_CANVAS };
-        self.addNode(t, self.state.plumb, null, true);
+        if (job.targets.length > 0) {
+            let t = { left: node.left, top: node.top, type: 'data-source', name: job.targets[0].name, id: job.targets[0].id, droptarget: ACQUIRE_CANVAS };
+            self.addNode(t, self.state.plumb, null, true);
+        }
+
 
         var top = 50
         for (let s of job.sources) {
@@ -110,15 +114,18 @@ class Acquire extends Component {
                 top = top + 150
                 self.addNode(n, self.state.plumb, null, true);
 
-                // Add a connection
-                var c = {
-                    source: n.id,
-                    target: job.targets[0].id,
-                    type: 'basic'
+                if (job.targets.length > 0) {
+                    // Add a connection
+                    var c = {
+                        source: n.id,
+                        target: job.targets[0].id,
+                        type: 'basic'
+                    }
+
+                    window.onAddConnection(c, ACQUIRE_CANVAS)
+                    self.state.plumb.connect(c);
                 }
 
-                window.onAddConnection(c, ACQUIRE_CANVAS)
-                self.state.plumb.connect(c);
             }
         }
 
@@ -332,7 +339,7 @@ class Acquire extends Component {
         console.log(rawFilePayload)
 
         // TODO: update the war so that this allows origin *. Using LOCAL for now
-        xmlhttp.open("POST", config.VDM_SERVICE_HOST_LOCAL + '/rawfile');
+        xmlhttp.open("POST", config.VDM_SERVICE_HOST + '/rawfile');
         xmlhttp.send(rawFilePayload);
     }
 
@@ -539,7 +546,7 @@ class Acquire extends Component {
             $(el).draggable({
                 cancel: "div.ep",
                 stop: function (event, ui) {
-                    var node = window.acquireCanvas.nodes.nodes.find(node => node.id === ui.helper[0].id)
+                    var node = window.acquireCanvas.nodes.find(node => node.id === ui.helper[0].id)
                     node.left = ui.position.left
                     node.top = ui.position.top
                 }
