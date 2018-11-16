@@ -244,8 +244,13 @@ class Acquire extends Component {
         }).then(function (response) {
             return response.json()
         }).then(function (data) {
-            console.log(data.jobList)
-            self.props.onInitJobList(data.jobList)
+            console.log(data)
+            if (data.error) {
+                return false
+            } else {
+                self.props.onInitJobList(data.jobList)
+            }
+
         });
 
     }
@@ -371,6 +376,24 @@ class Acquire extends Component {
     }
 
     //////////////////////////////
+
+    ////////////////////////////
+    // Actions
+    ///////////
+    removeNode(node) {
+        this.props.removeNode(node.id)
+        this.props.removeConnection({ source: node.id })
+
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: true,
+                canShowProps: true,
+                canSave: true,
+                canNew: false
+            }
+        })
+    }
 
     onAddConnection(connection) {
         // Make sure connections are not duplicated
@@ -525,6 +548,8 @@ class Acquire extends Component {
     // Add the node to the node list and to the canvas
     addNode(node, plumb, nodeClicked, isNewNode) {
 
+        var self = this
+
         if (this.props.jobs.currentJob === undefined || this.props.jobs.currentJob.name === '') {
             window.acquireActions.handleNewButtonClicked()
             return
@@ -586,11 +611,16 @@ class Acquire extends Component {
                 node.itemType = 'Data Source'
             }
 
-            d.innerHTML = `<div class='headerdiv'><b>` + node.itemType + `</b></div><div class='detaildiv'><table class="detailtable">` +
+            var removeBtn = `<button class='remove-btn'>x</button>`
+            var ep = '<div class="ep"></div>'
+            var header = `<div class='headerdiv ${node.type}'><b>` + node.itemType + '</b>' + removeBtn + '</div>'
+            var detail = `<div class='detaildiv'><table class="detailtable">` +
                 `<tr><td>Name:</td><td><input value='${nodeName}'/></td></tr>` +
                 `<tr><td>Path:</td><td><input value='${node.path}'/></td></tr>` +
                 `<tr><td>Source ID:</td><td><input value='${node.id}'/></td></tr>` +
-                `</table></div><div class="ep"></div>`;
+                `</table></div>`
+
+            d.innerHTML = header + detail + ep
 
             d.style.left = node.left + "px";
             d.style.top = node.top + "px";
@@ -607,9 +637,16 @@ class Acquire extends Component {
         window.acquireCanvas = this.props.acquireCanvas
 
         $(".w").on('click', function (e) {
-            console.log('clicked ' + e.currentTarget.id)
-            // nodeClicked(e.currentTarget.id);
-            e.preventDefault();
+            let target = {
+                id: e.currentTarget.id,
+                canvas: e.currentTarget.droptarget
+            }
+
+            if (e.originalEvent.target.className === 'remove-btn') {
+                console.log("Removed: " + target)
+                self.removeNode(target)
+                plumb.remove(e.currentTarget)
+            }
         });
 
     }
@@ -810,6 +847,10 @@ const mapDispatchToProps = dispatch => {
         updateCurrentJob: (job) => dispatch({ type: 'UPDATE_CURRENT_JOB', job: job }),
         closeCurrentJob: () => dispatch({ type: 'CLEAR_CURRENT_JOB' }),
         clearCanvas: () => dispatch({ type: 'CLEAR_CANVAS' }),
+
+        // Remove Node
+        // Remove nodes
+        removeNode: id => dispatch({ type: 'REMOVE_NODE', id: id }),
 
         onUpdateNodeClassName: node => dispatch({ type: 'UPDATE_NODE_CLASSNAME', node: node })
     };

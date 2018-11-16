@@ -23,6 +23,8 @@ const acquireCanvas = (state = { nodes: [], connections: [] }, action) => {
         case 'REMOVE_CONNECTION':
             return { ...state, connections: state.connections.filter(c => c.source !== action.connection.source) }
 
+        case 'REMOVE_NODE':
+            return { ...state, nodes: state.nodes.filter(n => n.id !== action.id) }
 
         case 'CLEAR_CANVAS':
             return { nodes: [], connections: [] };
