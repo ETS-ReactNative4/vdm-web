@@ -5,9 +5,7 @@ import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Jumbotron, Button, Panel, 
 
 class DataSourceList extends Component {
     constructor(props) {
-        super(props);
-        console.log('hello')
-        console.log('props' + JSON.stringify(props))
+        super(props)
     }
 
 

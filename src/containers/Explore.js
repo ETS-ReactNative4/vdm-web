@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
+import Uploader from '../components/Uploader'
 import * as config from '../config';
 import ReactTable from "react-table";
 import 'react-table/react-table.css'
-import axios from 'axios'
 
 class Explore extends Component {
 
@@ -16,39 +16,7 @@ class Explore extends Component {
             loaded: 0
         };
 
-        this.handleselectedFile = this.handleselectedFile.bind(this)
-        this.handleUpload = this.handleUpload.bind(this)
-    }
-
-    handleselectedFile = event => {
-        this.setState({
-            selectedFile: event.target.files[0],
-            loaded: 0,
-        })
-    }
-
-    handleUpload = () => {
-        let self = this
-        const data = new FormData()
-        data.append('file', self.state.selectedFile, self.state.selectedFile.name)
-
-        axios
-            .post(config.VDM_UPLOAD_HOST + '/upload', data, {
-                onUploadProgress: ProgressEvent => {
-                    self.setState({
-                        loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
-                    })
-                },
-            })
-            .then(res => {
-                if (res.statusText === 'OK') {
-                    // Initiate parsing
-                    console.log("Initiate parsing")
-                }else{
-                    console.log(res.statusText)
-                }
-            })
-
+        
     }
 
     render() {
@@ -83,11 +51,7 @@ class Explore extends Component {
 
         return (
             <div>
-                <div>
-                    <input type="file" name="file" id="" onChange={this.handleselectedFile} />
-                    <button onClick={this.handleUpload}>Upload</button>
-                    <div> {Math.round(this.state.loaded, 2)} %</div>
-                </div>
+                <Uploader></Uploader>
                 <div style={{ padding: '20px' }}>Wrangled Datasets<hr />
 
                     <ReactTable
