@@ -1052,7 +1052,7 @@ class GovernNew extends Component {
                 var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
                 var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
                 var el = ui.draggable[0];
-                var id = parseInt(el.id)
+                var id = parseInt(el.id, 10)
                 var node = { left: left, top: top, type: 'conformed-data-element', name: el.title, id: id, droptarget: el.getAttribute('droptarget') };
 
                 let container = wrapper.prevObject[0].id
@@ -1074,7 +1074,7 @@ class GovernNew extends Component {
 
                         self.addNode(node, self.state.cdePlumb, null, isNewNode);
 
-                        var top = 50
+                        top = 50
                         // If this CDE has sources create the nodes for those sources
                         for (const s of cde.sources) {
                             console.log(s)
@@ -1119,7 +1119,7 @@ class GovernNew extends Component {
                     node.description = cdo.description
                     self.addNode(node, self.state.cdoPlumb, null, isNewNode);
 
-                    var top = 50
+                    top = 50
                     for (const s of cdo.sources) {
                         console.log(s)
                         let n = { left: 50, top: top, type: 'conformed-data-element', name: s.name, id: s.id, droptarget: el.getAttribute('droptarget') };
@@ -1127,7 +1127,7 @@ class GovernNew extends Component {
                         self.addNode(n, self.state.cdoPlumb, null, isNewNode);
 
                         // Add a connection
-                        var c = {
+                        var conn = {
                             source: n.id,
                             sourceDataId: n.dataId,
                             target: node.id,
@@ -1135,8 +1135,8 @@ class GovernNew extends Component {
                             type: 'basic'
                         }
 
-                        window.onAddConnection(c, container)
-                        self.state.cdoPlumb.connect(c);
+                        window.onAddConnection(conn, container)
+                        self.state.cdoPlumb.connect(conn);
                     }
 
                     // Update the current conformed data element

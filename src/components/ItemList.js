@@ -38,6 +38,8 @@ class ItemList extends Component {
           let searchValue = el.name.toLowerCase();
           return searchValue.indexOf(current_state.currentFilter) !== -1;
         }
+
+        return null
       })
     }
 

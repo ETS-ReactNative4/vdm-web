@@ -76,7 +76,7 @@ class Uploader extends Component {
     }
 
     render() {
-        const {loaded, selectedFile, uploadStatus} = this.state
+        const {loaded, uploadStatus} = this.state
         return (
             <div className='uploader-container'>
                 {uploadStatus==='inactive'?<Button onClick={this.handleChooseCli}>Upload CLI</Button>:

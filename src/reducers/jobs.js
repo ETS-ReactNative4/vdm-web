@@ -16,6 +16,7 @@ const jobsInitialState = {
 const jobs = (state = jobsInitialState, action) => {
     switch (action.type) {
         case 'INIT_JOB_LIST':
+            if(action.jobList == null) action.jobList = []
             return { ...state, jobList: action.jobList }
 
         case 'ADD_JOB':

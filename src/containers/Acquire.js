@@ -107,10 +107,10 @@ class Acquire extends Component {
         for (let s of job.sources) {
             // Find the source in the data tree
             let dataSources = self.state.dataSources.children[1].children
-            let s = dataSources.find(d => d.name === s.name)
-            if (s) {
-                console.log(s)
-                let n = { left: 50, top: top, type: 'data-source', name: s.name, id: s.id, droptarget: ACQUIRE_CANVAS };
+            let ds = dataSources.find(d => d.name === s.name)
+            if (ds) {
+                console.log(ds)
+                let n = { left: 50, top: top, type: 'data-source', name: ds.name, id: ds.id, droptarget: ACQUIRE_CANVAS };
                 top = top + 150
                 self.addNode(n, self.state.plumb, null, true);
 
@@ -208,13 +208,7 @@ class Acquire extends Component {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
 
                     var json = JSON.parse(xmlhttp.responseText)
-
-                    // WorkAround: change the UUID to num
-                    json.children[0].id = window.uuidToNumString(json.children[0].id)
-                    json.children[1].id = window.uuidToNumString(json.children[1].id)
-                    for (let s of json.children[1].children) {
-                        s.id = window.uuidToNumString(s.id)
-                    }
+                    json = JSON.parse(json)
 
                     self.setState({
                         isLoaded: true,
@@ -260,10 +254,12 @@ class Acquire extends Component {
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    var json = JSON.parse('{' + resp + '}')
-                    console.log(json);
-                    job.id = json.ID
+                    // Workaround for wrong case and type
+                    // var resp = xmlhttp.responseText.replace('ID', '"ID"')
+                    // var json = JSON.parse('{' + resp + '}')
+                    // job.id = json.ID
+                    var json = JSON.parse(xmlhttp.responseText)
+                    job.id = json.id
                     callback(job)
                 } else {
                     console.log('failed');
@@ -510,29 +506,6 @@ class Acquire extends Component {
         this.setState({ show: false });
     }
 
-    // handleShow() {
-    //     console.log('redirect to explore');
-    //     $("#waitdiv").show();
-    //     this.setState({ show: true });
-    //     $('#modal1').hide();
-
-
-    //     var result = JSON.parse($('#triurl').val());
-    //     console.log(result)
-
-
-
-    //     var win = window.open(result.url, '_blank');
-    //     var timer = setInterval(function () {
-    //         if (win.closed) {
-    //             clearInterval(timer);
-    //             document.getElementById('explorebtn').click();
-    //             console.log('closed');
-    //             $("#waitdiv").hide();
-    //         }
-    //     }, 1000);
-    // }
-
     handleShow() {
         console.log('redirect to explore');
         this.setState({ show: true });
@@ -742,7 +715,7 @@ class Acquire extends Component {
                     }
 
                     if (el.className.indexOf('list-item') >= 0) {
-                        node.id = parseInt(node.id)
+                        node.id = parseInt(node.id, 10)
                         self.setCurrentJob(node)
                         return
                     }

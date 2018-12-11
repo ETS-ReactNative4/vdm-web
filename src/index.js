@@ -46,7 +46,7 @@ window.uuid = function () {
 }
 
 window.uuidToNum = uuid => {
-    return parseInt(uuid.replace(/\D/g,'').substring(0,5));
+    return parseInt(uuid.replace(/\D/g,'').substring(0,5), 10);
 }
 
 window.uuidToNumString = uuid => {
