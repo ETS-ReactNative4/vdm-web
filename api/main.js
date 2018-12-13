@@ -40,7 +40,7 @@ var conformedDataElements = []
 
 router.get('/getConnections', (request, response) => {
     var fs = require('fs');
-    var filex = fs.readFileSync('sources.txt', "utf8");
+    var filex = fs.readFileSync('connections.txt', "utf8");
     const jsonDatax = JSON.parse(filex);
 
     response.json(jsonDatax);

@@ -60,6 +60,7 @@ class Acquire extends Component {
         this.clearAcquireCanvas = this.clearAcquireCanvas.bind(this)
         this.setDraggedNode = this.setDraggedNode.bind(this)
         this.saveJob = this.saveJob.bind(this)
+        this.findInTree = this.findInTree.bind(this)
     }
 
 
@@ -106,7 +107,7 @@ class Acquire extends Component {
         var top = 50
         for (let s of job.sources) {
             // Find the source in the data tree
-            let dataSources = self.state.dataSources.children[1].children
+            let dataSources = self.state.dataSources
             let ds = dataSources.find(d => d.name === s.name)
             if (ds) {
                 console.log(ds)
@@ -181,18 +182,22 @@ class Acquire extends Component {
         let connections = this.props.acquireCanvas.connections.filter(c => c.target === targetId.toString())
         job.sources = []
 
-        let dataSources = self.state.dataSources.children[1].children
+        let dataSources = self.state.dataSources
 
         for (let c of connections) {
-            console.log(c);
-            let ds = dataSources.find(d => d.id.toString() === c.source)
-            if (ds) {
-                job.sources.push({ id: ds.id, name: ds.name })
+            for(let item of dataSources){
+                var ds = this.findInTree(item, c.source);
+                if (ds) {
+                    job.sources.push({ id: parseInt(ds.id,10), name: ds.name })
+                }
             }
         }
 
-        this.svcUpdateJob(job, this.onJobUpdated)
+        this.svcRunJob()
+        // this.svcUpdateJob(job, this.onJobUpdated)
     }
+
+    
 
 
     ///////////////////////////
@@ -268,7 +273,7 @@ class Acquire extends Component {
         }
 
         let newJob = {
-            Job: {
+            job: {
                 name: job.name,
                 description: job.description,
                 type: "Batch",
@@ -312,12 +317,12 @@ class Acquire extends Component {
         var data;
         if (source) {
             // Fluff up this source since it is not saved as metadata
-            let ds1 = this.state.dataSources.children
-            let ds2 = this.state.dataSources.children[1].children
-            data = ds1.find(d => d.id === source.id)
-
-            if (data == null) {
-                data = ds2.find(d => d.id === source.id)
+            let dataSources = this.state.dataSources
+            for(let item of dataSources){
+                var ds = this.findInTree(item, source.id);
+                if (ds) {
+                    data = ds
+                }
             }
         } else {
             console.log('No source specified');
@@ -332,7 +337,7 @@ class Acquire extends Component {
                 fileFormat: "Data Source",
                 delimiter: ":",
                 status: "Active",
-                sourceId: data.id
+                sourceId: parseInt(data.id, 10)
             }
         }
 
@@ -360,8 +365,8 @@ class Acquire extends Component {
             }
         }
 
-        let jobTemp = { Job: {} }
-        jobTemp.Job = job
+        let jobTemp = { job: {} }
+        jobTemp.job = job
 
         var payload = JSON.stringify(jobTemp)
         console.log(payload)
@@ -370,6 +375,25 @@ class Acquire extends Component {
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(payload);
     }
+
+
+    /////////////////
+    // Utility
+    //////
+    findInTree(item, id){
+        var self = this
+        if(item.id == id){
+             return item;
+        }else if (item.children != null){
+             var i;
+             var result = null;
+             for(i=0; result == null && i < item.children.length; i++){
+                  result = self.findInTree(item.children[i], id);
+             }
+             return result;
+        }
+        return null;
+   }
 
     //////////////////////////////
 
@@ -427,20 +451,20 @@ class Acquire extends Component {
 
         // Limit to one target for now
         job.targets = []
-        job.targets.push({
-            id: target.id,
-            description: target.description,
-            location: target.path,
-            name: source.name,
-            delimiter: ':',
-            fileFormat: 'Data Source',
-            sourceID: source.id,
-            status: 'Active'
-        })
         // job.targets.push({
-        //     id: target.id,
-        //     name: source.name
+        //     id: parseInt(target.id, 10),
+        //     description: target.description,
+        //     location: target.path,
+        //     name: source.name,
+        //     delimiter: ':',
+        //     fileFormat: 'Data Source',
+        //     sourceID: source.id,
+        //     status: 'Active'
         // })
+        job.targets.push({
+            id: parseInt(target.id, 10),
+            name: source.name
+        })
 
         // Time to enable the save button
         this.setState({
@@ -721,7 +745,7 @@ class Acquire extends Component {
                     }
                 }
             });
-        }, 1000)
+        }, 5000)
 
     }
 
