@@ -182,3 +182,4 @@ buildNumber.properties
 # Ignore uploaded files
 /api/public/files/
 
+src/config.js
