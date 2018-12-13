@@ -61,6 +61,7 @@ class Acquire extends Component {
         this.setDraggedNode = this.setDraggedNode.bind(this)
         this.saveJob = this.saveJob.bind(this)
         this.findInTree = this.findInTree.bind(this)
+        this.initCanvas = this.initCanvas.bind(this)
     }
 
 
@@ -204,7 +205,7 @@ class Acquire extends Component {
     // API Calls
     //////////
 
-    fetchSources = () => {
+    fetchSources = (callback) => {
         var self = this
         var xmlhttp = new XMLHttpRequest();
 
@@ -219,12 +220,12 @@ class Acquire extends Component {
                         isLoaded: true,
                         dataSources: json
                     });
-
-
                 } else {
                     console.log('failed');
                 }
             }
+
+            callback()
         }
 
         // Using local since the id of the server version changes randomly
@@ -232,7 +233,7 @@ class Acquire extends Component {
         xmlhttp.send();
     }
 
-    fetchJobs = () => {
+    fetchJobs = (callback) => {
         var self = this
         fetch(config.VDM_META_SERVICE_HOST + '/jobs', {
             headers: {
@@ -249,7 +250,7 @@ class Acquire extends Component {
             } else {
                 self.props.onInitJobList(data.jobList)
             }
-
+            callback()
         });
 
     }
@@ -713,40 +714,41 @@ class Acquire extends Component {
 
         this.setState({ plumb: plumb });
 
-        this.fetchSources()
+        this.fetchSources(this.initCanvas)
 
-        this.fetchJobs()
+        this.fetchJobs(this.initCanvas)
+    }
 
-        setTimeout(function () {
-            $('#canvas').droppable({
-                drop: function (event, ui) {
-                    var wrapper = $(this).parent();
-                    var parentOffset = wrapper.offset();
-                    var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
-                    var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
-                    var el = ui.draggable[0];
-                    var id = el.id
-                    var node = { left: left, top: top, type: '', name: el.innerText, id: id };
-                    var isNewNode = true;
+    initCanvas(){
+        var self = this
+        var plumb = self.state.plumb
+        $('#canvas').droppable({
+            drop: function (event, ui) {
+                var wrapper = $(this).parent();
+                var parentOffset = wrapper.offset();
+                var left = event.pageX - parentOffset.left + wrapper.scrollLeft() - this.offsetLeft;
+                var top = event.pageY - parentOffset.top + wrapper.scrollTop() - this.offsetTop;
+                var el = ui.draggable[0];
+                var id = el.id
+                var node = { left: left, top: top, type: '', name: el.innerText, id: id };
+                var isNewNode = true;
 
-                    if (el.className.indexOf('node_name') >= 0) {
-                        let n = self.state.draggedNode
-                        node.id = n.id
-                        node.itemType = n.itemType
-                        node.path = n.data.config.path
-                        self.addNode(node, plumb, null, isNewNode);
-                        return
-                    }
-
-                    if (el.className.indexOf('list-item') >= 0) {
-                        node.id = parseInt(node.id, 10)
-                        self.setCurrentJob(node)
-                        return
-                    }
+                if (el.className.indexOf('node_name') >= 0) {
+                    let n = self.state.draggedNode
+                    node.id = n.id
+                    node.itemType = n.itemType
+                    node.path = n.data.config.path
+                    self.addNode(node, plumb, null, isNewNode);
+                    return
                 }
-            });
-        }, 5000)
 
+                if (el.className.indexOf('list-item') >= 0) {
+                    node.id = parseInt(node.id, 10)
+                    self.setCurrentJob(node)
+                    return
+                }
+            }
+        });
     }
 
     render() {
