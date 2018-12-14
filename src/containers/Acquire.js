@@ -194,8 +194,8 @@ class Acquire extends Component {
             }
         }
 
-        this.svcRunJob()
-        // this.svcUpdateJob(job, this.onJobUpdated)
+        // this.svcRunJob()
+        this.svcUpdateJob(job, this.onJobUpdated)
     }
 
     
@@ -281,9 +281,15 @@ class Acquire extends Component {
                 layer: "Source-To-Raw",
                 sources: [],
                 targets: [],
-                activeIndicator: "Y"
+                activeIndicator: "Y",
             }
         }
+
+        newJob.job.schedule = {
+            frequency: "Weekly",
+            dayOfWeek: "Fri",
+            time: "23:00"
+            }
 
         var payload = JSON.stringify(newJob)
         console.log(payload)
@@ -330,15 +336,27 @@ class Acquire extends Component {
             return
         }
 
+        // let rawFile = {
+        //     rawFile: {
+        //         name: target.name,
+        //         description: "Customer file from Acme Company",
+        //         location: data.data.config.path,
+        //         fileFormat: "Data Source",
+        //         delimiter: ":",
+        //         status: "Active",
+        //         sourceId: parseInt(data.id, 10)
+        //     }
+        // }
+
         let rawFile = {
-            rawFile: {
-                name: target.name,
-                description: "Customer file from Acme Company",
-                location: data.data.config.path,
-                fileFormat: "Data Source",
-                delimiter: ":",
-                status: "Active",
-                sourceId: parseInt(data.id, 10)
+            RawFile: {
+                Name: "all_hotels.csv",
+                Description: "Customer file from Acme Company",
+                Location: "/",
+                FileFormat: "Delimited",
+                Delimiter: ",",
+                Status: "Active",
+                SourceId: parseInt(data.id, 10)
             }
         }
 
@@ -356,7 +374,7 @@ class Acquire extends Component {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
                     var resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    var json = JSON.parse('{' + resp + '}')
+                    var json = JSON.parse(resp)
                     console.log(json);
                     job.id = json.ID
                     callback(job)
@@ -368,6 +386,13 @@ class Acquire extends Component {
 
         let jobTemp = { job: {} }
         jobTemp.job = job
+
+        // Add new require attribute
+        jobTemp.job.schedule = {
+            frequency: "Weekly",
+            dayOfWeek: "Fri",
+            time: "23:00"
+            }
 
         var payload = JSON.stringify(jobTemp)
         console.log(payload)
