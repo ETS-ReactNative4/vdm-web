@@ -74,7 +74,7 @@ class Acquire extends Component {
 
     onJobUpdated(job) {
         this.props.updateCurrentJob(job)
-        // this.svcRunJob()
+        this.svcRunJob()
         this.setState({
             actionStates: {
                 ...this.state.actionStates,
