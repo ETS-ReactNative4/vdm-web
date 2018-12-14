@@ -414,10 +414,9 @@ class GovernNew extends Component {
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    var json = JSON.parse('{' + resp + '}')
+                     var json = JSON.parse(xmlhttp.responseText)
                     console.log(json);
-                    conformedDataElement.id = json.ID
+                    conformedDataElement.id = json.id
                     callback(conformedDataElement)
                 } else {
                     console.log('failed');
@@ -444,10 +443,8 @@ class GovernNew extends Component {
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    var json = JSON.parse('{' + resp + '}')
-                    console.log(json);
-                    cde.id = json.ID
+                    var json = JSON.parse(xmlhttp.responseText)
+                    cde.id = json.id
                     callback(cde)
                 } else {
                     console.log('failed');
@@ -478,10 +475,8 @@ class GovernNew extends Component {
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    var json = JSON.parse('{' + resp + '}')
-                    console.log(json);
-                    cdo.id = json.ID
+                    var json = JSON.parse(xmlhttp.responseText)
+                    cdo.id = json.id
                     callback(cdo)
                 } else {
                     console.log('failed');
@@ -508,10 +503,9 @@ class GovernNew extends Component {
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    let resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    let json = JSON.parse('{' + resp + '}')
+                    let json = JSON.parse(xmlhttp.responseText)
                     console.log(json);
-                    cdo.id = json.ID
+                    cdo.id = json.id
                     callback(cdo)
                 } else {
                     console.log('failed');
@@ -566,20 +560,20 @@ class GovernNew extends Component {
             name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
-            sourceID: source.id,
+            sourceId: source.id,
             status: 'Active'
         }
 
         // Hardcoding some of the parameters for now
         var target = this.props.governNewCanvas.nodes.find(node => node.id === connection.target)
         cde.Target = {
-            ID: target.id,
+            id: target.id,
             description: target.description,
             location: "/home/user/data",
             name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
-            sourceID: source.id,
+            sourceId: source.id,
             status: 'Active'
         }
 
@@ -622,20 +616,20 @@ class GovernNew extends Component {
             name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
-            sourceID: source.id,
+            sourceId: source.id,
             status: 'Active'
         }
 
         // Hardcoding some of the parameters for now
         var target = this.props.cdoCanvas.nodes.find(node => node.id === connection.target)
         cdo.Target = {
-            ID: target.id,
+            id: target.id,
             description: target.description,
             location: "/home/user/data",
             name: source.name,
             delimiter: ':',
             fileFormat: 'Data Source',
-            sourceID: source.id,
+            sourceId: source.id,
             status: 'Active'
         }
 

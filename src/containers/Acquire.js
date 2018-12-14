@@ -268,10 +268,6 @@ class Acquire extends Component {
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    // Workaround for wrong case and type
-                    // var resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    // var json = JSON.parse('{' + resp + '}')
-                    // job.id = json.ID
                     var json = JSON.parse(xmlhttp.responseText)
                     job.id = json.id
                     callback(job)
@@ -491,7 +487,7 @@ class Acquire extends Component {
         //     name: source.name,
         //     delimiter: ':',
         //     fileFormat: 'Data Source',
-        //     sourceID: source.id,
+        //     sourceId: source.id,
         //     status: 'Active'
         // })
         job.targets.push({
