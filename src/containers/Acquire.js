@@ -74,7 +74,7 @@ class Acquire extends Component {
 
     onJobUpdated(job) {
         this.props.updateCurrentJob(job)
-        this.svcRunJob()
+        // this.svcRunJob()
         this.setState({
             actionStates: {
                 ...this.state.actionStates,
@@ -100,7 +100,7 @@ class Acquire extends Component {
         // Recreate the job graph if possible
         // add the target first
         if (job.targets.length > 0) {
-            let t = { left: node.left, top: node.top, type: 'data-source', name: job.targets[0].name, id: job.targets[0].id, droptarget: ACQUIRE_CANVAS };
+            let t = { left: 350, top: node.top, type: 'data-source', name: job.targets[0].name, id: job.targets[0].id, droptarget: ACQUIRE_CANVAS };
             self.addNode(t, self.state.plumb, null, true);
         }
 
@@ -109,26 +109,30 @@ class Acquire extends Component {
         for (let s of job.sources) {
             // Find the source in the data tree
             let dataSources = self.state.dataSources
-            let ds = dataSources.find(d => d.name === s.name)
-            if (ds) {
-                console.log(ds)
-                let n = { left: 50, top: top, type: 'data-source', name: ds.name, id: ds.id, droptarget: ACQUIRE_CANVAS };
-                top = top + 150
-                self.addNode(n, self.state.plumb, null, true);
-
-                if (job.targets.length > 0) {
-                    // Add a connection
-                    var c = {
-                        source: n.id,
-                        target: job.targets[0].id,
-                        type: 'basic'
+            // let ds = dataSources.find(d => d.name === s.name)
+            for(let item of dataSources){
+                var ds = this.findInTree(item, s.id);
+                if (ds) {
+                    console.log(ds)
+                    let n = { left: 50, top: top, type: 'data-source', name: ds.name, id: ds.id, droptarget: ACQUIRE_CANVAS };
+                    top = top + 150
+                    self.addNode(n, self.state.plumb, null, true);
+    
+                    if (job.targets.length > 0) {
+                        // Add a connection
+                        var c = {
+                            source: n.id,
+                            target: job.targets[0].id,
+                            type: 'basic'
+                        }
+    
+                        window.onAddConnection(c, ACQUIRE_CANVAS)
+                        self.state.plumb.connect(c);
                     }
-
-                    window.onAddConnection(c, ACQUIRE_CANVAS)
-                    self.state.plumb.connect(c);
+    
                 }
-
             }
+            
         }
 
         for (let t of job.targets) {
@@ -215,6 +219,10 @@ class Acquire extends Component {
 
                     var json = JSON.parse(xmlhttp.responseText)
                     json = JSON.parse(json)
+
+                    // fake file
+                    json[0].children[0].children[0].name = "all_hotels.csv"
+                    json[4].children[0].children[0].children[0].name = "all_hotels.csv"
 
                     self.setState({
                         isLoaded: true,
@@ -350,9 +358,9 @@ class Acquire extends Component {
 
         let rawFile = {
             RawFile: {
-                Name: "all_hotels.csv",
-                Description: "Customer file from Acme Company",
-                Location: "/",
+                Name: data.name,
+                Description: data.description,
+                Location: data.data.config.path,
                 FileFormat: "Delimited",
                 Delimiter: ",",
                 Status: "Active",
@@ -373,10 +381,9 @@ class Acquire extends Component {
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200 || xmlhttp.status === 201) {
-                    var resp = xmlhttp.responseText.replace('ID', '"ID"')
-                    var json = JSON.parse(resp)
+                    var json = JSON.parse(xmlhttp.responseText)
                     console.log(json);
-                    job.id = json.ID
+                    job.id = json.id
                     callback(job)
                 } else {
                     console.log('failed');
@@ -742,6 +749,16 @@ class Acquire extends Component {
         this.fetchSources(this.initCanvas)
 
         this.fetchJobs(this.initCanvas)
+
+        this.setState({
+            actionStates: {
+                ...this.state.actionStates,
+                canClose: self.props.jobs.currentJob.id > 0,
+                canShowProps: true,
+                canSave: self.props.jobs.currentJob.id > 0,
+                canNew: true
+            }
+        })
     }
 
     initCanvas(){
@@ -774,6 +791,8 @@ class Acquire extends Component {
                 }
             }
         });
+
+        
     }
 
     render() {

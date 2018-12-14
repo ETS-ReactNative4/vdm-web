@@ -21,7 +21,7 @@ class ConnectionsList extends Component {
 
 		$(document).ready(function () {
 			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, dataSources);
-			zTreeObj.expandAll(true);
+			zTreeObj.expandAll(false);
 
 			$(".node_name").draggable({
 				helper: 'clone',
