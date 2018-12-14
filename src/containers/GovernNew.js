@@ -426,7 +426,7 @@ class GovernNew extends Component {
         }
 
         var cde = {
-            ConformedDataElement: {
+            conformedDataElement: {
                 name: conformedDataElement.name,
                 description: conformedDataElement.description
             }
@@ -456,7 +456,7 @@ class GovernNew extends Component {
         }
 
         var cdeTemp = {
-            ConformedDataElement: {
+            conformedDataElement: {
                 objectId: cde.id,
                 name: cde.name,
                 description: cde.description,
@@ -490,7 +490,7 @@ class GovernNew extends Component {
         }
 
         var cdoTemp = {
-            ConformedDataObject: {
+            conformedDataObject: {
                 name: cdo.name,
                 description: cdo.description
             }
@@ -521,7 +521,7 @@ class GovernNew extends Component {
 
         let newVersion = cdo.version + 1
         let cdoTemp = {
-            ConformedDataObject: {
+            conformedDataObject: {
                 version: newVersion,
                 name: cdo.name,
                 description: cdo.description,

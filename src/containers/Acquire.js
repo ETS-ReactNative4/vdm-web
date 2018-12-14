@@ -789,6 +789,16 @@ class Acquire extends Component {
                     self.setCurrentJob(node)
                     return
                 }
+
+                self.setState({
+                    actionStates: {
+                        ...self.state.actionStates,
+                        canClose: self.props.jobs.currentJob.id > 0,
+                        canShowProps: true,
+                        canSave: self.props.jobs.currentJob.id > 0,
+                        canNew: true
+                    }
+                })
             }
         });
 
