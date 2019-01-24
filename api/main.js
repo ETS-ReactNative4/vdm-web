@@ -1,5 +1,9 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
+var tar = require('tar-fs')
+var unzip = require('unzip')
+var fs = require('fs')
+
 const app = express();
 const router = express.Router();
 const port = 4000;
@@ -53,15 +57,20 @@ router.post('/upload', (req, res, next) => {
     console.log(req.files);
     let uploadFile = req.files.file
     const fileName = req.files.file.name
+    let uploaded = `${__dirname}/public/files/${fileName}`
     uploadFile.mv(
-      `${__dirname}/public/files/${fileName}`,
+      uploaded,
       function (err) {
         if (err) {
           return res.status(500).send(err)
         }
 
+        //fs.createReadStream(uploaded).pipe(tar.extract('./' + fileName))
+        fs.createReadStream(uploaded).pipe(unzip.Extract({ path: './public/files/cli' }));
+        console.log('Done!')
+
         res.json({
-          file: `public/${req.files.file.name}`,
+          file: uploaded,
         })
       },
     )

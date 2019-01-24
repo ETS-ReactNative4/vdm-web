@@ -38,3 +38,7 @@ npm i redux --save-dev
 # Setup git local
 git config --local user.email "nathan.noble@gmail.com"
 git config --local user.name "nathannoble"
+
+# API
+npm i tar-fs
+npm i unzip
