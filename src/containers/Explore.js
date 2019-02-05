@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import Uploader from '../components/Uploader'
 import * as config from '../config';
 import ReactTable from "react-table";
+import { Tabs, Tab } from 'react-bootstrap';
 import 'react-table/react-table.css'
+import Parser from '../components/Parser'
 
 class Explore extends Component {
 
@@ -13,14 +15,20 @@ class Explore extends Component {
             loading: true,
             dataSources: "[]",
             selectedFile: null,
-            loaded: 0
+            loaded: 0,
+            tabKey: 1
         };
 
-        
+        this.handleTabSelect = this.handleTabSelect.bind(this)
+
+    }
+
+    handleTabSelect(key) {
+        this.setState({ tabKey: key })
     }
 
     render() {
-        console.log(this.props.match)
+        const { tabKey } = this.state
 
         const columns = [{
             Header: 'ID',
@@ -48,54 +56,66 @@ class Explore extends Component {
         }
         ]
 
-
         return (
             <div>
-                <Uploader></Uploader>
-                <div style={{ padding: '20px' }}>Wrangled Datasets<hr />
+                <div className='sub-menu'>
+                    <Tabs defaultActiveKey={tabKey} onSelect={this.handleTabSelect} animation={false} id="noanim-tab-example">
+                        <Tab className='tab-content' eventKey={1} title="Extract">
+                            <div>
 
-                    <ReactTable
-                        data={JSON.parse(this.state.dataSources)}
-                        columns={columns}
-                        manual
-                        loading={this.state.loading}
-                        onFetchData={(state, instance) => {
-                            // show the loading overlay
-                            this.setState({ loading: true })
-                            // fetch your data
-                            fetch(config.VDM_SERVICE_HOST + '/getWrangledSets')
-                                .then(res => res.json())
-                                .then(
-                                    (result) => {
+                                <div style={{ padding: '20px' }}>Wrangled Datasets<hr />
 
-                                        var data = []
-                                        result.data.map((elem, i) => {
-                                            var url = `http://52.201.45.52:3005/data/${elem.flow.id}/${elem.id}`;
-                                            data.push({ "name": elem.name, "id": elem.id, "recipe": elem.recipe.id, "flow": elem.flow.id, "createdAt": elem.createdAt, "updatedAt": elem.updatedAt, "url": url })
-                                            console.log(this.state.dataSources)
-                                        });
-                
-                                        this.setState({
-                                            loading: false,
-                                            dataSources: JSON.stringify(data)
-                                        });
+                                    <ReactTable
+                                        data={JSON.parse(this.state.dataSources)}
+                                        columns={columns}
+                                        manual
+                                        loading={this.state.loading}
+                                        onFetchData={(state, instance) => {
+                                            // show the loading overlay
+                                            this.setState({ loading: true })
+                                            // fetch your data
+                                            fetch(config.VDM_SERVICE_HOST + '/getWrangledSets')
+                                                .then(res => res.json())
+                                                .then(
+                                                    (result) => {
+
+                                                        var data = []
+                                                        result.data.map((elem, i) => {
+                                                            var url = `http://52.201.45.52:3005/data/${elem.flow.id}/${elem.id}`;
+                                                            data.push({ "name": elem.name, "id": elem.id, "recipe": elem.recipe.id, "flow": elem.flow.id, "createdAt": elem.createdAt, "updatedAt": elem.updatedAt, "url": url })
+                                                            // console.log(this.state.dataSources)
+                                                        });
+
+                                                        this.setState({
+                                                            loading: false,
+                                                            dataSources: JSON.stringify(data)
+                                                        });
 
 
-                                    },
+                                                    },
 
-                                    (error) => {
-                                        console.log(error)
-                                    }
-                                )
-                        }}
-                    />
+                                                    (error) => {
+                                                        console.log(error)
+                                                    }
+                                                )
+                                        }}
+                                    />
 
+                                </div>
+                            </div>
+
+                        </Tab>
+
+                        <Tab className='tab-content' eventKey={2} title="Parse">
+                            <Uploader></Uploader>
+                            <Parser></Parser>
+                        </Tab>
+                    </Tabs>
                 </div>
+
+
             </div>
-
-
         );
-
     }
 }
 

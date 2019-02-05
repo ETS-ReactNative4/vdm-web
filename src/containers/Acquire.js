@@ -324,7 +324,7 @@ class Acquire extends Component {
         }
 
         let source = this.props.jobs.currentJob.sources[0]
-        let target = this.props.jobs.currentJob.targets[0]
+        // let target = this.props.jobs.currentJob.targets[0]
         var data;
         if (source) {
             // Fluff up this source since it is not saved as metadata
@@ -411,7 +411,7 @@ class Acquire extends Component {
     //////
     findInTree(item, id){
         var self = this
-        if(item.id == id){
+        if(item.id === id){
              return item;
         }else if (item.children != null){
              var i;

@@ -76,6 +76,13 @@ router.post('/upload', (req, res, next) => {
     )
   })
 
+  // List cli files
+  router.get('/clilist',(request, response) => {
+      fs.readdir('./public/files/cli', (err, data) => {
+        if (err) throw err;
+        response.json(data);
+      })
+  });
 
 router.post('/rawfile', (request, response) => {
     var jsonData = { dataSetId: 447, wrangledId: 1190, name: "/data/Ins_Demo_Parameters.csv", flowId: 310, url: "http://52.201.45.52:3005/data/304/1177" }
